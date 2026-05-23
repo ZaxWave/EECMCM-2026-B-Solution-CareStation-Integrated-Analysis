@@ -8,7 +8,41 @@
 
 \subsection{全局符号说明}
 
-全局符号约定见表\ref{tab:notation}（由于篇幅限制移至附录\ref{sec:appendix_notation}），正文中不再重复定义。核心符号简述如下：$\mathcal{I}$为10个小区索引集；$\mathcal{K}=\{1,2,3\}$为{小,中,大}三种规模；$\mathcal{E}=\{1,2,3\}$为{自理,半失能,失能}三类老人；$\mathcal{S}=\{1,\dots,6\}$为服务项目；$y_{i,k}\in\{0,1\}$为选址决策变量；$x_{i,j}\in\{0,1\}$为服务分配变量；$S_{i,j}=0.2S1_{ij}+0.3S2_i+0.5S3_i$为综合满意度；$B=120$万元为总预算。
+为消除跨子问题的符号歧义，表\ref{tab:notation}给出全局符号约定。
+
+\begin{table}[htbp]
+\centering
+\caption{全局符号说明表}
+\label{tab:notation}
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{符号} & \textbf{含义} & \textbf{值/单位} \\
+\midrule
+$\mathcal{I},i,j$ & 小区索引集 $\{A,\dots,J\}$，$|\mathcal{I}|=10$ & -- \\
+$\mathcal{K},k$ & 服务站规模 \{小,中,大\} & -- \\
+$\mathcal{E}$ & 老人类型 \{自理,半失能,失能\} & -- \\
+$\mathcal{S}$ & 服务项目 \{1,\dots,6\} & -- \\
+\midrule
+$\mathbf{S}_i^{(t)}$ & $i$小区第$t$年末三类老人数列向量 & 人 \\
+$\mathbf{A}$ & 增生型状态转移矩阵 ($3\times 3$) & -- \\
+$\alpha_{\text{S}\to\text{M}}$, $\alpha_{\text{M}\to\text{D}}$ & 自理$\to$半失能、半失能$\to$失能转移概率 & 0.045, 0.10 \\
+$\mu$, $\beta$ & 死亡率、新增老年人占比 & 0.05, 0.07 \\
+\midrule
+$y_{i,k}$ & 在$i$建规模$k$服务站的0-1变量 & $\{0,1\}$ \\
+$x_{i,j}$ & $j$小区是否由$i$站服务的0-1变量 & $\{0,1\}$ \\
+$C_k^{\text{build}}$ & 规模$k$建设成本 & $\{18,32,45\}$ 万元 \\
+$Q_k^{\max}$ & 规模$k$日最大服务人次 & $\{1000,2000,3000\}$ \\
+$d_{i,j}$ & 小区间距离矩阵 & m \\
+$B$ & 建设总预算约束 & 120 万元 \\
+\midrule
+$S_{i,j}$ & 综合满意度 $=0.2S1_{ij}+0.3S2_i+0.5S3_i$ & $[0.6, 1.0]$ \\
+$S1_{i,j}$ & 距离满意度 (4段阶梯) & $\{0.60,0.75,0.90,1.00\}$ \\
+$S2_i$ & 响应满意度 (5段阶梯) & $\{0.60,0.72,0.85,0.93,1.00\}$ \\
+$S3_{i,s}$ & 价格满意度 (4段阶梯) & $\{0.60,0.75,0.90,1.00\}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
 
 \subsection{Q1：老年人口演化的双模型互证体系}
 
@@ -54,7 +88,7 @@
 
 \subsubsection{模型B：Leslie年龄结构矩阵的等价推导与互证}
 
-将三类老人视为三个"生理年龄组"，构造$3\times 3$ Leslie矩阵$\mathbf{L}$（Leslie, 1945），其元素$f_1=(1-\mu)(1-\alpha_{\text{S}\to\text{M}})+\beta$（自理留存-新生复合生育力），$f_2=f_3=\beta$（新生注入），$p_{1\to2}=(1-\mu)\alpha_{\text{S}\to\text{M}}$（自理$\to$半失能转移率），$p_{2\to3}=(1-\mu)\alpha_{\text{M}\to\text{D}}$（半失能$\to$失能退化率）。$\mathbf{L}$精确等价于$\mathbf{A}^\top$（Leslie行向量左乘vs马尔可夫列向量右乘），两模型5年递推结果完全一致（差异$<10^{-6}$），构成模型内互证。Leslie主特征值$\lambda_1=1.0198>1$揭示年均净增长率约2.0\%，与Q1数值结果精确吻合——这一结构稳定性信息是纯马尔可夫递推所不能直接提供的（双模型数值对比见附录表\ref{tab:leslie_check}）。
+将三类老人视为三个"生理年龄组"，构造$3\times 3$ Leslie矩阵$\mathbf{L}$\cite{leslie1945}，其元素$f_1=(1-\mu)(1-\alpha_{\text{S}\to\text{M}})+\beta$（自理留存-新生复合生育力），$f_2=f_3=\beta$（新生注入），$p_{1\to2}=(1-\mu)\alpha_{\text{S}\to\text{M}}$（自理$\to$半失能转移率），$p_{2\to3}=(1-\mu)\alpha_{\text{M}\to\text{D}}$（半失能$\to$失能退化率）。$\mathbf{L}$精确等价于$\mathbf{A}^\top$（Leslie行向量左乘vs马尔可夫列向量右乘），两模型5年递推结果完全一致（差异$<10^{-6}$），构成模型内互证。Leslie主特征值$\lambda_1=1.0198>1$揭示年均净增长率约2.0\%，与Q1数值结果精确吻合——这一结构稳定性信息是纯马尔可夫递推所不能直接提供的（双模型数值对比见附录表\ref{tab:leslie_check}）。
 
 \subsubsection{递推预测算法}
 
@@ -104,9 +138,9 @@ D_{i,e,s}^{\text{actual}} = s_{i,e}^{(t)} \cdot D_{e,s} \cdot \min\left(1, \frac
 
 Q2要求"确定服务站数量、位置、规模，使得服务覆盖率和服务满意度尽可能高"。其数学本质可追溯至运筹学中的两个经典模型谱系：
 
-\textbf{理论底座一：最大覆盖选址问题 (Maximal Covering Location Problem, MCLP)}。Church和ReVelle (1974)在其开创性论文\textit{``The Maximal Covering Location Problem''}中首次形式化了如下问题：给定$n$个需求点、$m$个候选设施点、服务半径$R$和设施数量上限$P$，如何选择至多$P$个设施点以最大化被覆盖的需求总量？该模型在无线基站选址（GSM Transmitter Location）、消防站部署、急救中心规划等领域有广泛工程应用。本问题中，\textbf{服务站$\equiv$GSM发射塔、1000m服务半径$\equiv$基站信号覆盖半径、老年人口$\equiv$信号需求密度}——三要素精确对齐，构成了问题2的理论底座。
+\textbf{理论底座一：最大覆盖选址问题 (Maximal Covering Location Problem, MCLP)}。Church和ReVelle \cite{church1974}在其开创性论文中首次形式化了如下问题：给定$n$个需求点、$m$个候选设施点、服务半径$R$和设施数量上限$P$，如何选择至多$P$个设施点以最大化被覆盖的需求总量？该模型在无线基站选址（GSM Transmitter Location）、消防站部署、急救中心规划等领域有广泛工程应用。本问题中，\textbf{服务站$\equiv$GSM发射塔、1000m服务半径$\equiv$基站信号覆盖半径、老年人口$\equiv$信号需求密度}——三要素精确对齐，构成了问题2的理论底座。国内学者在养老设施空间匹配\cite{wang2024}与社区型设施分布优化\cite{sima2024}方面的实证研究，为本文选址模型的参数标定提供了方法论参照。
 
-\textbf{理论底座二：有容量设施选址问题 (Capacitated Facility Location Problem, CFLP)}。MCLP的经典形式假设设施容量无上限，而本题中三种规模服务站分别对应1~000/2~000/3~000人次/日的硬容量约束，且建设成本各异——这恰好对应CFLP的"多容量等级"变体（Multi-Level CFLP）。
+\textbf{理论底座二：有容量设施选址问题 (Capacitated Facility Location Problem, CFLP)}。MCLP的经典形式假设设施容量无上限，而本题中三种规模服务站分别对应1~000/2~000/3~000人次/日的硬容量约束，且建设成本各异——这恰好对应CFLP的"多容量等级"变体（Multi-Level CFLP）\cite{daskin1995}。
 
 \textbf{本问题的复合特征}。在上述两个经典谱系的交汇处，本问题额外附加了三个使建模显著复杂化的特征：(1) 满意度$S$是距离、利用率、价格三因素的\textbf{分段常数阶梯函数}——不可微分，不可简单连续化；(2) 目标为覆盖率与满意度的\textbf{双目标帕累托优化}；(3) 服务站容量与服务满意度通过利用率$S_2$产生\textbf{非线性耦合}。因此，本文将所建模型命名为\textbf{MILP-MCLP-ES (Maximal Covering Location Problem for Embedded Stations)}，以显式标注其在运筹学谱系中的精确位置。
 
@@ -185,7 +219,7 @@ S1_{i,j} &= 1.00\delta_1 + 0.90\delta_2 + 0.75\delta_3 + 0.60\delta_4
 
 \paragraph{响应满意度 $S_2$ 的线性化}
 
-$S_2(\rho)$为5档阶梯函数，断点$\{0,0.60,0.75,0.85,0.95,1.00\}$，分值$\{1.00,0.93,0.85,0.72,0.60\}$。利用率$\rho_i$含分式，引入$\delta_{i,\ell}^{S2}\in\{0,1\}$与McCormick包络辅助变量$w_{ij}=S2_i\cdot x_{ij}$消去非线性乘积项（McCormick, 1976）：
+$S_2(\rho)$为5档阶梯函数，断点$\{0,0.60,0.75,0.85,0.95,1.00\}$，分值$\{1.00,0.93,0.85,0.72,0.60\}$。利用率$\rho_i$含分式，引入$\delta_{i,\ell}^{S2}\in\{0,1\}$与McCormick包络辅助变量$w_{ij}=S2_i\cdot x_{ij}$消去非线性乘积项\cite{mccormick1976}：
 
 \begin{equation}
 \begin{aligned}
@@ -206,11 +240,11 @@ S_{i,j} = 0.2 \cdot S1_{i,j} + 0.3 \cdot S2_i + 0.5 \cdot \frac{1}{|\mathcal{S}|
 
 \subsubsection{线性化变量规模}
 
-上述Big-M方案的二元变量总数$|\mathcal{I}|^2\cdot4 + |\mathcal{I}|\cdot5 + |\mathcal{I}|\cdot|\mathcal{S}|\cdot4 = 690$，加上$y_{i,k}$(30个)和$x_{i,j}$(100个)，总计约820个二元变量、约束约2000条，CBC分支定界可在秒级收敛。
+上述Big-M方案的二元变量总数$|\mathcal{I}|^2\cdot4 + |\mathcal{I}|\cdot5 + |\mathcal{I}|\cdot|\mathcal{S}|\cdot4 = 690$，加上$y_{i,k}$(30个)和$x_{i,j}$(100个)，总计约820个二元变量、约束约2000条，CBC分支定界可在秒级收敛\cite{wolsey1998}。
 
 \subsection{Q3：服务定价与政府补贴优化模型}
 
-Q3在Q2最优选址方案$\{y_{i,k}^*\}$已确定的前提下，允许每个服务站自主定价$p'_{i,s}$，目标为最大化老人满意度，同时满足利润率$\le 8\%$的监管约束。
+养老服务定价与补贴机制设计是近年国内学界关注焦点\cite{feng2024,zhao2024}。Q3在Q2最优选址方案$\{y_{i,k}^*\}$已确定的前提下，允许每个服务站自主定价$p'_{i,s}$，目标为最大化老人满意度，同时满足利润率$\le 8\%$的监管约束。
 
 \subsubsection{目标函数（Q3修正）}
 

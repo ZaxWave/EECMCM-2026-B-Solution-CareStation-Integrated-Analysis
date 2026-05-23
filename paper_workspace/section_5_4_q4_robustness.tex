@@ -7,20 +7,13 @@
 
 \subsection{三场景参数扫描设计}
 
-为验证选址-定价联合方案的工程稳健性，以Q2 MILP模型为核，对三类外部冲击实施参数扫描共6组对比实验（基线为Q2确定解F+H+J，10/10全覆盖，目标值54.225）。结果汇总于表\ref{tab:q4_sensitivity}，覆盖率与满意度对比如图\ref{fig:q4_coverage}--\ref{fig:q4_satisfaction}所示，利润数据见表\ref{tab:q4_sensitivity}。
+为验证选址-定价联合方案的工程稳健性，以Q2 MILP模型为核，对三类外部冲击实施参数扫描共6组对比实验\cite{bertsimas2011}（基线为Q2确定解F+H+J，10/10全覆盖，目标值54.225）。结果汇总于表\ref{tab:q4_sensitivity}，覆盖率、满意度与利润的全景对比如图\ref{fig:q4_sensitivity_combined}所示。
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.72\textwidth]{figures/figure_q4_coverage.png}
-\caption{灵敏度分析——覆盖率对比。基线全覆盖（100\%）；场景A维持100\%；场景B成本通胀骤降至80\%；场景C银发海啸维持90\%。}
-\label{fig:q4_coverage}
-\end{figure}
-
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.72\textwidth]{figures/figure_q4_satisfaction.png}
-\caption{灵敏度分析——加权满意度与利润对比。满意度：场景A边际递减（0.850$\to$0.912），场景B反升至0.906（集约化效应），场景C逆势微升至0.895。利润：成本通胀侵蚀最为严重（$-$39.1\%）。}
-\label{fig:q4_satisfaction}
+\includegraphics[width=\textwidth]{figures/figure_q4_sensitivity_combined.png}
+\caption{三场景灵敏度分析全景对比。(a) 覆盖率；(b) 加权满意度；(c) 年利润。}
+\label{fig:q4_sensitivity_combined}
 \end{figure}
 
 \begin{table}[H]
@@ -59,12 +52,21 @@ C: 银发海啸 & 120 & 90.0\% & A(小)+G(中)+I(中)+J(中) & 0.895 & 887.9 \\
 
 \subsection{综合鲁棒性判定}
 
-多维度韧性矩阵（$\rho = 1 - |\Delta X / X_{\text{baseline}}|$，见附录表\ref{tab:q4_resilience}）显示：所有场景任一维度$\rho>0.80$。覆盖率韧性0.80--1.00，满意度韧性0.927--0.961，利润率韧性0.609--0.960。成本通胀场景利润率韧性0.609为全场景最低，但覆盖率与满意度端仍维持可接受水平。多维度韧性分布见图\ref{fig:q4_radar}的雷达图。
+多维度韧性矩阵（$\rho = 1 - |\Delta X / X_{\text{baseline}}|$）的数值结果见附录表\ref{tab:q4_resilience}，其热力图可视化如图\ref{fig:q4_heatmap}所示：所有场景任一维度$\rho>0.80$。覆盖率韧性0.80--1.00，满意度韧性0.927--0.961，利润率韧性0.609--0.960。场景B利润率维度（0.609）为唯一突破强鲁棒性阈值的场景-维度组合。
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.62\textwidth]{figures/figure_q4_resilience_radar.png}
-\caption{多维度鲁棒性雷达图。三场景各维度韧性系数均高于强鲁棒性阈值0.75。成本通胀场景(B)利润率韧性0.609为全场景最低，但覆盖率与满意度韧性仍维持可接受水平。}
+\includegraphics[width=0.76\textwidth]{figures/figure_q4_resilience_heatmap.png}
+\caption{多场景多维度韧性热力图。蓝色越深韧性越强，红色越深韧性越弱。}
+\label{fig:q4_heatmap}
+\end{figure}
+
+多维度韧性雷达图（图\ref{fig:q4_radar}）进一步验证了系统的整体鲁棒性。
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.70\textwidth]{figures/figure_q4_resilience_radar.png}
+\caption{多维度鲁棒性雷达图。三场景各维度韧性系数均高于强鲁棒性阈值0.75。}
 \label{fig:q4_radar}
 \end{figure}
 
@@ -72,6 +74,5 @@ C: 银发海啸 & 120 & 90.0\% & A(小)+G(中)+I(中)+J(中) & 0.895 & 887.9 \\
 
 \begin{enumerate}
     \item \textbf{全覆盖预算底线为109万元}：成本通胀20\%将摧毁全覆盖，建议建立建设成本指数化应急基金（预算的15--20\%）以吸收不可预见冲击。
-    \item \textbf{130万元为甜点投资门槛}：额外10万可使满意度从0.850升至0.883（+3.9\%），超过此预算后边际回报急剧下降。
-    \item \textbf{建立半失能$\to$失能转化率季度监测机制}：转化率超11\%触发黄灯预警，超12.5\%触发红灯扩容（H站中型$\to$大型，追加13万），将灵敏度分析从学术练习转化为可操作的工程风险管理工具。
+    \item \textbf{130万元为甜点投资门槛}：额外10万可使满意度从0.850升至0.883（+3.9\%），超出后边际回报急剧下降。建议建立半失能$\to$失能转化率季度监测机制，转化率超11\%触发黄灯预警、超12.5\%触发红灯扩容（H站中型$\to$大型，追加13万），将灵敏度分析转化为可操作的工程风险管理工具。
 \end{enumerate}

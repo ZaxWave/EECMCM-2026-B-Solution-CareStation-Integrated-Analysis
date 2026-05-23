@@ -99,15 +99,15 @@
 \end{center}
 \vspace{0.2cm}
 
-面对人口老龄化加速背景下社区养老服务"建在哪、建多大、收多少钱"的全链条决策难题，本文以某城市10个连片小区为实证场景，构建四阶段递进求解框架，在120万元总预算与1000m服务半径硬约束下完成从需求预测到方案落地的闭环求解。
+面对人口老龄化加速背景下社区养老服务"建在哪、建多大、收多少钱"的全链条决策难题，本文以某城市10个连片小区为实证场景，构建"预测--选址--定价--灵敏度"四阶段递进求解框架，在120万元总预算与1000m服务半径硬约束下完成从需求预测到方案落地的闭环求解。
 
-\textbf{问题1——人口与服务需求预测}：构造增生型3状态Markov转移矩阵，以7\%年注入率与5\%死亡率刻画系统开放性；同步建立Leslie矩阵双模型三角校验，两范式5年60+人口预测偏差仅1.7\%。核心发现：失能老人因棘轮效应从625人飙升至1,125人（+80.3\%），失能率从9.1\%攀升至14.8\%；半失能群体充当自理向失能的加速通道。消费约束预诊断表明失能老人全10小区触发等比例削减，缺口23.9\%--49.1\%。
+\textbf{问题1——人口与服务需求预测}：构造增生型3状态Markov转移矩阵，以7\%年注入率与5\%死亡率刻画系统开放性；同步建立Leslie矩阵进行双模型三角校验，两范式对第5年末60+人口的预测偏差仅1.7\%，Leslie主特征值$\lambda_1=1.0198$与年均增长率2.0\%精确吻合。核心发现：失能老人因棘轮效应从625人飙升至1,125人（+80.3\%），失能率从9.1\%攀升至14.8\%；半失能群体充当自理向失能的加速通道。消费约束预诊断表明失能老人全10小区触发等比例削减，缺口23.9\%--49.1\%。
 
-\textbf{问题2——选址与规模优化}：将Church\&ReVelle经典MCLP扩展为MILP-MCLP-ES模型，引入Big-M与McCormick包络等价线性化，CBC分支定界求解。最优方案F大型+H中型+J中型，成本109万元，10/10全覆盖，加权满意度0.850，年总利润1,097.7万元。三站平均利用率94.3\%，确定解目标值较非确定解提升24\%。
+\textbf{问题2——选址与规模优化}：将Church\&ReVelle经典MCLP扩展为MILP-MCLP-ES（嵌入式最大覆盖选址）模型，针对满意度函数中$S_2$与$x_{ij}$的非线性乘积引入McCormick包络，$S_1$（4段）与$S_2$（5段）阶梯函数以Big-M方法精确线性化，CBC分支定界在120秒内收敛至gap$<1\%$的确定解。最优方案F(大型,45万)+H(中型,32万)+J(中型,32万)，总成本109万元，10/10全覆盖，加权满意度0.850，年总利润1,097.7万元。三站平均利用率94.3\%，确定解目标值54.225较非确定解提升24\%。
 
-\textbf{问题3——服务定价与政府补贴}：构建词典序MILP定价模型，优先最大化$S_3$、次优先弱激励营收最大化，利润率$\le8\%$红线。全6项服务$S_3=1.000$平价，仅上门护理从30元降至12.64元吸收F站紧约束。三层交叉补贴使紧急救助年净支出47.42万元由营利利润完全吸收，交叉补贴率仅14.3\%。
+\textbf{问题3——服务定价与政府补贴}：在固化Q2选址方案的基础上，构建词典序MILP定价模型——优先最大化加权$S_3$，次优先以弱激励$\varepsilon=10^{-4}$最大化营收，受利润率$\le8\%$监管红线与补贴上限双重约束。全6项服务$S_3=1.000$平价，仅上门护理从30元降至12.64元（降幅57.9\%）以吸收F站8\%利润率紧约束，体现Ramsey-Boiteux反向价格歧视原理。三层交叉补贴使紧急救助年净支出47.42万元由营利利润331.3万元完全吸收，交叉补贴率仅14.3\%。
 
-\textbf{问题4——灵敏度与鲁棒性}：三场景6组MILP重求解。场景A预算扩张满意度单调递增边际递减，130万为甜点；场景B成本通胀20\%击穿全覆盖防线；场景C银发海啸下系统从3站跃迁至4站，维持90\%覆盖率。各维度韧性系数均>0.80，系统鲁棒性为强。框架可迁移至分级诊疗、冷链前置仓等公共设施优化场景。
+\textbf{问题4——灵敏度与鲁棒性}：对预算总额、建设成本、转移概率三类外部冲击实施三场景6组MILP重求解。场景A预算释放下满意度单调递增但边际递减，130万为甜点门槛；场景B成本通胀20\%击穿全覆盖防线，覆盖率降至80\%；场景C银发海啸下系统从3站自适应跃迁至4站，维持90\%覆盖率。多维鲁棒性韧性矩阵显示各维度$\rho>0.80$，系统鲁棒性为强。该框架可迁移至分级诊疗、冷链前置仓、充电桩等公共设施优化场景。
 
 \textbf{关键词：}嵌入式养老；Markov链；最大覆盖选址（MCLP）；混合整数线性规划（MILP）；McCormick包络；Ramsey-Boiteux定价；交叉补贴；鲁棒性分析
 
@@ -122,10 +122,6 @@
 \input{paper_workspace/section_3_model_formulation.tex}
 
 \input{paper_workspace/section_4_assumptions.tex}
-
-\section{子问题求解与结果分析}
-
-以下按Q1$\to$Q2$\to$Q3$\to$Q4的顺序，逐题报告模型求解结果与关键发现。各子问题之间通过数据接口（Q1输出$\to$Q2输入$\to$Q3输入）形成闭环依赖链。
 
 \input{paper_workspace/section_5_1_q1_results.tex}
 
@@ -156,29 +152,29 @@
 % ===== 参考文献 =====
 \begin{thebibliography}{99}
 
+\bibitem{leslie1945} Leslie P H. On the use of matrices in certain population mathematics[J]. Biometrika, 1945, 33(3): 183-212.
+
 \bibitem{church1974} Church R L, ReVelle C. The maximal covering location problem[J]. Papers of the Regional Science Association, 1974, 32(1): 101-118.
 
-\bibitem{kariv1979} Kariv O, Hakimi S L. An algorithmic approach to network location problems. Part II: The $p$-medians[J]. SIAM Journal on Applied Mathematics, 1979, 37(3): 539-560.
+\bibitem{wang2024} 王天心, 戈大专, 李杰. 基于供需视角的南京市养老设施空间匹配研究[J]. 人文地理, 2024, 39(4): 85--93.
 
-\bibitem{leslie1945} Leslie P H. On the use of matrices in certain population mathematics[J]. Biometrika, 1945, 33(3): 183-212.
+\bibitem{sima2024} 司马蕾, 张若曦. 上海市社区型养老设施的空间分布特征与优化策略研究[J]. 建筑与文化, 2024(6): 162--166.
+
+\bibitem{daskin1995} Daskin M S. Network and Discrete Location: Models, Algorithms, and Applications[M]. New York: John Wiley \& Sons, 1995: 110--145.
 
 \bibitem{mccormick1976} McCormick G P. Computability of global solutions to factorable nonconvex programs: Part I — Convex underestimating problems[J]. Mathematical Programming, 1976, 10(1): 147-175.
 
+\bibitem{feng2024} 冯华, 邱雨如, 黄宇, 唐紫璇. 养老服务补贴研究：补需方比补供方更好吗？[J]. 中国管理科学, 2023, 31(9): 266--277.
+
+\bibitem{zhao2024} 赵树平, 李双双, 陈敬贤, 梁昌勇, 李克卿. 考虑预算约束的养老服务补贴策略研究[J]. 系统管理学报, 2024, 33(4): 892--901.
+
+\bibitem{wolsey1998} Wolsey L A. Integer Programming[M]. New York: John Wiley \& Sons, 1998: 1--45.
+
+\bibitem{liu2023} 刘新, 王新建, 吴政, 戴昭鑫, 孙哲. 基于随机森林算法与供需关系的养老设施选址研究[J]. 测绘工程, 2023, 32(1): 49--55.
+
 \bibitem{ramsey1927} Ramsey F P. A contribution to the theory of taxation[J]. The Economic Journal, 1927, 37(145): 47-61.
 
-\bibitem{daskin1995} Daskin M S. Network and Discrete Location: Models, Algorithms, and Applications[M]. New York: John Wiley \& Sons, 1995.
-
-\bibitem{wolsey1998} Wolsey L A. Integer Programming[M]. New York: John Wiley \& Sons, 1998.
-
 \bibitem{bertsimas2011} Bertsimas D, Brown D B, Caramanis C. Theory and applications of robust optimization[J]. SIAM Review, 2011, 53(3): 464-501.
-
-\bibitem{wang2023} 王某某, 李某某. 社区嵌入式养老服务的空间可达性研究——基于改进两步移动搜索法[J]. 地理科学, 2023, 43(5): 812-821.
-
-\bibitem{zhang2024} 张某某, 陈某某. 养老服务设施选址的多目标优化模型与求解算法[J]. 运筹与管理, 2024, 33(2): 156-163.
-
-\bibitem{griva2025} Griva I, Nash S G, Sofer A. Linear and Nonlinear Optimization (3rd ed.)[M]. Philadelphia: SIAM, 2025.
-
-\bibitem{gu2025} 顾某某, 赵某某. 老龄化背景下社区养老服务供需匹配的混合整数规划模型[J]. 系统工程理论与实践, 2025, 45(3): 678-692.
 
 \end{thebibliography}
 
@@ -189,75 +185,167 @@
 
 \section{主要算法伪代码}
 
-\subsection*{算法1：MILP-MCLP-ES 选址-规模优化}
+\subsection*{算法1：MILP-MCLP-ES选址-规模优化（对应§3.2）}
 
-\begin{lstlisting}[language=Python, caption={MILP-MCLP-ES核心算法框架}]
-# 输入: I(小区集), K(规模集), D(需求), d(距离矩阵), B(预算)
-# 输出: y*(选址-规模), x*(服务分配)
+\begin{algorithm}[H]
+\caption{MILP-MCLP-ES核心算法框架}
+\label{alg:mclp_es}
+\begin{algorithmic}[1]
+\Require 小区集 $\mathcal{I}$，规模集 $\mathcal{K}$，需求矩阵 $\mathbf{D}$，距离矩阵 $d_{ij}$，预算 $B=120$万
+\Ensure 最优选址-规模方案 $\mathbf{y}^*=\{y_{ik}^*\}$，最优服务分配 $\mathbf{x}^*=\{x_{ij}^*\}$
+\State \textbf{// Step 1: 构建决策变量}
+\State $y_{ik} \in \{0,1\}$ \Comment{小区$i$是否建规模$k$的站}
+\State $x_{ij} \in \{0,1\}$ \Comment{$j$小区是否由$i$站服务}
+\State $\delta_{ij\ell}^{S1}\in\{0,1\}$ \Comment{$S_1$距离满意度4段指示变量}
+\State $\delta_{i\ell}^{S2}\in\{0,1\}$ \Comment{$S_2$响应满意度5段指示变量}
+\State $w_{ij}\in[0,1]$ \Comment{McCormick辅助变量，替代$S2_i\cdot x_{ij}$}
+\State \textbf{// Step 2: 目标函数（双目标加权聚合）}
+\State $\max \quad \lambda\cdot\text{Coverage} + (1-\lambda)\cdot\text{AvgSatisfaction}$
+\State \textbf{// Step 3: Big-M线性化$S_1$（4段阶梯，断点0/300/500/650/1000m）}
+\For{每对$(i,j)$满足$d_{ij}\le 1000$m}
+    \State $\sum_{\ell=1}^{4}\delta_{ij\ell}^{S1}=x_{ij}$
+    \State $S1_{ij}=1.00\delta_1+0.90\delta_2+0.75\delta_3+0.60\delta_4$
+\EndFor
+\State \textbf{// Step 4: McCormick包络线性化$S_2\cdot x_{ij}$}
+\For{每站$i$，每小区$j$}
+    \State $\sum_{\ell=1}^{5}\delta_{i\ell}^{S2}=\sum_k y_{ik}$； $S2_i=1.00\delta_1+0.93\delta_2+0.85\delta_3+0.72\delta_4+0.60\delta_5$
+    \State $w_{ij}\le x_{ij}$； $w_{ij}\le S2_i$； $w_{ij}\ge S2_i-(1-x_{ij})$； $0\le w_{ij}\le 1$
+\EndFor
+\State \textbf{// Step 5: 约束条件}
+\State $\sum_i\sum_k C_k^{\text{build}}y_{ik}\le B$ \Comment{预算约束}
+\State $\sum_i x_{ij}=1,\;\forall j$ \Comment{每位老人由最近站服务}
+\State $\sum_j\sum_e D_{je}\cdot x_{ij}\le 30\cdot\sum_k Q_k^{\max}y_{ik},\;\forall i$ \Comment{容量约束}
+\State $x_{ij}=0,\;\forall i,j: d_{ij}>1000$ \Comment{服务半径约束}
+\State \textbf{// Step 6: 分支定界求解}
+\State 调用CBC求解器（time\_limit=120s, randomSeed=42, gapRel=0.01）
+\State \Return $\mathbf{y}^*$, $\mathbf{x}^*$, 目标值$Z^*$
+\end{algorithmic}
+\end{algorithm}
 
-# Step 1: 构建MILP模型
+\subsection*{算法2：S3价格满意度Big-M线性化（对应§3.3）}
+
+\begin{algorithm}[H]
+\caption{定价优化S3满意度Big-M线性化}
+\label{alg:s3_bigm}
+\begin{algorithmic}[1]
+\Require 服务基准价 $\mathbf{p}^{\text{base}}$；S3断点 $\{1.0, 1.1, 1.2\}\times\mathbf{p}^{\text{base}}$；S3分值 $\{1.00, 0.90, 0.75, 0.60\}$
+\Ensure 最优定价 $\mathbf{p}^*=\{p_s^*\}_{s\in\mathcal{S}}$；S3满意度 $\{S3_s\}$
+\State \textbf{// Step 1: 4段指示变量}
+\For{每项服务$s$（紧急救助除外）}
+    \State $\sum_{\ell=0}^{3}\delta_{s\ell}^{S3}=1$ \Comment{恰好选一段}
+    \For{$\ell=0$ \textbf{to} $3$}
+        \State $p_s\ge\text{lo}_\ell - M(1-\delta_{s\ell}^{S3})$； $p_s\le\text{hi}_\ell + M(1-\delta_{s\ell}^{S3})$
+    \EndFor
+    \State $S3_s=\sum_\ell \text{val}_\ell\cdot\delta_{s\ell}^{S3}$
+\EndFor
+\State \textbf{// Step 2: 词典序目标}
+\State $\max \quad \underbrace{\sum_s D_s\cdot S3_s}_{\text{优先: }S_3\text{最大化}} + \underbrace{\varepsilon\cdot\sum_s D_s\cdot p_s}_{\text{次优: 营收激励}(\varepsilon=10^{-4})}$
+\State \textbf{// Step 3: 利润率约束}
+\State $\Pi_i/(\text{年化成本}_i)\le 0.08,\;\forall i$ \Comment{利润率$\le$8\%红线}
+\State \Return $\mathbf{p}^*$, $\{S3_s\}$, 各站利润率$\{\pi_i\}$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{算法3：三层交叉补贴与定价优化（对应§5.3.3）}
+
+\begin{algorithm}[H]
+\caption{三层交叉补贴算法}
+\label{alg:cross_subsidy}
+\begin{algorithmic}[1]
+\Require 固化选址方案 $\mathbf{y}^*$；各站点服务需求矩阵 $\mathbf{D}$；服务基准价 $\mathbf{p}^{\text{base}}$；利润率上界 $\pi^{\max}=8\%$
+\Ensure 最优定价 $\mathbf{p}^*$；各站点利润率 $\pi_i$；交叉补贴率 $\eta$
+\State \textbf{// 第一阶段：站内营利养公益}
+\For{每站 $i \in \mathcal{I}^{\text{built}}$}
+    \State $C^{\text{welfare}}_i \gets 12 \times D_{i,\text{emergency}} \times c_{\text{emergency}}$
+    \State $R^{\text{profit}}_i \gets 12 \times \sum_{s \neq \text{emergency}} D_{i,s} \times (p^{\text{base}}_s - c_s)$
+\EndFor
+\State \textbf{// 第二阶段：站间补贴效率再分配}
+\For{每站 $i \in \mathcal{I}^{\text{built}}$}
+    \State $S^{\text{actual}}_i \gets \min(r^{\text{sub}} \times \sum_{s \neq \text{emergency}} D_{i,s},\; S^{\text{cap}}_i)$
+\EndFor
+\State \textbf{// 第三阶段：Ramsey-Boiteux反向价格歧视}
+\State 构建MILP词典序目标并求解 → $\mathbf{p}^*$；识别绑定站点$i^*$
+\If{$\pi_{i^*} = \pi^{\max}$}
+    \State $\mathbf{p}^*_{s^*} \gets \max\{p \mid S_3(p) = 1.000\}$
+\EndIf
+\State \Return $\mathbf{p}^*$, $\{\pi_i\}$, $\eta \gets \sum_i C^{\text{welfare}}_i / \sum_i R^{\text{profit}}_i$
+\end{algorithmic}
+\end{algorithm}
+
+\section{核心求解代码摘要}
+
+本文全部求解代码含4个Python脚本（solve\_q1.py / solve\_q2.py / solve\_q3.py / solve\_q4\_sensitivity.py）及2个可视化脚本（generate\_extra\_figures.py / generate\_q4\_combined.py），核心依赖Python 3.12 + NumPy + SciPy + PuLP + Matplotlib + NetworkX + Pandas。以下摘要列出各模块的关键代码片段。
+
+\subsection*{代码B1：Markov递推引擎（对应§3.1，solve\_q1.py）}
+
+\begin{lstlisting}[language=Python, caption={增生型Markov链5年递推}]
+# 对应 §3.1: 增生型Markov状态转移矩阵递推
+import numpy as np
+
+# 转移矩阵 A (3x3): 自理/半失能/失能
+alpha_sm, alpha_md, mu, beta = 0.045, 0.10, 0.05, 0.07
+A = np.array([
+    [(1-mu)*(1-alpha_sm) + beta,  beta,                     beta],
+    [(1-mu)*alpha_sm,             (1-mu)*(1-alpha_md),      0],
+    [0,                           (1-mu)*alpha_md,          (1-mu)]
+])
+
+# 递推5年
+S = S0.copy()  # S0: (10, 3) 基年状态矩阵
+for t in range(5):
+    S = (A @ S.T).T  # 每小区独立递推
+    S = np.round(S).astype(int)
+\end{lstlisting}
+
+\subsection*{代码B2：MILP-MCLP-ES模型构建（对应§3.2，solve\_q2.py）}
+
+\begin{lstlisting}[language=Python, caption={MILP选址模型PuLP构建}]
+# 对应 §3.2: MILP-MCLP-ES 选址-规模优化
+from pulp import LpProblem, LpMaximize, LpVariable, lpSum, LpBinary
+
 prob = LpProblem("MCLP_ES", LpMaximize)
 
-# Step 2: 决策变量
-y[i,k] = Binary  # 小区i是否建规模k的站
-x[i,j] = Binary  # 小区i是否由站j服务
-s1[i,j] = Continuous  # S1距离满意度 (0.6-1.0)
-s2[i] = Continuous    # S2响应满意度 (0.6-1.0)
+# 决策变量
+y = {(i,k): LpVariable(f"y_{i}_{k}", cat=LpBinary) for i in I for k in K}
+x = {(i,j): LpVariable(f"x_{i}_{j}", cat=LpBinary) for i in I for j in J}
 
-# Step 3: Big-M线性化 S1 (4段)
-for each (i,j) with d[i,j] <= 1000:
-    sum(delta_s1[ell]) = x[i,j]
-    s1[i,j] = sum(val[ell] * delta_s1[ell])
+# McCormick包络: w[i,j] = S2[i] * x[i,j]
+w = {(i,j): LpVariable(f"w_{i}_{j}", 0, 1) for i in I for j in J}
+for i in I:
+    for j in J:
+        prob += w[i,j] <= x[i,j]
+        prob += w[i,j] <= s2[i]
+        prob += w[i,j] >= s2[i] - (1 - x[i,j])
 
-# Step 4: Big-M线性化 S2 (5段，基于利用率)
-for each i:
-    sum(delta_s2[ell]) = station_exists[i]
-    s2[i] = sum(val[ell] * delta_s2[ell])
+# 目标: 覆盖率×5.0 + 满意度×0.5
+prob += lpSum([coverage * 5.0, weighted_satisfaction * 0.5])
 
-# Step 5: McCormick包络
-w[i,j] = s2[i] * x[i,j]  # 非线性!
-# 替换为:
-w[i,j] <= x[i,j]
-w[i,j] <= s2[i]
-w[i,j] >= s2[i] - (1 - x[i,j])
-
-# Step 6: 目标与约束
-max sum(coverage * 5.0 + weighted_S * 0.5)
-s.t. budget, capacity, single-sourcing, radius
-
-# Step 7: 求解
-solve_with_fallback(prob, time_limit=180)  # CBC -> Gurobi -> Mosek
+# 求解 (CBC, 120s, randomSeed=42)
+prob.solve(PULP_CBC_CMD(timeLimit=120, options=['randomSeed 42']))
 \end{lstlisting}
 
-\subsection*{算法2：S3价格满意度Big-M线性化 (Q3)}
+\subsection*{代码B3：词典序MILP定价（对应§3.3，solve\_q3.py）}
 
-\begin{lstlisting}[language=Python, caption={定价优化S3线性化}]
-# S3四段: 平价[0,1.0] / 微溢价(1.0,1.1] / 中溢价(1.1,1.2] / 高溢价(1.2,2.0]
-# 对应S3值: 1.00, 0.90, 0.75, 0.60
+\begin{lstlisting}[language=Python, caption={词典序目标定价MILP}]
+# 对应 §3.3: 词典序MILP定价 — 优先S3最大化，次优营收
+epsilon = 1e-4  # 弱激励系数
 
-for each service s (except emergency):
-    # 恰好选一段
-    sum(delta_s3[s,ell] for ell in 0..3) == 1
+# Phase 1: 最大化S3
+prob.setObjective(lpSum([demand[s] * s3[s] for s in services]))
+prob.solve()
 
-    for ell in 0..3:
-        lo = base[s] * S3_lo[ell]
-        hi = base[s] * S3_hi[ell]
-        p[s] >= lo - M * (1 - delta_s3[s,ell])
-        p[s] <= hi + M * (1 - delta_s3[s,ell])
-
-    s3[s] = sum(S3_val[ell] * delta_s3[s,ell])
-
-# 词典序目标
-max sum(demand[s] * s3[s] * 0.5) + epsilon * sum(demand[s] * p[s])
+# Phase 2: 固定S3最优值，最大化营收
+s3_opt = {s: s3[s].varValue for s in services}
+prob += lpSum([demand[s] * s3[s] for s in services]) >= sum(
+    demand[s] * s3_opt[s] for s in services)
+prob.setObjective(lpSum([demand[s] * s3[s] * 0.5 +
+    epsilon * demand[s] * price[s] for s in services]))
+prob.solve()
 \end{lstlisting}
 
-\section{完整代码}
+\section{补充数据表}
 
-本文全部求解代码（solve\_q1.py, solve\_q2.py, solve\_q3.py, solve\_q4\_sensitivity.py）及LaTeX源文件详见竞赛提交材料。核心依赖：Python 3.12 + NumPy + SciPy + PuLP + Matplotlib + NetworkX + Pandas。
-
-\section{补充图表}
-
-\subsection*{附录A：Leslie矩阵三角校验数值结果}
+\subsection*{附录C1：Leslie矩阵三角校验数值结果}
 
 \begin{table}[H]
 \centering
@@ -277,7 +365,34 @@ max sum(demand[s] * s3[s] * 0.5) + epsilon * sum(demand[s] * p[s])
 \end{tabular}
 \end{table}
 
-\subsection*{附录B：Q4灵敏度分析全量数据}
+\subsection*{附录C2：10个小区第5年末人口预测详细数据}
+
+\begin{table}[H]
+\centering
+\caption{各小区第5年末三类老年人口及消费约束削减情况}
+\label{tab:q1_community_detail}
+\footnotesize
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{小区} & \textbf{自理} & \textbf{半失能} & \textbf{失能} & \textbf{60+合计} & \textbf{月实际需求(次)} & \textbf{削减率(\%)} \\
+\midrule
+A & 521 & 150 & 114 & 785 & 27,486 & 5.3 \\
+B & 436 & 130 & 106 & 672 & 23,521 & 6.4 \\
+C & 669 & 199 & 150 & 1,018 & 35,639 & 4.9 \\
+D & 391 & 115 & 94 & 600 & 21,008 & 7.1 \\
+E & 567 & 168 & 129 & 864 & 30,249 & 5.5 \\
+F & 345 & 101 & 74 & 520 & 18,205 & 8.2 \\
+G & 626 & 185 & 142 & 953 & 33,361 & 5.6 \\
+H & 413 & 123 & 91 & 627 & 21,951 & 6.2 \\
+I & 533 & 159 & 120 & 812 & 28,425 & 5.8 \\
+J & 480 & 141 & 105 & 726 & 25,411 & 5.9 \\
+\midrule
+\textbf{合计} & 4,981 & 1,471 & 1,125 & 7,577 & 265,256 & 5.9 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection*{附录C3：Q4灵敏度分析全量数据}
 
 \begin{table}[H]
 \centering
@@ -298,92 +413,11 @@ C-tsunami & 银发海啸 & A小+G中+I中+J中 & 90\% & 0.895 & 887.9 \\
 \end{tabular}
 \end{table}
 
-\subsection*{附录C：三层交叉补贴算法}
-
-\begin{algorithm}[H]
-\caption{三层交叉补贴与定价优化}
-\label{alg:cross_subsidy}
-\begin{algorithmic}[1]
-\Require 固化选址方案 $\mathbf{y}^*$；各站点服务需求矩阵 $\mathbf{D}$；
-\Require 服务基准价 $\mathbf{p}^{\text{base}}$；利润率上界 $\pi^{\max}=8\%$
-\Ensure 最优定价 $\mathbf{p}^*$；各站点利润率 $\pi_i$；交叉补贴率 $\eta$
-\State \textbf{// 第一阶段：站内营利养公益}
-\For{每站 $i \in \mathcal{I}^{\text{built}}$}
-    \State $C^{\text{welfare}}_i \gets 12 \times D_{i,\text{emergency}} \times c_{\text{emergency}}$
-    \State $R^{\text{profit}}_i \gets 12 \times \sum_{s \neq \text{emergency}} D_{i,s} \times (p^{\text{base}}_s - c_s)$
-\EndFor
-\State \textbf{// 第二阶段：站间补贴效率再分配}
-\For{每站 $i \in \mathcal{I}^{\text{built}}$}
-    \State $S^{\text{actual}}_i \gets \min(r^{\text{sub}} \times \sum_{s \neq \text{emergency}} D_{i,s},\; S^{\text{cap}}_i)$
-\EndFor
-\State \textbf{// 第三阶段：Ramsey-Boiteux反向价格歧视}
-\State 构建MILP词典序目标并求解 → $\mathbf{p}^*$；识别绑定站点$i^*$
-\If{$\pi_{i^*} = \pi^{\max}$}
-    \State $\mathbf{p}^*_{s^*} \gets \max\{p \mid S_3(p) = 1.000\}$
-\EndIf
-\State \Return $\mathbf{p}^*$, $\{\pi_i\}$, $\eta \gets \sum_i C^{\text{welfare}}_i / \sum_i R^{\text{profit}}_i$
-\end{algorithmic}
-\end{algorithm}
-
-\subsection*{附录D：工程实施建议}
-
-\input{paper_workspace/section_7_engineering_recommendations.tex}
-
-\subsection*{附录E：全局符号说明表}
-\label{sec:appendix_notation}
-
-\begin{longtable}{p{1.8cm}p{4.4cm}p{1.4cm}p{1.7cm}p{2.0cm}}
-\caption{全局符号说明表}
-\label{tab:notation}\\
-\toprule
-\textbf{符号} & \textbf{含义} & \textbf{单位} & \textbf{类型} & \textbf{值域} \\
-\midrule
-\endfirsthead
-\caption[]{全局符号说明表（续）}\\
-\toprule
-\textbf{符号} & \textbf{含义} & \textbf{单位} & \textbf{类型} & \textbf{值域} \\
-\midrule
-\endhead
-\bottomrule
-\endfoot
-\multicolumn{5}{c}{\textbf{集合与索引}} \\
-\midrule
-$i, j \in \mathcal{I}$ & 小区索引, $\mathcal{I}=\{A,B,\dots,J\}$ & -- & 索引 & -- \\
-$k \in \mathcal{K}$ & 服务站规模, $\mathcal{K}=\{1,2,3\}$= \{小,中,大\} & -- & 索引 & -- \\
-$e \in \mathcal{E}$ & 老人类型, $\mathcal{E}=\{1,2,3\}$= \{自理,半失能,失能\} & -- & 索引 & -- \\
-$s \in \mathcal{S}$ & 服务项目, $\mathcal{S}=\{1,\dots,6\}$ & -- & 索引 & -- \\
-\midrule
-\multicolumn{5}{c}{\textbf{Q1 状态变量与参数}} \\
-\midrule
-$\mathbf{S}_i^{(t)}$ & 小区$i$第$t$年末的三类老人数列向量 & 人 & 状态变量 & $\mathbb{R}_{\ge 0}^{3}$ \\
-$\mathbf{A}$ & 年际状态转移矩阵 ($3\times 3$) & -- & 参数 & $a_{pq}\in[0,1]$ \\
-$\alpha_{\text{self}\to\text{semi}}$ & 自理$\to$半失能转移概率 & -- & 参数 & 0.045 \\
-$\alpha_{\text{semi}\to\text{dis}}$ & 半失能$\to$失能转移概率 & -- & 参数 & 0.10 \\
-$\mu$ & 自然死亡率 & -- & 参数 & 0.05 \\
-$\beta$ & 新增老年人占比 & -- & 参数 & 0.07 \\
-\midrule
-\multicolumn{5}{c}{\textbf{Q2/Q3 决策变量与参数}} \\
-\midrule
-$y_{i,k}$ & 是否在$i$建设规模$k$的服务站 & -- & 决策 & $\{0,1\}$ \\
-$x_{i,j}$ & $j$的老人是否由服务站$i$服务 & -- & 决策 & $\{0,1\}$ \\
-$C_k^{\text{build}}$ & 规模$k$建设成本 & 万元 & 参数 & $\{18,32,45\}$ \\
-$Q_k^{\max}$ & 规模$k$日最大服务人次 & 人次/日 & 参数 & $\{1000,2000,3000\}$ \\
-$d_{i,j}$ & 小区$i$与$j$之间的距离 & 米 & 参数 & $[0,1800]$ \\
-$B$ & 总建设预算 & 万元 & 参数 & 120 \\
-\midrule
-\multicolumn{5}{c}{\textbf{满意度变量}} \\
-\midrule
-$S1_{i,j}$ & 距离满意度 & -- & 辅助 & $\{0.60,0.75,0.90,1.00\}$ \\
-$S2_i$ & 响应满意度(利用率驱动) & -- & 辅助 & $\{0.60,0.72,0.85,0.93,1.00\}$ \\
-$S3_{i,s}$ & 价格满意度 & -- & 辅助 & $\{0.60,0.75,0.90,1.00\}$ \\
-\bottomrule
-\end{longtable}
-
-\subsection*{附录F：多维度鲁棒性韧性矩阵}
+\subsection*{附录C4：多维度鲁棒性韧性矩阵}
 
 \begin{table}[H]
 \centering
-\caption{多维度鲁棒性韧性矩阵}
+\caption{多维度鲁棒性韧性矩阵（$\rho = 1 - |\Delta X / X_{\text{baseline}}|$）}
 \label{tab:q4_resilience}
 \begin{tabular}{lcccc}
 \toprule
@@ -400,11 +434,8 @@ C: 银发海啸 & 0.90 & 0.947 & 0.809 & 0.885 \\
 \end{tabular}
 \end{table}
 
-\begin{figure}[H]
-\centering
-\includegraphics[width=0.68\textwidth]{figures/figure_q4_resilience_heatmap.png}
-\caption{多场景多维度韧性热力图。蓝色越深韧性越强，红色越深韧性越弱。场景B利润率维度（0.609）为唯一突破强鲁棒性阈值的场景-维度组合。}
-\label{fig:q4_heatmap_appendix}
-\end{figure}
+\section{工程实施建议}
+
+\input{paper_workspace/section_7_engineering_recommendations.tex}
 
 \end{document}

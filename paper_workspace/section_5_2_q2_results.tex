@@ -9,10 +9,10 @@
 
 基于§3.2的MILP-MCLP-ES模型，以PuLP+CBC在120秒内收敛至gap$<1\%$的确定解（randomSeed=42），得120万元预算下F(大型)+H(中型)+J(中型)三站、总成本109万元、\textbf{10/10全覆盖}的最优方案（图\ref{fig:q2_network}），目标值54.225。站点运营指标见表\ref{tab:q2_stations}。
 
-\begin{figure}[H]
+\begin{figure}[htbp]
 \centering
-\includegraphics[width=0.72\textwidth]{figures/figure_q2_network.png}
-\caption{Q2最优选址-规模方案的空间网络图。蓝色节点为大型站(F)，橙色节点为中型站(H, J)。红色箭头表示服务辐射关系，均满足1000m半径硬约束。全部10个小区均被覆盖（全覆盖配置）。}
+\includegraphics[width=0.68\textwidth]{figures/figure_q2_network.png}
+\caption{Q2最优选址-规模方案的空间网络图。蓝色节点为大型站(F)，橙色节点为中型站(H, J)，红色箭头表示服务辐射关系。}
 \label{fig:q2_network}
 \end{figure}
 
@@ -62,52 +62,11 @@ J & J & 0 & 1.000 & 0.600 & 0.880 & 本小区自服务 \\
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.72\textwidth]{figures/figure_q2_station_load.png}
+\includegraphics[width=0.92\textwidth]{figures/figure_q2_station_load.png}
 \caption{各站点服务负荷与利用率对比。三站利用率均超过91\%，F站(95.9\%)已接近容量上限，120万元预算下不存在闲置容量。}
 \label{fig:q2_load}
 \end{figure}
 
 \subsection{道法术三维解读}
 
-Q2目标函数覆盖权重5.0与满意度权重0.5的比例为10:1，本质是对"不落一户"政策偏好的数学编码。CBC在39秒找到10/10覆盖可行解，120秒以Optimal状态退出，randomSeed=42确定的启发式分支顺序是避免局部最优的关键。最优方案呈三足鼎立结构：F大型站覆盖C-F-G-I四小区，H中型站覆盖B-E-H三小区，J中型站覆盖A-D-J三小区，三站日负荷各占容量上限的95.9\%、94.5\%、92.5\%（图\ref{fig:q2_load}），120万元预算下不存在闲置容量。确定解较非确定解目标值提升24\%（表\ref{tab:q2_comparison}），揭示MILP在非凸满意度景观上的多峰性质，多起点随机重启是回避局部最优的低成本策略。
-
-\begin{table}[htbp]
-\centering
-\caption{种子42确定解与非确定解的比较}
-\label{tab:q2_comparison}
-\begin{tabular}{lcc}
-\toprule
-\textbf{指标} & \textbf{确定解 (seed=42)} & \textbf{非确定解} \\
-\midrule
-站点配置 & F(大)+H(中)+J(中) & B(小)+C(大)+J(大) \\
-总建设成本(万元) & 109 & 108 \\
-覆盖率 & \textbf{10/10 (100\%)} & 8/10 (80\%) \\
-未覆盖小区 & \textbf{无} & D, E \\
-目标函数值 & \textbf{54.225} & 43.644 \\
-平均综合满意度$S$ & 0.85 & 0.90 \\
-年总利润(万元) & 1,097.7 & 811.0 \\
-加权利润率(\%) & 25.2 & 22.5 \\
-\bottomrule
-\end{tabular}
-\end{table}
-
-\subsection{确定解与非确定解对比}
-
-确定解较非确定解目标值提升24\%（表\ref{tab:q2_comparison}），揭示MILP在非凸满意度景观上的多峰性质——多起点随机重启是回避局部最优的低成本策略。Q2输出$y_{ik}^*$与$x_{ij}^*$作为Q3定价的固定输入，遵循"先选址、后定价"两阶段分离（合理性论证见§3.3）。
-
-\begin{table}[htbp]
-\centering
-\caption{种子42确定解与非确定解的比较}
-\label{tab:q2_comparison}
-\begin{tabular}{lcc}
-\toprule
-\textbf{指标} & \textbf{确定解 (seed=42)} & \textbf{非确定解} \\
-\midrule
-站点配置 & F(大)+H(中)+J(中) & B(小)+C(大)+J(大) \\
-总建设成本(万元) & 109 & 108 \\
-覆盖率 & \textbf{10/10 (100\%)} & 8/10 (80\%) \\
-目标函数值 & \textbf{54.225} & 43.644 \\
-年总利润(万元) & 1,097.7 & 811.0 \\
-\bottomrule
-\end{tabular}
-\end{table}
+Q2目标函数覆盖权重5.0与满意度权重0.5的比例为10:1，本质是对"不落一户"政策偏好的数学编码。CBC在39秒找到10/10覆盖可行解，120秒以Optimal状态退出，randomSeed=42确定的启发式分支顺序是避免局部最优的关键。最优方案呈三足鼎立结构：F大型站覆盖C-F-G-I四小区，H中型站覆盖B-E-H三小区，J中型站覆盖A-D-J三小区，三站日负荷各占容量上限的95.9\%、94.5\%、92.5\%（图\ref{fig:q2_load}），120万元预算下不存在闲置容量。确定解较非确定解（B小+C大+J大，8/10覆盖，目标值43.644）提升24\%，揭示MILP在非凸满意度景观上的多峰性质——多起点随机重启是回避局部最优的低成本策略\cite{liu2023}。Q2输出$y_{ik}^*$与$x_{ij}^*$作为Q3定价的固定输入，遵循"先选址、后定价"两阶段分离（合理性论证见§3.3）。

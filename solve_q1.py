@@ -28,9 +28,12 @@ plt.rcParams.update({
     "font.family": "sans-serif",
     "font.sans-serif": ["SimHei", "Microsoft YaHei", "Noto Sans SC", "DejaVu Sans"],
     "axes.unicode_minus": False,
-    "font.size": 12,
-    "axes.titlesize": 14,
-    "axes.labelsize": 12,
+    "font.size": 16,
+    "axes.titlesize": 18,
+    "axes.labelsize": 15,
+    "legend.fontsize": 14,
+    "xtick.labelsize": 13,
+    "ytick.labelsize": 13,
     "figure.dpi": 300,
     "savefig.dpi": 300,
     "savefig.bbox": "tight",
@@ -179,7 +182,7 @@ def plot_population_trends(communities, S_history):
         ax.set_title(f"小区 {communities[idx]}", fontweight="bold")
         ax.set_xlabel("年份")
         ax.set_ylabel("人数")
-        ax.legend(fontsize=7, loc="upper left")
+        ax.legend(fontsize=11, loc="upper left")
         ax.set_xticks(years)
         ax.set_xlim(-0.2, T_plus_1 - 1 + 0.2)
 
@@ -204,7 +207,7 @@ def plot_population_trends(communities, S_history):
     ax.set_title("全区域三类老人总量演化趋势", fontsize=14, fontweight="bold")
     ax.set_xlabel("年份")
     ax.set_ylabel("总人数")
-    ax.legend(fontsize=11)
+    ax.legend(fontsize=13)
     ax.set_xticks(years)
     ax.grid(True, alpha=0.3)
 
@@ -238,7 +241,7 @@ def plot_population_trends(communities, S_history):
         ax.set_xticks(x)
         ax.set_xticklabels(communities)
         ax.set_ylabel("老年人口数")
-        ax.legend(fontsize=9)
+        ax.legend(fontsize=12)
 
     fig.suptitle("基年 vs 第5年末 各小区老年人口结构对比",
                  fontsize=14, fontweight="bold")

@@ -45,10 +45,13 @@ plt.rcParams.update({
     "font.family": "sans-serif",
     "font.sans-serif": [FONT_NAME, "Microsoft YaHei", "SimHei", "DejaVu Sans"],
     "axes.unicode_minus": False,
-    "font.size": 12,
-    "axes.titlesize": 14,
-    "axes.labelsize": 12,
-    "figure.dpi": 200,
+    "font.size": 15,
+    "axes.titlesize": 17,
+    "axes.labelsize": 14,
+    "legend.fontsize": 14,
+    "xtick.labelsize": 13,
+    "ytick.labelsize": 13,
+    "figure.dpi": 300,
     "savefig.dpi": 300,
     "savefig.bbox": "tight",
     "axes.spines.top": False,
@@ -401,7 +404,7 @@ C_MEDIUM  = '#2980B9'   # 中型站 (蓝)
 C_LARGE   = '#C0392B'   # 大型站 (深红)
 C_LABEL   = '#1A1A2E'   # 标签文字
 
-fig, ax = plt.subplots(figsize=(22, 17))
+fig, ax = plt.subplots(figsize=(16, 11))
 fig.patch.set_facecolor('white')
 
 # ---- 5a. Kamada-Kawai 弹簧布局 ----
