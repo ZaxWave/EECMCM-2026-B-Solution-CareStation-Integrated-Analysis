@@ -401,7 +401,7 @@ C_MEDIUM  = '#2980B9'   # 中型站 (蓝)
 C_LARGE   = '#C0392B'   # 大型站 (深红)
 C_LABEL   = '#1A1A2E'   # 标签文字
 
-fig, ax = plt.subplots(figsize=(26, 20))
+fig, ax = plt.subplots(figsize=(22, 17))
 fig.patch.set_facecolor('white')
 
 # ---- 5a. Kamada-Kawai 弹簧布局 ----
@@ -415,7 +415,34 @@ for i in range(n_comm):
 
 pos = nx.kamada_kawai_layout(G, weight='weight', scale=3.0)
 
-# ---- 5b. 可达网络背景边 (粗实线, 清晰) ----
+# ---- 5b. 需求强度热力层 (Heatmap Overlay) ----
+# 加载 Q1 人口数据, 以暖色气泡大小映射各小区老年人口密度
+import matplotlib.colors as mcolors
+try:
+    df_pop_heat = pd.read_csv("results/q1_final_population.csv")
+    pop_map = dict(zip(df_pop_heat["小区"], df_pop_heat["60岁以上总人口"]))
+except:
+    pop_map = {c: 500 for c in communities}  # fallback
+pop_vals = np.array([pop_map.get(c, 500) for c in communities])
+pop_min, pop_max = pop_vals.min(), pop_vals.max()
+norm_heat = plt.Normalize(pop_min, pop_max)
+cmap_heat = plt.cm.YlOrRd  # 黄→橙→红热力渐变
+
+for i, comm in enumerate(communities):
+    x, y = pos[comm][0], pos[comm][1]
+    pop = pop_vals[i]
+    # 气泡大小与人口成正比, 半径 0.40–0.85
+    bubble_r = 0.40 + 0.55 * (pop - pop_min) / (pop_max - pop_min + 1)
+    # 暖色热力 (透明度 0.12–0.28, 人口越多越不透明)
+    alpha_heat = 0.12 + 0.18 * (pop - pop_min) / (pop_max - pop_min + 1)
+    color_heat = cmap_heat(norm_heat(pop))
+    ax.add_patch(plt.Circle((x, y), bubble_r, facecolor=color_heat,
+                            edgecolor='none', alpha=alpha_heat, zorder=1))
+    # 外层渐变光晕 (更大, 更淡)
+    ax.add_patch(plt.Circle((x, y), bubble_r*1.55, facecolor=color_heat,
+                            edgecolor='none', alpha=alpha_heat*0.40, zorder=0))
+
+# ---- 5c. 可达网络背景边 (粗实线, 清晰) ----
 for i in range(n_comm):
     for j in range(i+1, n_comm):
         if reachable[i,j]:
@@ -428,7 +455,7 @@ for i in range(n_comm):
                     C_BG_EDGE, lw=lw_val, alpha=alpha_val, zorder=0,
                     solid_capstyle='round')
 
-# ---- 5c. 服务辐射弧线 (极粗、极醒目) ----
+# ---- 5d. 服务辐射弧线 (极粗、极醒目) ----
 for j in range(n_comm):
     if j in assignments:
         i = assignments[j]
@@ -443,7 +470,7 @@ for j in range(n_comm):
                                        connectionstyle=f"arc3,rad={rad:.3f}"),
                         zorder=15)
 
-# ---- 5d. 节点绘制 (大幅放大) ----
+# ---- 5e. 节点绘制 (大幅放大) ----
 station_colors = {0: C_SMALL, 1: C_MEDIUM, 2: C_LARGE}
 for i, comm in enumerate(communities):
     st = next((s for s in built if s['loc']==comm), None)
@@ -459,7 +486,7 @@ for i, comm in enumerate(communities):
         ax.scatter(x, y, s=700, c=C_NORMAL, marker='o', edgecolors='white',
                    linewidths=2.2, zorder=10, alpha=0.90)
 
-# ---- 5e. 标签 (大字, 粗体) ----
+# ---- 5f. 标签 (大字, 粗体) ----
 for i, comm in enumerate(communities):
     st = next((s for s in built if s['loc']==comm), None)
     x, y = pos[comm][0], pos[comm][1]
@@ -476,7 +503,7 @@ for i, comm in enumerate(communities):
                     fontsize=16, fontweight='bold', ha='center', va='center',
                     color=C_LABEL, zorder=25)
 
-# ---- 5f. 图例 (大幅放大) ----
+# ---- 5g. 图例 (大幅放大) ----
 legend_elements = [
     mlines.Line2D([0],[0], marker='o', color='w', markerfacecolor=C_NORMAL,
            markersize=20, markeredgecolor='white', markeredgewidth=2.0,
@@ -497,17 +524,17 @@ ax.legend(handles=legend_elements, loc='upper right', fontsize=15,
           frameon=True, framealpha=0.94, edgecolor='#B0B0B0',
           title='                图例', title_fontsize=16)
 
-# ---- 5g. 标题 (超大) ----
+# ---- 5h. 标题 (超大) ----
 ax.set_title("嵌入式养老服务站选址-规模优化方案\n"
              f"预算 $\\leq$ {BUDGET} 万元  |  服务半径 $\\leq$ {RADIUS} m  |  "
              f"覆盖 {coverage}/{n_comm} 小区  |  总建设成本 {sum(build_cost[s['size']] for s in built):.0f} 万元",
-             fontsize=22, fontweight='bold', pad=28)
+             fontsize=20, fontweight='bold', pad=16)
 ax.axis('off')
 ax.set_xlim(-4.5, 4.5)
 ax.set_ylim(-4.0, 4.0)
 
-plt.subplots_adjust(left=0.02, right=0.98, top=0.93, bottom=0.02)
-fig.savefig("figures/figure_q2_network.png", dpi=300, facecolor='white')
+plt.tight_layout(pad=1.0)
+fig.savefig("figures/figure_q2_network.png", dpi=300, facecolor='white', bbox_inches='tight')
 plt.close()
 print("[图表] figure_q2_network.png 已保存 (v4 超大尺寸高可读性)")
 

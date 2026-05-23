@@ -3,31 +3,38 @@
 % 竞赛: 电工杯 B题 (2026)
 % ============================================================
 
-\section{问题4求解结果与分析：灵敏度与鲁棒性}
+\section{Q4求解结果与分析：灵敏度与鲁棒性}
 
 \subsection{三场景参数扫描设计}
 
-为验证选址-定价联合方案的工程稳健性，以Q2 MILP模型为核，对三大类外部冲击实施参数扫描，共6组对比实验。基线方案直接加载Q2的已知最优解（F大型+H中型+J中型，Obj=54.225，10/10全覆盖），场景A/B/C以MILP重新求解（randomSeed=42, gapRel=0.01, timeLimit=180s），汇总于表\ref{tab:q4_sensitivity}。
+为验证选址-定价联合方案的工程稳健性，以Q2 MILP模型为核，对三大类外部冲击实施参数扫描，共6组对比实验。基线方案直接加载Q2的已知最优解（F大型+H中型+J中型，Obj=54.225，10/10全覆盖），场景A/B/C以MILP重新求解（randomSeed=42, gapRel=0.01, timeLimit=180s），汇总于表\ref{tab:q4_sensitivity}，各场景的覆盖率、满意度与利润三维对比如图\ref{fig:q4_bars}所示。
 
-\begin{table}[htbp]
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.95\textwidth]{figures/figure_q4_sensitivity_bars.png}
+\caption{灵敏度分析三场景六方案多维对比。基线（深蓝）实现全覆盖（100\%）；场景A（预算放松）满意度递增但边际递减；场景B（成本通胀）覆盖率骤降至80\%；场景C（银发海啸）通过四站分散布局维持90\%覆盖率。}
+\label{fig:q4_bars}
+\end{figure}
+
+\begin{table}[H]
 \centering
 \caption{三场景参数扫描灵敏度汇总 (确定性求解)}
 \label{tab:q4_sensitivity}
-\small
-\begin{tabular}{lccccccl}
-\hline
-\textbf{场景} & \textbf{预算(万)} & \textbf{覆盖率} & \textbf{站点配置} & \textbf{目标值} & \textbf{平均$S$} & \textbf{年利润(万)} & \textbf{未覆盖} \\
-\hline
-基线 (Q2) & 120 & \textbf{100\%} & F(大)+H(中)+J(中) & 54.225 & 0.850 & 1~097.7 & 无 \\
-\hline
-A$_1$: 预算放松 & 130 & 100\% & B(大)+E(中)+G(大) & 54.42 & 0.883 & 1~053.8 & 无 \\
-A$_2$: 预算放松 & 140 & 100\% & B(大)+D(大)+E(大) & 54.45 & 0.889 & 1~010.0 & 无 \\
-A$_3$: 预算放松 & 150 & 100\% & D(中)+E(大)+F(小)+J(大) & 54.56 & \textbf{0.912} & 980.9 & 无 \\
-\hline
-B: 成本通胀+20\% & 120 & 80.0\% & A(小)+E(中)+J(大) & 43.62 & 0.906 & 667.7 & C, G \\
-\hline
-C: 银发海啸 & 120 & 90.0\% & A(小)+G(中)+I(中)+J(中) & 49.03 & 0.895 & 887.9 & C \\
-\hline
+\footnotesize
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{场景} & \textbf{预算(万)} & \textbf{覆盖率} & \textbf{站点配置} & \textbf{目标值} & \textbf{平均$S$} & \textbf{年利润(万)} \\
+\midrule
+基线 (Q2) & 120 & \textbf{100\%} & F(大)+H(中)+J(中) & 54.225 & 0.850 & 1~097.7 \\
+\midrule
+A$_1$: 预算放松 & 130 & 100\% & B(大)+E(中)+G(大) & 54.42 & 0.883 & 1~053.8 \\
+A$_2$: 预算放松 & 140 & 100\% & B(大)+D(大)+E(大) & 54.45 & 0.889 & 1~010.0 \\
+A$_3$: 预算放松 & 150 & 100\% & D(中)+E(大)+F(小)+J(大) & 54.56 & \textbf{0.912} & 980.9 \\
+\midrule
+B: 成本通胀+20\% & 120 & 80.0\% & A(小)+E(中)+J(大) & 43.62 & 0.906 & 667.7 \\
+\midrule
+C: 银发海啸 & 120 & 90.0\% & A(小)+G(中)+I(中)+J(中) & 49.03 & 0.895 & 887.9 \\
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -66,22 +73,22 @@ C: 银发海啸 & 120 & 90.0\% & A(小)+G(中)+I(中)+J(中) & 49.03 & 0.895 & 8
 
 表\ref{tab:q4_resilience}从覆盖率、满意度、利润率三个维度给出了各场景相对于基线的韧性系数$\rho = 1 - |\Delta X / X_{\text{baseline}}|$。所有场景下，\textbf{任一维度的$\rho$均大于0.80}，即系统在所有外部冲击下保持了基线性能的80\%以上。除成本通胀场景外，其余场景的覆盖率均维持100\%（A组）或90\%（C组），远超0.75的强鲁棒性阈值。
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{多维度鲁棒性韧性矩阵}
 \label{tab:q4_resilience}
 \begin{tabular}{lcccc}
-\hline
+\toprule
 \textbf{场景} & \textbf{覆盖率韧性$\rho_c$} & \textbf{满意度韧性$\rho_s$} & \textbf{利润率韧性$\rho_\pi$} & \textbf{综合韧性$\bar{\rho}$} \\
-\hline
+\midrule
 A$_1$: 预算130万 & 1.00 & 0.961 & 0.960 & 0.974 \\
 A$_2$: 预算140万 & 1.00 & 0.954 & 0.920 & 0.958 \\
 A$_3$: 预算150万 & 1.00 & 0.927 & 0.893 & 0.940 \\
 B: 成本+20\% & \textbf{0.80} & 0.934 & 0.609 & 0.781 \\
 C: 银发海啸 & 0.90 & 0.947 & 0.809 & 0.885 \\
-\hline
+\midrule
 \textbf{最劣情景} & 0.80 (B) & 0.927 (A$_3$) & 0.609 (B) & 0.781 (B) \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 

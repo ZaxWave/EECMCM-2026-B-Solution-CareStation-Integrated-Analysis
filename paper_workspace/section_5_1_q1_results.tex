@@ -3,36 +3,36 @@
 % 竞赛: 电工杯 B题 (2026)
 % ============================================================
 
-\section{问题1求解结果与分析}
+\section{Q1求解结果与分析}
 
 \subsection{老年人口演化的马尔可夫递推结果}
 
 基于§3.2构造的增生型转移矩阵$\mathbf{A}$，对10个小区独立运行5年递推预测。全区域三类老人总量的演化轨迹如图\ref{fig:q1_total}所示，各小区基年(t=0)与第5年末(t=5)的人口结构对比见图\ref{fig:q1_stacked}。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/figure_q1_total_trend.png}
+\includegraphics[width=0.92\textwidth]{figures/figure_q1_total_trend.png}
 \caption{全区域三类老人总量5年演化轨迹。自理老人(+5.7\%)与失能老人(+80.3\%)同步增长，半失能老人(-3.7\%)因净流出效应微降。}
 \label{fig:q1_total}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/figure_q1_stacked_bar.png}
+\includegraphics[width=0.92\textwidth]{figures/figure_q1_stacked_bar.png}
 \caption{基年与第5年末各小区老年人口结构对比。失能老人(橙色)占比从9.1\%跃升至14.8\%，构成"银发海啸"的底层推力。}
 \label{fig:q1_stacked}
 \end{figure}
 
 表\ref{tab:q1_summary}汇总了全区域尺度的关键指标变化。以下从"道、法、术"三个层面展开精细化解读。
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
 \caption{Q1人口预测关键指标汇总}
 \label{tab:q1_summary}
 \begin{tabular}{lrrr}
-\hline
+\toprule
 \textbf{指标} & \textbf{基年(t=0)} & \textbf{第5年末(t=5)} & \textbf{变化(\%)} \\
-\hline
+\midrule
 60+总人口 & 6~864 & 7~577 & +10.4\% \\
 自理老人 & 4~712 & 4~981 & +5.7\% \\
 半失能老人 & 1~528 & 1~471 & $-$3.7\% \\
@@ -41,7 +41,7 @@
 理论月需求总量 & -- & 262~553次/月 & -- \\
 实际月需求总量 & -- & 247~060次/月 & -- \\
 消费约束削减 & -- & 15~493次/月 & 5.9\% \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 

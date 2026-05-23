@@ -14,16 +14,16 @@
 \caption{Q3最优定价方案}
 \label{tab:q3_pricing}
 \begin{tabular}{lccccc}
-\hline
+\toprule
 \textbf{服务项目} & \textbf{基准价(元)} & \textbf{最优定价(元)} & \textbf{溢价率(\%)} & \textbf{S3} & \textbf{价格区间} \\
-\hline
+\midrule
 助餐 & 10 & 10.00 & 0.0 & 1.000 & 平价 \\
 日间照料 & 20 & 20.00 & 0.0 & 1.000 & 平价 \\
 上门护理 & 30 & \textbf{12.64} & \textbf{-57.9} & 1.000 & 平价 \\
 康复理疗 & 28 & 28.00 & 0.0 & 1.000 & 平价 \\
 助浴 & 25 & 25.00 & 0.0 & 1.000 & 平价 \\
 紧急救助 & 0 & 0.00 & 公益免费 & 1.000 & 公益免费 \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -35,16 +35,18 @@
 \centering
 \caption{最优定价下的站点运营指标}
 \label{tab:q3_stations}
+\small
 \begin{tabular}{lcccccc}
-\hline
-\textbf{站点} & \textbf{规模} & \textbf{年营收(万元)} & \textbf{年补贴(万元)} & \textbf{年总成本(万元)} & \textbf{年利润(万元)} & \textbf{利润率(\%)} \\
-\hline
-F & 大型 & 1,967.1 & 93.6 & 1,908.1 & 152.6 & \textbf{8.0 (紧约束)} \\
+\toprule
+\textbf{站点} & \textbf{规模} & \textbf{年营收} & \textbf{年补贴} & \textbf{年总成本} & \textbf{年利润} & \textbf{利润率} \\
+ &  & \textbf{(万元)} & \textbf{(万元)} & \textbf{(万元)} & \textbf{(万元)} & \textbf{(\%)} \\
+\midrule
+F & 大型 & 1,967.1 & 93.6 & 1,908.1 & 152.6 & \textbf{8.0} \\
 H & 中型 & 1,265.6 & 64.8 & 1,239.6 & 90.8 & 7.3 \\
 J & 中型 & 1,226.3 & 64.8 & 1,203.2 & 87.9 & 7.3 \\
-\hline
-\textbf{合计} & -- & 4,459.0 & 223.2 & 4,350.9 & 331.3 & 7.6 (加权) \\
-\hline
+\midrule
+\textbf{合计} & -- & 4,459.0 & 223.2 & 4,350.9 & 331.3 & 7.6 \\
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -62,14 +64,16 @@ Q3的全系统紧急救助月需求为4,940次（F:2,202 + H:1,399 + J:1,339）�
 \centering
 \caption{各站点补贴池约束分析}
 \label{tab:q3_subsidy}
+\small
 \begin{tabular}{lccccc}
-\hline
-\textbf{站点} & \textbf{日非紧急需求(次)} & \textbf{理论补贴(元/日)} & \textbf{日补贴上限(元)} & \textbf{实际补贴(元/日)} & \textbf{有效补贴率(元/次)} \\
-\hline
+\toprule
+\textbf{站点} & \textbf{日非紧急需求} & \textbf{理论补贴} & \textbf{日补贴上限} & \textbf{实际补贴} & \textbf{有效补贴率} \\
+ & \textbf{(次)} & \textbf{(元/日)} & \textbf{(元)} & \textbf{(元/日)} & \textbf{(元/次)} \\
+\midrule
 F & 3,559 & 7,118 & 2,600 & 2,600 & 0.73 \\
 H & 2,291 & 4,582 & 1,800 & 1,800 & 0.79 \\
 J & 2,221 & 4,442 & 1,800 & 1,800 & 0.81 \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -78,6 +82,42 @@ J & 2,221 & 4,442 & 1,800 & 1,800 & 0.81 \\
 在Q3的最优解中，上门护理（30元$\to$12.64元，-57.9\%）成为唯一的降价服务，而助餐（频次最高、需求弹性最大）维持基准价不动。这一结果与F/H/J的站点规模结构直接相关：F站（大型）是利润率紧约束的绑定者，而上门护理在所有服务中具有最高的基准价（30元），其单位降价的利润率释放效应最大——从拉格朗日乘子的视角，上门护理的"影子价格"（降低1元对利润率松绑的边际贡献）在所有服务中最高，因此成为词典序S3最大化目标下的最优"价格牺牲品"。
 
 从Ramsey-Boiteux最优定价的视角看：在总利润率约束下，价格需求弹性最小的服务应承担最多的加价（或最少的降价），反之亦然。上门护理的基准价（30元）在所有服务中最高，其"过剩的利润空间"使其成为$S_3$最大化目标下最优先被削减的对象。这一结果可理解为"反向价格歧视"——高频低价服务（助餐：10元$\times$118,443次/月）的保护优先于低频高价服务（上门护理：30元$\times$19,608次/月）的保护，在社会福利函数中体现了"利用最不敏感价格维度吸收监管约束"的Ramsey原理。
+
+\subsubsection{交叉补贴机制的算法透明化}
+
+为清晰展示三层交叉补贴的决策逻辑，算法\ref{alg:cross_subsidy}将其形式化为三阶段递进流程。该算法揭示了问题的内在结构：第一阶段（站内交叉补贴）的公益支出$C^{\text{welfare}}$构成第二阶段（站间补贴效率再分配）的输入约束，而第二阶段的计算结果直接触发第三阶段（Ramsey-Boiteux反向价格歧视）的定价调整——三个阶段的顺序不可交换，体现了"微利约束$\to$补贴效率$\to$定价弹性"的因果链条。
+
+\begin{algorithm}[htbp]
+\caption{三层交叉补贴与定价优化}
+\label{alg:cross_subsidy}
+\begin{algorithmic}[1]
+\Require 固化选址方案 $\mathbf{y}^*$（Q2输出）；各站点服务需求矩阵 $\mathbf{D} = [D_{i,s}]$；
+\Require 服务基准价 $\mathbf{p}^{\text{base}}$；利润率上界 $\pi^{\max}=8\%$；政府补贴率 $r^{\text{sub}}=2$元/次
+\Ensure 最优定价 $\mathbf{p}^*$；各站点利润率 $\pi_i$；交叉补贴率 $\eta$
+\State \textbf{// 第一阶段：站内营利养公益}
+\For{每站 $i \in \mathcal{I}^{\text{built}}$}
+    \State 计算紧急救助年净支出：$C^{\text{welfare}}_i \gets 12 \times D_{i,\text{emergency}} \times c_{\text{emergency}}$
+    \State 计算营利服务年毛利润：$R^{\text{profit}}_i \gets 12 \times \sum_{s \neq \text{emergency}} D_{i,s} \times (p^{\text{base}}_s - c_s)$
+    \State 站内交叉补贴率：$\eta^{\text{intra}}_i \gets C^{\text{welfare}}_i / R^{\text{profit}}_i$
+\EndFor
+\State \textbf{// 第二阶段：站间补贴效率再分配}
+\For{每站 $i \in \mathcal{I}^{\text{built}}$}
+    \State 理论补贴额：$S^{\text{theory}}_i \gets r^{\text{sub}} \times \sum_{s \neq \text{emergency}} D_{i,s}$
+    \State 实际补贴额：$S^{\text{actual}}_i \gets \min(S^{\text{theory}}_i,\; S^{\text{cap}}_i)$ \Comment{补贴帽截断}
+    \State 有效补贴率：$\bar{r}_i \gets S^{\text{actual}}_i / \sum_{s \neq \text{emergency}} D_{i,s}$
+\EndFor
+\State \textbf{// 第三阶段：Ramsey-Boiteux反向价格歧视}
+\State 构建MILP词典序目标：$\max \; \sum_{s} w_s \cdot S_3(p_s) \;+\; \varepsilon \cdot \sum_{i,s} D_{i,s} \cdot p_s$
+\State 附加约束：$\forall i \in \mathcal{I}^{\text{built}}: \; 0 \le \pi_i \le \pi^{\max}$
+\State 求解 → $\mathbf{p}^*$，识别绑定站点$i^* = \arg\max_i \pi_i$
+\If{$\pi_{i^*} = \pi^{\max}$（紧约束）}
+    \State 选择价格弹性最高服务$s^* \gets \arg\max_s |\partial \pi_{i^*} / \partial p_s|$
+    \State $\mathbf{p}^*_{s^*} \gets \max\{p \mid S_3(p) = 1.000\}$ \Comment{在平价段内降到底}
+\EndIf
+\State 全局交叉补贴率：$\eta \gets \sum_i C^{\text{welfare}}_i / \sum_i R^{\text{profit}}_i$
+\State \Return $\mathbf{p}^*$, $\{\pi_i\}$, $\eta$
+\end{algorithmic}
+\end{algorithm}
 
 \subsection{加权综合满意度解构}
 
@@ -88,9 +128,9 @@ J & 2,221 & 4,442 & 1,800 & 1,800 & 0.81 \\
 \caption{各小区加权综合满意度分解（Q2+Q3联合）}
 \label{tab:q3_satisfaction}
 \begin{tabular}{lcccccc}
-\hline
+\toprule
 \textbf{小区} & \textbf{服务站} & $S_1$(距离) & $S_2$(响应) & $S_3$(价格) & $S$(综合) & \textbf{说明} \\
-\hline
+\midrule
 A & J & 0.900 & 0.600 & 1.000 & 0.860 & 中距离，满意均好 \\
 B & H & 0.900 & 0.600 & 1.000 & 0.860 & 中距离，满意均好 \\
 C & F & 0.600 & 0.600 & 1.000 & 0.800 & 远距离S1触底 \\
@@ -101,8 +141,8 @@ G & F & 0.750 & 0.600 & 1.000 & 0.830 & 中距离，满意均好 \\
 H & H & 1.000 & 0.600 & 1.000 & 0.880 & 本小区自服务 \\
 I & F & 0.600 & 0.600 & 1.000 & 0.800 & 远距离S1触底 \\
 J & J & 1.000 & 0.600 & 1.000 & 0.880 & 本小区自服务 \\
-\hline
+\midrule
 \textbf{平均} & -- & 0.825 & 0.600 & 1.000 & 0.845 & -- \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}

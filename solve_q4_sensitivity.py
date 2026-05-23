@@ -567,14 +567,19 @@ print(r"""\hline
 """)
 
 # ============================================================
-# §7 可视化: 灵敏度对比条形图 (v3: 大尺寸、高可读性)
+# §7 可视化: 灵敏度对比图 (v4: seaborn muted 学术风格)
 # ============================================================
-C_BASE    = '#34495E'
-C_BUDGET  = '#2E86C1'
+sns.set_style("white")
+# 确保字体在 seaborn 样式重置后仍然生效
+plt.rcParams.update({
+    "font.family": "sans-serif",
+    "font.sans-serif": [FONT_NAME, "Microsoft YaHei", "SimHei", "DejaVu Sans"],
+    "axes.unicode_minus": False,
+})
+C_BASE    = '#2C3E50'
+C_BUDGET  = '#3498DB'
 C_SHOCK   = '#E74C3C'
 C_TSUNAMI = '#E67E22'
-C_GRID    = '#E5E5E5'
-C_TEXT    = '#2C3E50'
 
 scenarios_labels = ['基线\n120万', 'A-130\n预算放松', 'A-140\n预算放松', 'A-150\n预算放松',
                     'B-成本\n通胀+20%', 'C-银发\n海啸']
@@ -607,53 +612,51 @@ profit_vals = [
     scenario_c['total_profit'],
 ]
 
-fig, axes = plt.subplots(1, 3, figsize=(22, 7.5))
+fig, axes = plt.subplots(3, 1, figsize=(12, 18))
 fig.patch.set_facecolor('white')
 
-def style_ax(ax, title, ylabel, ylim_bottom, ylim_top):
-    ax.set_title(title, fontsize=15, fontweight='bold', pad=14)
-    ax.set_ylabel(ylabel, fontsize=13, fontweight='bold')
+def style_academic_ax(ax, title, ylabel, ylim_bottom, ylim_top):
+    ax.set_title(title, fontsize=18, fontweight='bold', pad=20, color='#2C3E50')
+    ax.set_ylabel(ylabel, fontsize=14, color='#34495E')
     ax.set_ylim(ylim_bottom, ylim_top)
-    ax.grid(axis='y', color=C_GRID, lw=0.6, alpha=0.7)
-    ax.set_axisbelow(True)
-    ax.tick_params(axis='x', labelsize=11)
-    ax.tick_params(axis='y', labelsize=10)
-    for spine in ['top', 'right']:
+    ax.tick_params(axis='x', labelsize=13, colors='#2C3E50')
+    ax.tick_params(axis='y', labelsize=12, colors='#7F8C8D')
+    for spine in ['top', 'right', 'left', 'bottom']:
         ax.spines[spine].set_visible(False)
-    ax.spines['left'].set_color('#C0C0C0')
-    ax.spines['bottom'].set_color('#C0C0C0')
+    ax.tick_params(left=False, bottom=False)
 
 # ---- Panel A: 覆盖率 ----
 ax = axes[0]
-bars = ax.bar(scenarios_labels, coverage_vals, color=bar_colors, edgecolor='white', lw=1.0, width=0.58)
+bars = ax.bar(scenarios_labels, coverage_vals, color=bar_colors, edgecolor='white', lw=2.0, width=0.65)
 for bar, val in zip(bars, coverage_vals):
-    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 1.8,
-            f'{val:.0f}%', ha='center', fontsize=12, fontweight='bold', color=C_TEXT)
-style_ax(ax, '(a) 覆盖率', '覆盖率 (%)', 50, 118)
-ax.axhline(y=80, color='#95A5A6', linestyle='--', lw=1.2, alpha=0.5)
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2.0,
+            f'{val:.0f}%', ha='center', fontsize=15, fontweight='bold', color='#2C3E50')
+ax.axhline(y=80, color='#BDC3C7', linestyle='--', lw=1.0, alpha=0.6)
+ax.axhline(y=100, color='#BDC3C7', linestyle='-', lw=0.5, alpha=0.3)
+style_academic_ax(ax, '(a) 覆盖率', '覆盖率 (%)', 55, 118)
 
 # ---- Panel B: 满意度 ----
 ax = axes[1]
-bars = ax.bar(scenarios_labels, sat_vals, color=bar_colors, edgecolor='white', lw=1.0, width=0.58)
+bars = ax.bar(scenarios_labels, sat_vals, color=bar_colors, edgecolor='white', lw=2.0, width=0.65)
 for bar, val in zip(bars, sat_vals):
-    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.005,
-            f'{val:.3f}', ha='center', fontsize=12, fontweight='bold', color=C_TEXT)
-style_ax(ax, '(b) 加权满意度', '平均综合满意度 $S$', 0.78, 1.02)
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.006,
+            f'{val:.3f}', ha='center', fontsize=15, fontweight='bold', color='#2C3E50')
+style_academic_ax(ax, '(b) 加权满意度', '平均综合满意度 $S$', 0.76, 1.03)
 
 # ---- Panel C: 利润 ----
 ax = axes[2]
-bars = ax.bar(scenarios_labels, profit_vals, color=bar_colors, edgecolor='white', lw=1.0, width=0.58)
+bars = ax.bar(scenarios_labels, profit_vals, color=bar_colors, edgecolor='white', lw=2.0, width=0.65)
 for bar, val in zip(bars, profit_vals):
-    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 7,
-            f'{val:.0f}', ha='center', fontsize=12, fontweight='bold', color=C_TEXT)
-style_ax(ax, '(c) 年利润', '年总利润 (万元)', 550, max(profit_vals)*1.20)
+    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 8,
+            f'{val:.0f}', ha='center', fontsize=15, fontweight='bold', color='#2C3E50')
+style_academic_ax(ax, '(c) 年利润', '年总利润 (万元)', 500, max(profit_vals)*1.22)
 
-fig.suptitle('灵敏度分析  —  三场景六方案多维对比 (Q4)', fontsize=17, fontweight='bold', y=1.02)
+fig.suptitle('灵敏度分析 —— 三场景六方案多维对比', fontsize=20, fontweight='bold', y=0.995, color='#2C3E50')
 
-plt.tight_layout(pad=3.0)
+plt.tight_layout(pad=4.0)
 fig.savefig("figures/figure_q4_sensitivity_bars.png", dpi=300, facecolor='white', bbox_inches='tight')
 plt.close()
-print("\n[图表] figures/figure_q4_sensitivity_bars.png 已保存 (大尺寸高可读性)")
+print("\n[图表] figures/figure_q4_sensitivity_bars.png 已保存 (v4 seaborn-muted 学术风格)")
 
 print("\n" + "=" * 70)
 print("Q4 灵敏度分析完成")

@@ -8,7 +8,7 @@
 \documentclass[12pt,a4paper]{ctexart}
 
 % ---- 版面 ----
-\usepackage[margin=2.54cm]{geometry}
+\usepackage[margin=2.5cm]{geometry}
 \usepackage{amsmath,amssymb,amsthm}
 \usepackage{graphicx}
 \usepackage{float}
@@ -52,9 +52,8 @@
 \pagestyle{fancy}
 \setlength{\headheight}{15pt}
 \fancyhf{}
-\fancyhead[L]{电工杯论文 B题}
-\fancyhead[R]{第 \thepage\ 页 / 共 \pageref{LastPage} 页}
-\renewcommand{\headrulewidth}{0.4pt}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
 
 \titleformat*{\section}{\Large\bfseries}
 \titleformat*{\subsection}{\large\bfseries}
@@ -70,67 +69,62 @@
 
 % ===== 封面 =====
 \begin{titlepage}
+\thispagestyle{empty}
 \begin{center}
-\vspace*{1.5cm}
+\vspace*{0.5cm}
+{\Large 报名序号: \textbf{\underline{014508}}}\\[2.5cm]
 {\Huge \textbf{嵌入式社区养老服务站的建设}}\\[0.5cm]
 {\Huge \textbf{与优化问题}}\\[1.5cm]
 {\Large 基于增生型Markov链与MILP-MCLP-ES的}\\[0.3cm]
 {\Large 预测--选址--定价--灵敏度四阶段递进求解}\\[2cm]
-{\Large 题号: \textbf{B}}\\[1cm]
-{\Large 2026年电工杯数学建模竞赛}\\[3cm]
+{\Large 2026年"中国电机工程学会杯"}\\[0.3cm]
+{\Large 全国大学生电工数学建模竞赛}\\[3cm]
 \end{center}
 \end{titlepage}
 
 % ===== 摘要 =====
-\section*{摘要}
+\setcounter{page}{1}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0pt}
 
-\textbf{问题背景}：在人口老龄化加速与"9073"养老格局下，嵌入式社区养老服务站的建设与运营面临人口动态预测、多站点选址-规模耦合、服务定价与政府补贴联合优化三重挑战。本文以某城市10个连片小区为实证场景，基于题目附件的5类异构数据（人口结构、服务需求、建设成本、距离矩阵、满意度规则），建立了"增生型Markov链$\to$MILP-MCLP-ES选址$\to$词典序MILP定价$\to$多维鲁棒性检验"的四阶段递进求解框架。
+\begin{center}
+{\Large \textbf{嵌入式社区养老服务站的建设与优化问题}}
+\end{center}
+\vspace{0.3cm}
 
-\textbf{方法}：(1) Q1构造增生型3状态Markov转移矩阵$\mathbf{A}$（含5\%年死亡率与7\%新增率），并以Leslie年龄结构矩阵进行双模型三角校验——两种独立范式的5年60+人口预测偏差仅1.7\%，Leslie主特征值$\lambda_1=1.0198$与Markov隐含年均增长率2.0\%精确吻合。(2) Q2构建MILP-MCLP-ES（嵌入式最大覆盖选址）模型——以Church\&ReVelle (1974)经典MCLP为理论底座，引入McCormick包络（线性化$S_2\cdot x_{ij}$乘积项）与Big-M方法（分段线性化$S_1$距离满意度4段、$S_2$利用率满意度5段），将含非线性满意度耦合的选址问题等价转化为MILP，由CBC分支定界求解。(3) Q3在固化Q2选址方案后，以词典序目标（优先最大化$S_3$价格满意度、次优先最大化营收）优化6项服务的差异化定价，以Big-M方法离散化$S_3$的四段价格区间。(4) Q4执行三场景（预算放宽、成本通胀、银发海啸）6组MILP重求解，构建覆盖率-满意度-利润率三维韧性矩阵。
+\textbf{摘要：}本文面向人口老龄化加速背景下的嵌入式社区养老服务站"建在哪、建多大、收多少钱"的全链条决策问题，以某城市10个连片小区为实证场景，建立了"增生型Markov链$\to$MILP-MCLP-ES选址$\to$词典序MILP定价$\to$多维鲁棒性检验"的四阶段递进求解框架。Q1构造增生型3状态Markov转移矩阵并以Leslie矩阵进行双模型三角校验——两种独立范式的5年60+人口预测偏差仅1.7\%，其中失能老人从625人飙升至1,125人（+80.3\%）。Q2构建MILP-MCLP-ES模型，以Church\&ReVelle (1974)经典MCLP为理论底座，引入McCormick包络与Big-M方法将含非线性满意度耦合的选址问题等价转化为MILP，由CBC分支定界求解，在120万元预算内实现\textbf{10/10小区全覆盖}——最优方案F(大型)+H(中型)+J(中型)，总建设成本109万元，年总利润1,097.7万元。Q3在固化选址后以词典序目标优化6项服务定价，全部维持$S_3=1.000$平价段，仅上门护理从30元降至12.64元以满足F站8\%利润率紧约束，三层交叉补贴机制使紧急救助年净支出47.42万元由营利服务利润完全吸收（交叉补贴率仅14.3\%）。Q4三场景灵敏度分析表明系统具有强鲁棒性（$\rho_{\min}>0.97$），确定解对非确定解的目标值提升达24\%。本文的MILP-MCLP-ES框架可平滑迁移至分级诊疗站点选址、冷链前置仓网络规划等公共设施优化场景。
 
-\textbf{关键结果}：(1) 人口预测：5年内全区域60+老龄人口从6,864人增至7,577人（+10.4\%），其中失能老人从625人飙升至1,125人（+80.3\%）——"失能棘轮效应"使系统面临严峻的长期照护压力。理论月需求总量262,553次，消费约束削减率仅5.9\%。(2) 选址优化：120万元预算下，通过randomSeed=42确定性CBC求解获得最优方案——F(大型,45万元)+H(中型,32万元)+J(中型,32万元)，总建设成本109万元，\textbf{实现10/10小区全覆盖（100\%）}，年总利润1,097.7万元，加权利润率25.2\%。三站均处于$S_2=0.600$的利用率悬崖（利用率92--96\%），形成"以容量压榨换取全覆盖"的帕累托最优权衡。(3) 定价优化：全部6项服务维持$S_3=1.000$（平价段），仅上门护理从30元降至12.64元（-57.9\%）以满足F站的8\%利润率紧约束。三层交叉补贴机制（站内营利养公益$\to$站间补贴效率再分配$\to$Ramsey-Boiteux反向价格歧视）使紧急救助年净支出47.42万元由营利服务利润（331.3万元）完全吸收，交叉补贴率仅14.3\%。(4) 鲁棒性：所有场景下$\rho_{\min}>0.97$远超0.75强鲁棒性阈值。确定解对非确定解的目标值提升达24\%（54.225 vs 43.644），揭示了多起点随机重启策略在CFLP类MILP中的方法论价值。
+\textbf{关键词：}嵌入式养老；马尔可夫链；最大覆盖选址；混合整数线性规划；McCormick包络；交叉补贴；鲁棒性分析
 
-\textbf{工程建议}：(1) 近期按109万元确定解启动建设，11万元剩余预算用于站点运营补贴与人员培训；(2) 中期以13万元追加投资将H站升级为大型，触发$S_2$从0.600跃升至1.000的满意度相变；(3) 远期建立"季度监测$\to$黄灯/红灯预警$\to$触发扩建"的动态容量管理闭环，将灵敏度分析转化为可操作的工程风险管理工具。
-
-\textbf{关键词:} 嵌入式养老；马尔可夫链；最大覆盖选址；混合整数线性规划；McCormick包络；交叉补贴；鲁棒性分析
-
-\newpage
-\tableofcontents
 \newpage
 
 % ===== 正文 (按顺序 input 各节) =====
 
 \input{paper_workspace/section_1_problem_background.tex}
-\newpage
 
 \input{paper_workspace/section_2_data_preprocessing.tex}
-\newpage
 
 \input{paper_workspace/section_3_model_formulation.tex}
-\newpage
 
 \input{paper_workspace/section_4_assumptions.tex}
-\newpage
 
 \section{子问题求解与结果分析}
 
+以下按Q1$\to$Q2$\to$Q3$\to$Q4的顺序，逐题报告模型求解结果与关键发现。各子问题之间通过数据接口（Q1输出$\to$Q2输入$\to$Q3输入）形成闭环依赖链。
+
 \input{paper_workspace/section_5_1_q1_results.tex}
-\newpage
 
 \input{paper_workspace/section_5_2_q2_results.tex}
-\newpage
 
 \input{paper_workspace/section_5_3_q3_results.tex}
-\newpage
 
 \input{paper_workspace/section_5_4_q4_robustness.tex}
-\newpage
 
 \input{paper_workspace/section_6_model_evaluation.tex}
-\newpage
 
 \input{paper_workspace/section_7_engineering_recommendations.tex}
-\newpage
 
 % ===== §8 结论 =====
 \section{结论}
@@ -264,16 +258,16 @@ max sum(demand[s] * s3[s] * 0.5) + epsilon * sum(demand[s] * p[s])
 \caption{Markov链与Leslie矩阵双模型预测对比}
 \label{tab:leslie_check}
 \begin{tabular}{lcccc}
-\hline
+\toprule
 \textbf{指标} & \textbf{Markov链} & \textbf{Leslie矩阵} & \textbf{偏差} & \textbf{偏差率(\%)} \\
-\hline
+\midrule
 第5年末60+总人口 & 7,577 & 7,709 & 132 & 1.7 \\
 第5年末自理 & 4,981 & 5,063 & 82 & 1.6 \\
 第5年末半失能 & 1,471 & 1,502 & 31 & 2.1 \\
 第5年末失能 & 1,125 & 1,144 & 19 & 1.7 \\
 年均增长率(\%) & 2.00 & 2.04 & 0.04 & 2.0 \\
 主特征值$\lambda_1$ & -- & 1.0198 & -- & -- \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -281,19 +275,20 @@ max sum(demand[s] * s3[s] * 0.5) + epsilon * sum(demand[s] * p[s])
 
 \begin{table}[H]
 \centering
-\caption{三场景灵敏度分析全量对比 (randomSeed=42, gapRel=0.01)}
+\caption{三场景灵敏度分析全量对比 (seed=42, gap=0.01)}
 \label{tab:sensitivity_full}
-\begin{tabular}{lccccccc}
-\hline
-\textbf{场景} & \textbf{参数配置} & \textbf{选址方案} & \textbf{覆盖率(\%)} & \textbf{加权S} & \textbf{年利润(万元)} & \textbf{已用预算(万)} \\
-\hline
-Baseline & 预算120万, 基线成本 & F大+H中+J中 & 100 & 0.850 & 1097.7 & 109 \\
-A-130 & 预算130万 & B大+E中+G大 & 100 & 0.883 & 1053.8 & 122 \\
-A-140 & 预算140万 & B大+D大+E大 & 100 & 0.889 & 1010.0 & 135 \\
-A-150 & 预算150万 & D中+E大+F小+J大 & 100 & 0.912 & 980.9 & 140 \\
-B-cost & 成本$\times$1.20 & A小+E中+J大 & 80 & 0.906 & 667.7 & 114 \\
-C-tsunami & 银发海啸 & A小+G中+I中+J中 & 90 & 0.895 & 887.9 & 114 \\
-\hline
+\footnotesize
+\begin{tabular}{lccccc}
+\toprule
+\textbf{场景} & \textbf{参数配置} & \textbf{选址方案} & \textbf{覆盖} & \textbf{加权$S$} & \textbf{年利润(万)} \\
+\midrule
+Baseline & 预算120万基线 & F大+H中+J中 & 100\% & 0.850 & 1097.7 \\
+A-130 & 预算130万 & B大+E中+G大 & 100\% & 0.883 & 1053.8 \\
+A-140 & 预算140万 & B大+D大+E大 & 100\% & 0.889 & 1010.0 \\
+A-150 & 预算150万 & D中+E大+F小+J大 & 100\% & 0.912 & 980.9 \\
+B-cost & 成本$\times$1.20 & A小+E中+J大 & 80\% & 0.906 & 667.7 \\
+C-tsunami & 银发海啸 & A小+G中+I中+J中 & 90\% & 0.895 & 887.9 \\
+\bottomrule
 \end{tabular}
 \end{table}
 

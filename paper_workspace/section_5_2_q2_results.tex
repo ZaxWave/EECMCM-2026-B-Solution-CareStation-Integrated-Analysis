@@ -9,27 +9,28 @@
 
 基于§3.2构造的MILP-MCLP-ES模型——Church\&ReVelle (1974)经典最大覆盖选址问题在嵌入式养老场景的容量扩展——以PuLP+CBC求解器（randomSeed=42确定性求解）在120秒内收敛至最优性间隙容限（gapRel=0.01）内的最优解，得到120万元预算下的最优选址-规模方案。若将服务站类比为GSM发射塔、1000m服务半径类比为基站信号覆盖半径、老年人口密度类比为信号需求强度，则该方案等价于在给定"基站建设预算"下最大化"网络覆盖率+信号质量"的电信基础设施优化问题。最优解的目标函数值为54.225（覆盖权重5.0 + 满意度权重0.5），对应3座服务站、\textbf{全部10个小区的全覆盖}配置。方案全景如图\ref{fig:q2_network}所示，各站点运营指标汇总于表\ref{tab:q2_stations}。
 
-\begin{figure}[htbp]
+\begin{figure}[H]
 \centering
-\includegraphics[width=\textwidth]{figures/figure_q2_network.png}
+\includegraphics[width=0.95\textwidth]{figures/figure_q2_network.png}
 \caption{Q2最优选址-规模方案的空间网络图。蓝色节点为大型站(F)，橙色节点为中型站(H, J)。红色箭头表示服务辐射关系，均满足1000m半径硬约束。全部10个小区均被覆盖（全覆盖配置）。}
 \label{fig:q2_network}
 \end{figure}
 
-\begin{table}[htbp]
+\begin{table}[H]
 \centering
+\small
 \caption{Q2最优方案站点运营指标}
 \label{tab:q2_stations}
 \begin{tabular}{lcccccc}
-\hline
+\toprule
 \textbf{站点} & \textbf{规模} & \textbf{建设成本(万元)} & \textbf{日容量(人次)} & \textbf{覆盖小区数} & \textbf{年利润(万元)} & \textbf{利润率(\%)} \\
-\hline
+\midrule
 F & 大型 & 45 & 3000 & 4 & 497.6 & 26.1 \\
 H & 中型 & 32 & 2000 & 3 & 306.7 & 24.7 \\
 J & 中型 & 32 & 2000 & 3 & 293.4 & 24.4 \\
-\hline
+\midrule
 \textbf{合计} & -- & \textbf{109} & \textbf{7000} & \textbf{10} & \textbf{1,097.7} & \textbf{25.2(加权)} \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -42,9 +43,9 @@ J & 中型 & 32 & 2000 & 3 & 293.4 & 24.4 \\
 \caption{最优服务分配与满意度分解（全覆盖方案）}
 \label{tab:q2_assignments}
 \begin{tabular}{lcccccl}
-\hline
+\toprule
 \textbf{需求小区} & \textbf{服务站} & \textbf{距离(m)} & $S_1$(距离) & $S_2$(响应) & $S$(综合) & \textbf{说明} \\
-\hline
+\midrule
 A & J & 500 & 0.900 & 0.600 & 0.860 & 中距离，J站辐射 \\
 B & H & 400 & 0.900 & 0.600 & 0.860 & 中距离，H站辐射 \\
 C & F & 900 & 0.600 & 0.600 & 0.800 & 远距离触底，F站辐射 \\
@@ -55,7 +56,7 @@ G & F & 500 & 0.750 & 0.600 & 0.830 & 中距离，F站辐射 \\
 H & H & 0 & 1.000 & 0.600 & 0.880 & 本小区自服务 \\
 I & F & 700 & 0.600 & 0.600 & 0.800 & 远距离，F站辐射 \\
 J & J & 0 & 1.000 & 0.600 & 0.880 & 本小区自服务 \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
@@ -82,9 +83,9 @@ Q2的目标函数中覆盖权重（5.0）与满意度权重（0.5）的比例$\l
 \caption{种子42确定解与非确定解的比较}
 \label{tab:q2_comparison}
 \begin{tabular}{lcc}
-\hline
+\toprule
 \textbf{指标} & \textbf{确定解 (seed=42)} & \textbf{非确定解} \\
-\hline
+\midrule
 站点配置 & F(大)+H(中)+J(中) & B(小)+C(大)+J(大) \\
 总建设成本(万元) & 109 & 108 \\
 覆盖率 & \textbf{10/10 (100\%)} & 8/10 (80\%) \\
@@ -93,7 +94,7 @@ Q2的目标函数中覆盖权重（5.0）与满意度权重（0.5）的比例$\l
 平均综合满意度$S$ & 0.85 & 0.90 \\
 年总利润(万元) & 1,097.7 & 811.0 \\
 加权利润率(\%) & 25.2 & 22.5 \\
-\hline
+\bottomrule
 \end{tabular}
 \end{table}
 
