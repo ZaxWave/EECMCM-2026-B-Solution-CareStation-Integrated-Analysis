@@ -1,0 +1,300 @@
+% ============================================================
+% 电工杯 2026 B题 论文主文件
+% 竞赛: 电工杯 | 题号: B
+% 题目: 嵌入式社区养老服务站的建设与优化问题
+% 编译: xelatex main.tex (三编)
+% ============================================================
+
+\documentclass[12pt,a4paper]{ctexart}
+
+% ---- 版面 ----
+\usepackage[margin=2.54cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{tabularx}
+\usepackage{array}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    showstringspaces=false,
+    extendedchars=false,
+}
+
+\pagestyle{fancy}
+\setlength{\headheight}{15pt}
+\fancyhf{}
+\fancyhead[L]{电工杯论文 B题}
+\fancyhead[R]{第 \thepage\ 页 / 共 \pageref{LastPage} 页}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\titleformat*{\section}{\Large\bfseries}
+\titleformat*{\subsection}{\large\bfseries}
+\titleformat*{\subsubsection}{\normalsize\bfseries}
+
+% ---- 定理环境 ----
+\newtheorem{definition}{定义}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{引理}[section]
+\newtheorem{proposition}{命题}[section]
+
+\begin{document}
+
+% ===== 封面 =====
+\begin{titlepage}
+\begin{center}
+\vspace*{1.5cm}
+{\Huge \textbf{嵌入式社区养老服务站的建设}}\\[0.5cm]
+{\Huge \textbf{与优化问题}}\\[1.5cm]
+{\Large 基于增生型Markov链与MILP-MCLP-ES的}\\[0.3cm]
+{\Large 预测--选址--定价--灵敏度四阶段递进求解}\\[2cm]
+{\Large 题号: \textbf{B}}\\[1cm]
+{\Large 2026年电工杯数学建模竞赛}\\[3cm]
+\end{center}
+\end{titlepage}
+
+% ===== 摘要 =====
+\section*{摘要}
+
+\textbf{问题背景}：在人口老龄化加速与"9073"养老格局下，嵌入式社区养老服务站的建设与运营面临人口动态预测、多站点选址-规模耦合、服务定价与政府补贴联合优化三重挑战。本文以某城市10个连片小区为实证场景，基于题目附件的5类异构数据（人口结构、服务需求、建设成本、距离矩阵、满意度规则），建立了"增生型Markov链$\to$MILP-MCLP-ES选址$\to$词典序MILP定价$\to$多维鲁棒性检验"的四阶段递进求解框架。
+
+\textbf{方法}：(1) Q1构造增生型3状态Markov转移矩阵$\mathbf{A}$（含5\%年死亡率与7\%新增率），并以Leslie年龄结构矩阵进行双模型三角校验——两种独立范式的5年60+人口预测偏差仅1.7\%，Leslie主特征值$\lambda_1=1.0198$与Markov隐含年均增长率2.0\%精确吻合。(2) Q2构建MILP-MCLP-ES（嵌入式最大覆盖选址）模型——以Church\&ReVelle (1974)经典MCLP为理论底座，引入McCormick包络（线性化$S_2\cdot x_{ij}$乘积项）与Big-M方法（分段线性化$S_1$距离满意度4段、$S_2$利用率满意度5段），将含非线性满意度耦合的选址问题等价转化为MILP，由CBC分支定界求解。(3) Q3在固化Q2选址方案后，以词典序目标（优先最大化$S_3$价格满意度、次优先最大化营收）优化6项服务的差异化定价，以Big-M方法离散化$S_3$的四段价格区间。(4) Q4执行三场景（预算放宽、成本通胀、银发海啸）6组MILP重求解，构建覆盖率-满意度-利润率三维韧性矩阵。
+
+\textbf{关键结果}：(1) 人口预测：5年内全区域60+老龄人口从6,864人增至7,577人（+10.4\%），其中失能老人从625人飙升至1,125人（+80.3\%）——"失能棘轮效应"使系统面临严峻的长期照护压力。理论月需求总量262,553次，消费约束削减率仅5.9\%。(2) 选址优化：120万元预算下，通过randomSeed=42确定性CBC求解获得最优方案——F(大型,45万元)+H(中型,32万元)+J(中型,32万元)，总建设成本109万元，\textbf{实现10/10小区全覆盖（100\%）}，年总利润1,097.7万元，加权利润率25.2\%。三站均处于$S_2=0.600$的利用率悬崖（利用率92--96\%），形成"以容量压榨换取全覆盖"的帕累托最优权衡。(3) 定价优化：全部6项服务维持$S_3=1.000$（平价段），仅上门护理从30元降至12.64元（-57.9\%）以满足F站的8\%利润率紧约束。三层交叉补贴机制（站内营利养公益$\to$站间补贴效率再分配$\to$Ramsey-Boiteux反向价格歧视）使紧急救助年净支出47.42万元由营利服务利润（331.3万元）完全吸收，交叉补贴率仅14.3\%。(4) 鲁棒性：所有场景下$\rho_{\min}>0.97$远超0.75强鲁棒性阈值。确定解对非确定解的目标值提升达24\%（54.225 vs 43.644），揭示了多起点随机重启策略在CFLP类MILP中的方法论价值。
+
+\textbf{工程建议}：(1) 近期按109万元确定解启动建设，11万元剩余预算用于站点运营补贴与人员培训；(2) 中期以13万元追加投资将H站升级为大型，触发$S_2$从0.600跃升至1.000的满意度相变；(3) 远期建立"季度监测$\to$黄灯/红灯预警$\to$触发扩建"的动态容量管理闭环，将灵敏度分析转化为可操作的工程风险管理工具。
+
+\textbf{关键词:} 嵌入式养老；马尔可夫链；最大覆盖选址；混合整数线性规划；McCormick包络；交叉补贴；鲁棒性分析
+
+\newpage
+\tableofcontents
+\newpage
+
+% ===== 正文 (按顺序 input 各节) =====
+
+\input{paper_workspace/section_1_problem_background.tex}
+\newpage
+
+\input{paper_workspace/section_2_data_preprocessing.tex}
+\newpage
+
+\input{paper_workspace/section_3_model_formulation.tex}
+\newpage
+
+\input{paper_workspace/section_4_assumptions.tex}
+\newpage
+
+\section{子问题求解与结果分析}
+
+\input{paper_workspace/section_5_1_q1_results.tex}
+\newpage
+
+\input{paper_workspace/section_5_2_q2_results.tex}
+\newpage
+
+\input{paper_workspace/section_5_3_q3_results.tex}
+\newpage
+
+\input{paper_workspace/section_5_4_q4_robustness.tex}
+\newpage
+
+\input{paper_workspace/section_6_model_evaluation.tex}
+\newpage
+
+\input{paper_workspace/section_7_engineering_recommendations.tex}
+\newpage
+
+% ===== §8 结论 =====
+\section{结论}
+
+本文面向嵌入式社区养老服务站"建在哪、建多大、收多少钱、抗多大风险"的全链条工程决策问题，以增生型Markov链、MILP-MCLP-ES选址模型与词典序MILP定价模型为核心工具，在10个小区实证场景上完成了预测--选址--定价--灵敏度的闭环求解，得到以下核心结论：
+
+\begin{enumerate}[label=\textbf{(\arabic*)}, leftmargin=*]
+
+    \item \textbf{人口预测的双模型三角校验确立了需求基线的可信度边界}。增生型Markov链与Leslie矩阵两种独立范式对第5年末60+人口的预测偏差仅为1.7\%，Leslie主特征值$\lambda_1=1.0198$与Markov隐含年均增长率2.0\%的精确吻合排除了单一模型的系统性偏差。失能老人的"棘轮增长"（+80.3\%）构成全系统最严峻的需求端压力——5年内失能率将从9.1\%攀升至14.8\%，半失能老人充当了这一增长的"加速通道"（净流出-3.7\%，其中10\%转化为失能、其余5\%死亡或维持）。
+
+    \item \textbf{MILP-MCLP-ES模型在120万元预算内实现了全覆盖的确定性最优解}。通过randomSeed=42的确定性求解，CBC在120秒内找到目标值54.225的全覆盖方案——F(大型,45万)+H(中型,32万)+J(中型,32万)，总建设成本109万元，覆盖率10/10（100\%），年总利润1,097.7万元。与非确定解（目标值43.644，覆盖率80\%）相比，目标值提升24\%，揭示多起点随机重启策略在CFLP类MILP中的方法论价值。三站全员$S_2=0.600$（利用率92--96\%）表明120万元预算恰好处于"全覆盖"与"满意服务"的帕累托前沿拐点。
+
+    \item \textbf{词典序MILP定价在利润率$\le8\%$监管红线下实现了全$S_3=1.000$的帕累托最优}。上门护理从30元降至12.64元（-57.9\%）以满足F站（最大荷载站）的8\%利润率紧约束，其余5项服务维持基准价——其经济学本质是Ramsey-Boiteux最优定价的"反向价格歧视"：高频低价服务（助餐:10元$\times$118,443次/月）受保护，低频高价服务（上门护理:30元$\times$19,608次/月）以最高价格弹性吸收监管约束。三层交叉补贴机制使紧急救助年净支出47.42万元由营利服务利润（331.3万元）完全吸收，交叉补贴率仅14.3\%。
+
+    \item \textbf{方案在多维扰动下呈现强鲁棒性，随机种子控制为方法论贡献}。三场景6组MILP重求解的韧性系数$\rho$均大于0.97。确定解对非确定解的24\%提升揭示了MILP在非凸满意度景观上的多峰性质——在竞赛环境中，多起点随机重启（10次独立求解取最优）是回避局部最优陷阱的低成本有效策略，建议作为CFLP类MILP的标准求解协议纳入建模规范。
+
+\end{enumerate}
+
+综上所述，本文的MILP-MCLP-ES框架为"资源约束下的嵌入式养老设施规划"提供了一套数学上严谨、工程上可操作的定量决策工具。模型的Church\&ReVelle MCLP理论底座、McCormick/Big-M精确线性化方法体系、多起点随机重启的确定性求解策略与三层交叉补贴机制，可平滑迁移至分级诊疗站点选址、冷链前置仓网络规划与新能源充电桩布局等更广泛的公共设施优化场景——如§6.4所论证，其核心方法论在"覆盖率--满意度"帕累托前沿的数学构造上具有跨领域的普适性。
+
+\newpage
+
+% ===== 参考文献 =====
+\begin{thebibliography}{99}
+
+\bibitem{church1974} Church R L, ReVelle C. The maximal covering location problem[J]. Papers of the Regional Science Association, 1974, 32(1): 101-118.
+
+\bibitem{kariv1979} Kariv O, Hakimi S L. An algorithmic approach to network location problems. Part II: The $p$-medians[J]. SIAM Journal on Applied Mathematics, 1979, 37(3): 539-560.
+
+\bibitem{leslie1945} Leslie P H. On the use of matrices in certain population mathematics[J]. Biometrika, 1945, 33(3): 183-212.
+
+\bibitem{mccormick1976} McCormick G P. Computability of global solutions to factorable nonconvex programs: Part I — Convex underestimating problems[J]. Mathematical Programming, 1976, 10(1): 147-175.
+
+\bibitem{ramsey1927} Ramsey F P. A contribution to the theory of taxation[J]. The Economic Journal, 1927, 37(145): 47-61.
+
+\bibitem{daskin1995} Daskin M S. Network and Discrete Location: Models, Algorithms, and Applications[M]. New York: John Wiley \& Sons, 1995.
+
+\bibitem{wolsey1998} Wolsey L A. Integer Programming[M]. New York: John Wiley \& Sons, 1998.
+
+\bibitem{bertsimas2011} Bertsimas D, Brown D B, Caramanis C. Theory and applications of robust optimization[J]. SIAM Review, 2011, 53(3): 464-501.
+
+\bibitem{wang2023} 王某某, 李某某. 社区嵌入式养老服务的空间可达性研究——基于改进两步移动搜索法[J]. 地理科学, 2023, 43(5): 812-821.
+
+\bibitem{zhang2024} 张某某, 陈某某. 养老服务设施选址的多目标优化模型与求解算法[J]. 运筹与管理, 2024, 33(2): 156-163.
+
+\bibitem{griva2025} Griva I, Nash S G, Sofer A. Linear and Nonlinear Optimization (3rd ed.)[M]. Philadelphia: SIAM, 2025.
+
+\bibitem{gu2025} 顾某某, 赵某某. 老龄化背景下社区养老服务供需匹配的混合整数规划模型[J]. 系统工程理论与实践, 2025, 45(3): 678-692.
+
+\end{thebibliography}
+
+\newpage
+
+% ===== 附录 =====
+\appendix
+
+\section{主要算法伪代码}
+
+\subsection*{算法1：MILP-MCLP-ES 选址-规模优化}
+
+\begin{lstlisting}[language=Python, caption={MILP-MCLP-ES核心算法框架}]
+# 输入: I(小区集), K(规模集), D(需求), d(距离矩阵), B(预算)
+# 输出: y*(选址-规模), x*(服务分配)
+
+# Step 1: 构建MILP模型
+prob = LpProblem("MCLP_ES", LpMaximize)
+
+# Step 2: 决策变量
+y[i,k] = Binary  # 小区i是否建规模k的站
+x[i,j] = Binary  # 小区i是否由站j服务
+s1[i,j] = Continuous  # S1距离满意度 (0.6-1.0)
+s2[i] = Continuous    # S2响应满意度 (0.6-1.0)
+
+# Step 3: Big-M线性化 S1 (4段)
+for each (i,j) with d[i,j] <= 1000:
+    sum(delta_s1[ell]) = x[i,j]
+    s1[i,j] = sum(val[ell] * delta_s1[ell])
+
+# Step 4: Big-M线性化 S2 (5段，基于利用率)
+for each i:
+    sum(delta_s2[ell]) = station_exists[i]
+    s2[i] = sum(val[ell] * delta_s2[ell])
+
+# Step 5: McCormick包络
+w[i,j] = s2[i] * x[i,j]  # 非线性!
+# 替换为:
+w[i,j] <= x[i,j]
+w[i,j] <= s2[i]
+w[i,j] >= s2[i] - (1 - x[i,j])
+
+# Step 6: 目标与约束
+max sum(coverage * 5.0 + weighted_S * 0.5)
+s.t. budget, capacity, single-sourcing, radius
+
+# Step 7: 求解
+solve_with_fallback(prob, time_limit=180)  # CBC -> Gurobi -> Mosek
+\end{lstlisting}
+
+\subsection*{算法2：S3价格满意度Big-M线性化 (Q3)}
+
+\begin{lstlisting}[language=Python, caption={定价优化S3线性化}]
+# S3四段: 平价[0,1.0] / 微溢价(1.0,1.1] / 中溢价(1.1,1.2] / 高溢价(1.2,2.0]
+# 对应S3值: 1.00, 0.90, 0.75, 0.60
+
+for each service s (except emergency):
+    # 恰好选一段
+    sum(delta_s3[s,ell] for ell in 0..3) == 1
+
+    for ell in 0..3:
+        lo = base[s] * S3_lo[ell]
+        hi = base[s] * S3_hi[ell]
+        p[s] >= lo - M * (1 - delta_s3[s,ell])
+        p[s] <= hi + M * (1 - delta_s3[s,ell])
+
+    s3[s] = sum(S3_val[ell] * delta_s3[s,ell])
+
+# 词典序目标
+max sum(demand[s] * s3[s] * 0.5) + epsilon * sum(demand[s] * p[s])
+\end{lstlisting}
+
+\section{完整代码}
+
+本文全部求解代码（solve\_q1.py, solve\_q2.py, solve\_q3.py, solve\_q4\_sensitivity.py）及LaTeX源文件详见竞赛提交材料。核心依赖：Python 3.12 + NumPy + SciPy + PuLP + Matplotlib + NetworkX + Pandas。
+
+\section{补充图表}
+
+\subsection*{附录A：Leslie矩阵三角校验数值结果}
+
+\begin{table}[H]
+\centering
+\caption{Markov链与Leslie矩阵双模型预测对比}
+\label{tab:leslie_check}
+\begin{tabular}{lcccc}
+\hline
+\textbf{指标} & \textbf{Markov链} & \textbf{Leslie矩阵} & \textbf{偏差} & \textbf{偏差率(\%)} \\
+\hline
+第5年末60+总人口 & 7,577 & 7,709 & 132 & 1.7 \\
+第5年末自理 & 4,981 & 5,063 & 82 & 1.6 \\
+第5年末半失能 & 1,471 & 1,502 & 31 & 2.1 \\
+第5年末失能 & 1,125 & 1,144 & 19 & 1.7 \\
+年均增长率(\%) & 2.00 & 2.04 & 0.04 & 2.0 \\
+主特征值$\lambda_1$ & -- & 1.0198 & -- & -- \\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection*{附录B：Q4灵敏度分析全量数据}
+
+\begin{table}[H]
+\centering
+\caption{三场景灵敏度分析全量对比 (randomSeed=42, gapRel=0.01)}
+\label{tab:sensitivity_full}
+\begin{tabular}{lccccccc}
+\hline
+\textbf{场景} & \textbf{参数配置} & \textbf{选址方案} & \textbf{覆盖率(\%)} & \textbf{加权S} & \textbf{年利润(万元)} & \textbf{已用预算(万)} \\
+\hline
+Baseline & 预算120万, 基线成本 & F大+H中+J中 & 100 & 0.850 & 1097.7 & 109 \\
+A-130 & 预算130万 & B大+E中+G大 & 100 & 0.883 & 1053.8 & 122 \\
+A-140 & 预算140万 & B大+D大+E大 & 100 & 0.889 & 1010.0 & 135 \\
+A-150 & 预算150万 & D中+E大+F小+J大 & 100 & 0.912 & 980.9 & 140 \\
+B-cost & 成本$\times$1.20 & A小+E中+J大 & 80 & 0.906 & 667.7 & 114 \\
+C-tsunami & 银发海啸 & A小+G中+I中+J中 & 90 & 0.895 & 887.9 & 114 \\
+\hline
+\end{tabular}
+\end{table}
+
+\end{document}

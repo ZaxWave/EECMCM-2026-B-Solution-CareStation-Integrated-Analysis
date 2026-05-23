@@ -1,0 +1,46 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.env
+
+# LaTeX build artifacts
+*.aux
+*.bbl
+*.blg
+*.brf
+*.fls
+*.fdb_latexmk
+*.log
+*.nav
+*.out
+*.snm
+*.toc
+*.synctex.gz
+*.lof
+*.lot
+*.gz
+*.xdv
+*.idx
+*.ilg
+*.ind
+*.run.xml
+*.dvi
+*.ps
+
+# Skill (nested repo)
+mathmodel-skill/
+
+# Claude internal
+.claude/
+
+# Backup / debug
+paper_workspace/main_backup.tex
+utils/_verify_font.png
+
+# VS Code and misc
+.vscode/
+Thumbs.db
+.DS_Store

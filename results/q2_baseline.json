@@ -1,0 +1,25 @@
+{
+  "objective": 54.225,
+  "coverage": 10,
+  "n_communities": 10,
+  "budget_used": 109.0,
+  "stations": [
+    {"loc": "F", "size": 2, "size_label": "大型", "profit": 497.6, "rate": 26.1},
+    {"loc": "H", "size": 1, "size_label": "中型", "profit": 306.7, "rate": 24.7},
+    {"loc": "J", "size": 1, "size_label": "中型", "profit": 293.4, "rate": 24.4}
+  ],
+  "assignments": {
+    "A": {"station": "J", "S": 0.860, "S1": 0.900, "S2": 0.600, "dist": 500},
+    "B": {"station": "H", "S": 0.860, "S1": 0.900, "S2": 0.600, "dist": 400},
+    "C": {"station": "F", "S": 0.800, "S1": 0.600, "S2": 0.600, "dist": 900},
+    "D": {"station": "J", "S": 0.860, "S1": 0.900, "S2": 0.600, "dist": 400},
+    "E": {"station": "H", "S": 0.800, "S1": 0.600, "S2": 0.600, "dist": 1000},
+    "F": {"station": "F", "S": 0.880, "S1": 1.000, "S2": 0.600, "dist": 0},
+    "G": {"station": "F", "S": 0.830, "S1": 0.750, "S2": 0.600, "dist": 500},
+    "H": {"station": "H", "S": 0.880, "S1": 1.000, "S2": 0.600, "dist": 0},
+    "I": {"station": "F", "S": 0.800, "S1": 0.600, "S2": 0.600, "dist": 700},
+    "J": {"station": "J", "S": 0.880, "S1": 1.000, "S2": 0.600, "dist": 0}
+  },
+  "avg_satisfaction": 0.850,
+  "s2_by_station": {"F": 0.600, "H": 0.600, "J": 0.600}
+}
