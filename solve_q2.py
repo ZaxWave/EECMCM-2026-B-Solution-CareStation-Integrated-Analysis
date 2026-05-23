@@ -122,7 +122,7 @@ def solve_with_fallback(prob, time_limit=180, gap_rel=0.01, verbose=True):
                 print(f"  [Solver] Mosek不可用 ({str(e)[:80]})")
                 print(f"  [Solver] 当前仅CBC可用.")
 
-BASE = r"E:\Desktop\2026电工杯\2026年电工杯竞赛赛题\B题"
+BASE = os.path.join(os.path.dirname(__file__), "data")
 
 # ============================================================
 # §1 数据加载

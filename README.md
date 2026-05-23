@@ -16,6 +16,13 @@ EECMCM2026/
 ├── solve_q4_sensitivity.py           # 问题4：鲁棒性与灵敏度分析
 ├── generate_extra_figures.py         # 论文图表生成
 ├── generate_q4_combined.py           # 问题4组合图生成
+├── data/                             # B题赛题数据 (本文 + 5个附件)
+│   ├── B题：嵌入式社区养老服务站的建设与优化问题.pdf
+│   ├── 附件1：小区基础数据.xlsx
+│   ├── 附件2：服务需求数据.xlsx
+│   ├── 附件3：服务站建设与运营成本.xlsx
+│   ├── 附件4：小区间距离矩阵.xlsx
+│   └── 附件5：满意度评分规则.xlsx
 ├── figures/                          # 论文插图 (PNG)
 ├── results/                          # 模型输出数据 (CSV/JSON)
 ├── paper_workspace/                  # 论文分章节 tex 源文件
@@ -29,6 +36,11 @@ EECMCM2026/
 │   ├── section_5_4_q4_robustness.tex
 │   ├── section_6_model_evaluation.tex
 │   └── section_7_engineering_recommendations.tex
+├── references/                       # 参考文献 PDF
+│   ├── 004799B.pdf
+│   └── example.pdf
+├── docs/
+│   └── 论文规范                       # 竞赛论文格式规范
 ├── utils/
 │   └── fix_matplotlib_font.py        # matplotlib 中文字体修复
 ├── state/
@@ -70,6 +82,6 @@ python solve_q4_sensitivity.py
 
 ## 竞赛要求
 
-- 论文格式参见 `论文规范`（根目录下）
+- 论文格式参见 `docs/论文规范`
 - 参赛论文：`main.pdf`
 - 支撑材料：源码、数据及结果文件（压缩为 ZIP/RAR，≤20MB）

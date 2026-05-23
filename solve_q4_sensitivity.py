@@ -56,7 +56,7 @@ plt.rcParams.update({
 })
 print(f"[Font] Registered: {FONT_NAME}")
 
-BASE = r"E:\Desktop\2026电工杯\2026年电工杯竞赛赛题\B题"
+BASE = os.path.join(os.path.dirname(__file__), "data")
 os.makedirs("results", exist_ok=True)
 os.makedirs("figures", exist_ok=True)
 

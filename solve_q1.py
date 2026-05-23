@@ -44,7 +44,7 @@ plt.rcParams.update({
 Path("results").mkdir(exist_ok=True)
 Path("figures").mkdir(exist_ok=True)
 
-BASE = r"E:\Desktop\2026电工杯\2026年电工杯竞赛赛题\B题"
+BASE = os.path.join(os.path.dirname(__file__), "data")
 
 # ============================================================
 # §1 数据挂载: 读取附件1 初始状态向量 S_i^(0)
