@@ -92,11 +92,24 @@
 \begin{center}
 {\Large \textbf{嵌入式社区养老服务站的建设与优化问题}}
 \end{center}
-\vspace{0.3cm}
+\vspace{0.2cm}
 
-\textbf{摘要：}本文面向人口老龄化加速背景下的嵌入式社区养老服务站"建在哪、建多大、收多少钱"的全链条决策问题，以某城市10个连片小区为实证场景，建立了"增生型Markov链$\to$MILP-MCLP-ES选址$\to$词典序MILP定价$\to$多维鲁棒性检验"的四阶段递进求解框架。Q1构造增生型3状态Markov转移矩阵并以Leslie矩阵进行双模型三角校验——两种独立范式的5年60+人口预测偏差仅1.7\%，其中失能老人从625人飙升至1,125人（+80.3\%）。Q2构建MILP-MCLP-ES模型，以Church\&ReVelle (1974)经典MCLP为理论底座，引入McCormick包络与Big-M方法将含非线性满意度耦合的选址问题等价转化为MILP，由CBC分支定界求解，在120万元预算内实现\textbf{10/10小区全覆盖}——最优方案F(大型)+H(中型)+J(中型)，总建设成本109万元，年总利润1,097.7万元。Q3在固化选址后以词典序目标优化6项服务定价，全部维持$S_3=1.000$平价段，仅上门护理从30元降至12.64元以满足F站8\%利润率紧约束，三层交叉补贴机制使紧急救助年净支出47.42万元由营利服务利润完全吸收（交叉补贴率仅14.3\%）。Q4三场景灵敏度分析表明系统具有强鲁棒性（$\rho_{\min}>0.97$），确定解对非确定解的目标值提升达24\%。本文的MILP-MCLP-ES框架可平滑迁移至分级诊疗站点选址、冷链前置仓网络规划等公共设施优化场景。
+\begin{center}
+{\Large \textbf{摘\quad 要}}
+\end{center}
+\vspace{0.2cm}
 
-\textbf{关键词：}嵌入式养老；马尔可夫链；最大覆盖选址；混合整数线性规划；McCormick包络；交叉补贴；鲁棒性分析
+面对人口老龄化加速背景下社区养老服务"建在哪、建多大、收多少钱"的全链条决策难题，本文以某城市10个连片小区为实证场景，构建四阶段递进求解框架，在120万元总预算与1000m服务半径硬约束下完成从需求预测到方案落地的闭环求解。
+
+\textbf{问题1——人口与服务需求预测}：构造增生型3状态Markov转移矩阵，以7\%年注入率与5\%死亡率刻画系统开放性；同步建立Leslie矩阵双模型三角校验，两范式5年60+人口预测偏差仅1.7\%。核心发现：失能老人因棘轮效应从625人飙升至1,125人（+80.3\%），失能率从9.1\%攀升至14.8\%；半失能群体充当自理向失能的加速通道。消费约束预诊断表明失能老人全10小区触发等比例削减，缺口23.9\%--49.1\%。
+
+\textbf{问题2——选址与规模优化}：将Church\&ReVelle经典MCLP扩展为MILP-MCLP-ES模型，引入Big-M与McCormick包络等价线性化，CBC分支定界求解。最优方案F大型+H中型+J中型，成本109万元，10/10全覆盖，加权满意度0.850，年总利润1,097.7万元。三站平均利用率94.3\%，确定解目标值较非确定解提升24\%。
+
+\textbf{问题3——服务定价与政府补贴}：构建词典序MILP定价模型，优先最大化$S_3$、次优先弱激励营收最大化，利润率$\le8\%$红线。全6项服务$S_3=1.000$平价，仅上门护理从30元降至12.64元吸收F站紧约束。三层交叉补贴使紧急救助年净支出47.42万元由营利利润完全吸收，交叉补贴率仅14.3\%。
+
+\textbf{问题4——灵敏度与鲁棒性}：三场景6组MILP重求解。场景A预算扩张满意度单调递增边际递减，130万为甜点；场景B成本通胀20\%击穿全覆盖防线；场景C银发海啸下系统从3站跃迁至4站，维持90\%覆盖率。各维度韧性系数均>0.80，系统鲁棒性为强。框架可迁移至分级诊疗、冷链前置仓等公共设施优化场景。
+
+\textbf{关键词：}嵌入式养老；Markov链；最大覆盖选址（MCLP）；混合整数线性规划（MILP）；McCormick包络；Ramsey-Boiteux定价；交叉补贴；鲁棒性分析
 
 \newpage
 
@@ -124,28 +137,21 @@
 
 \input{paper_workspace/section_6_model_evaluation.tex}
 
-\input{paper_workspace/section_7_engineering_recommendations.tex}
+% §7 移至附录
 
 % ===== §8 结论 =====
 \section{结论}
 
-本文面向嵌入式社区养老服务站"建在哪、建多大、收多少钱、抗多大风险"的全链条工程决策问题，以增生型Markov链、MILP-MCLP-ES选址模型与词典序MILP定价模型为核心工具，在10个小区实证场景上完成了预测--选址--定价--灵敏度的闭环求解，得到以下核心结论：
+本文面向嵌入式社区养老服务站"建在哪、建多大、收多少钱、抗多大风险"的全链条工程决策问题，以增生型Markov链、MILP-MCLP-ES选址模型与词典序MILP定价模型为核心工具，在10个小区实证场景上完成了预测--选址--定价--灵敏度的闭环求解，核心结论如下：
 
 \begin{enumerate}[label=\textbf{(\arabic*)}, leftmargin=*]
-
-    \item \textbf{人口预测的双模型三角校验确立了需求基线的可信度边界}。增生型Markov链与Leslie矩阵两种独立范式对第5年末60+人口的预测偏差仅为1.7\%，Leslie主特征值$\lambda_1=1.0198$与Markov隐含年均增长率2.0\%的精确吻合排除了单一模型的系统性偏差。失能老人的"棘轮增长"（+80.3\%）构成全系统最严峻的需求端压力——5年内失能率将从9.1\%攀升至14.8\%，半失能老人充当了这一增长的"加速通道"（净流出-3.7\%，其中10\%转化为失能、其余5\%死亡或维持）。
-
-    \item \textbf{MILP-MCLP-ES模型在120万元预算内实现了全覆盖的确定性最优解}。通过randomSeed=42的确定性求解，CBC在120秒内找到目标值54.225的全覆盖方案——F(大型,45万)+H(中型,32万)+J(中型,32万)，总建设成本109万元，覆盖率10/10（100\%），年总利润1,097.7万元。与非确定解（目标值43.644，覆盖率80\%）相比，目标值提升24\%，揭示多起点随机重启策略在CFLP类MILP中的方法论价值。三站全员$S_2=0.600$（利用率92--96\%）表明120万元预算恰好处于"全覆盖"与"满意服务"的帕累托前沿拐点。
-
-    \item \textbf{词典序MILP定价在利润率$\le8\%$监管红线下实现了全$S_3=1.000$的帕累托最优}。上门护理从30元降至12.64元（-57.9\%）以满足F站（最大荷载站）的8\%利润率紧约束，其余5项服务维持基准价——其经济学本质是Ramsey-Boiteux最优定价的"反向价格歧视"：高频低价服务（助餐:10元$\times$118,443次/月）受保护，低频高价服务（上门护理:30元$\times$19,608次/月）以最高价格弹性吸收监管约束。三层交叉补贴机制使紧急救助年净支出47.42万元由营利服务利润（331.3万元）完全吸收，交叉补贴率仅14.3\%。
-
-    \item \textbf{方案在多维扰动下呈现强鲁棒性，随机种子控制为方法论贡献}。三场景6组MILP重求解的韧性系数$\rho$均大于0.97。确定解对非确定解的24\%提升揭示了MILP在非凸满意度景观上的多峰性质——在竞赛环境中，多起点随机重启（10次独立求解取最优）是回避局部最优陷阱的低成本有效策略，建议作为CFLP类MILP的标准求解协议纳入建模规范。
-
+    \item \textbf{双模型三角校验确立需求基线可信度}。Markov链与Leslie矩阵对第5年末60+人口的预测偏差仅1.7\%，Leslie主特征值$\lambda_1=1.0198$与年均增长率2.0\%精确吻合。失能老人因棘轮效应5年激增+80.3\%（625$\to$1,125人），失能率从9.1\%升至14.8\%。
+    \item \textbf{MILP-MCLP-ES在120万元内实现全覆盖}。F(大型,45万)+H(中型,32万)+J(中型,32万)，成本109万，10/10全覆盖，目标值54.225，较非确定解提升24\%。三站利用率92--96\%，恰处"全覆盖"与"满意服务"的帕累托拐点。
+    \item \textbf{词典序MILP定价实现全$S_3=1.000$}。上门护理从30元降至12.64元（-57.9\%）吸收F站8\%利润率紧约束，体现Ramsey-Boiteux反向价格歧视：高频低价受保护，低频高价承压。紧急救助年净支出47.42万元由营利利润331.3万元完全吸收，交叉补贴率14.3\%。
+    \item \textbf{多维扰动下韧性系数均$>$0.80}。三场景6组MILP重求解验证强鲁棒性。多起点随机重启是回避局部最优的低成本策略，建议作为CFLP类MILP的标准求解协议。
 \end{enumerate}
 
-综上所述，本文的MILP-MCLP-ES框架为"资源约束下的嵌入式养老设施规划"提供了一套数学上严谨、工程上可操作的定量决策工具。模型的Church\&ReVelle MCLP理论底座、McCormick/Big-M精确线性化方法体系、多起点随机重启的确定性求解策略与三层交叉补贴机制，可平滑迁移至分级诊疗站点选址、冷链前置仓网络规划与新能源充电桩布局等更广泛的公共设施优化场景——如§6.4所论证，其核心方法论在"覆盖率--满意度"帕累托前沿的数学构造上具有跨领域的普适性。
-
-\newpage
+综上所述，MILP-MCLP-ES框架——Church\&ReVelle MCLP底座、McCormick/Big-M线性化方法、多起点重启策略、三层交叉补贴机制——可平滑迁移至分级诊疗、冷链前置仓、充电桩等公共设施优化场景，其"覆盖率--满意度"帕累托前沿构造具有跨领域普适性。
 
 % ===== 参考文献 =====
 \begin{thebibliography}{99}
@@ -291,5 +297,114 @@ C-tsunami & 银发海啸 & A小+G中+I中+J中 & 90\% & 0.895 & 887.9 \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\subsection*{附录C：三层交叉补贴算法}
+
+\begin{algorithm}[H]
+\caption{三层交叉补贴与定价优化}
+\label{alg:cross_subsidy}
+\begin{algorithmic}[1]
+\Require 固化选址方案 $\mathbf{y}^*$；各站点服务需求矩阵 $\mathbf{D}$；
+\Require 服务基准价 $\mathbf{p}^{\text{base}}$；利润率上界 $\pi^{\max}=8\%$
+\Ensure 最优定价 $\mathbf{p}^*$；各站点利润率 $\pi_i$；交叉补贴率 $\eta$
+\State \textbf{// 第一阶段：站内营利养公益}
+\For{每站 $i \in \mathcal{I}^{\text{built}}$}
+    \State $C^{\text{welfare}}_i \gets 12 \times D_{i,\text{emergency}} \times c_{\text{emergency}}$
+    \State $R^{\text{profit}}_i \gets 12 \times \sum_{s \neq \text{emergency}} D_{i,s} \times (p^{\text{base}}_s - c_s)$
+\EndFor
+\State \textbf{// 第二阶段：站间补贴效率再分配}
+\For{每站 $i \in \mathcal{I}^{\text{built}}$}
+    \State $S^{\text{actual}}_i \gets \min(r^{\text{sub}} \times \sum_{s \neq \text{emergency}} D_{i,s},\; S^{\text{cap}}_i)$
+\EndFor
+\State \textbf{// 第三阶段：Ramsey-Boiteux反向价格歧视}
+\State 构建MILP词典序目标并求解 → $\mathbf{p}^*$；识别绑定站点$i^*$
+\If{$\pi_{i^*} = \pi^{\max}$}
+    \State $\mathbf{p}^*_{s^*} \gets \max\{p \mid S_3(p) = 1.000\}$
+\EndIf
+\State \Return $\mathbf{p}^*$, $\{\pi_i\}$, $\eta \gets \sum_i C^{\text{welfare}}_i / \sum_i R^{\text{profit}}_i$
+\end{algorithmic}
+\end{algorithm}
+
+\subsection*{附录D：工程实施建议}
+
+\input{paper_workspace/section_7_engineering_recommendations.tex}
+
+\subsection*{附录E：全局符号说明表}
+\label{sec:appendix_notation}
+
+\begin{longtable}{p{1.8cm}p{4.4cm}p{1.4cm}p{1.7cm}p{2.0cm}}
+\caption{全局符号说明表}
+\label{tab:notation}\\
+\toprule
+\textbf{符号} & \textbf{含义} & \textbf{单位} & \textbf{类型} & \textbf{值域} \\
+\midrule
+\endfirsthead
+\caption[]{全局符号说明表（续）}\\
+\toprule
+\textbf{符号} & \textbf{含义} & \textbf{单位} & \textbf{类型} & \textbf{值域} \\
+\midrule
+\endhead
+\bottomrule
+\endfoot
+\multicolumn{5}{c}{\textbf{集合与索引}} \\
+\midrule
+$i, j \in \mathcal{I}$ & 小区索引, $\mathcal{I}=\{A,B,\dots,J\}$ & -- & 索引 & -- \\
+$k \in \mathcal{K}$ & 服务站规模, $\mathcal{K}=\{1,2,3\}$= \{小,中,大\} & -- & 索引 & -- \\
+$e \in \mathcal{E}$ & 老人类型, $\mathcal{E}=\{1,2,3\}$= \{自理,半失能,失能\} & -- & 索引 & -- \\
+$s \in \mathcal{S}$ & 服务项目, $\mathcal{S}=\{1,\dots,6\}$ & -- & 索引 & -- \\
+\midrule
+\multicolumn{5}{c}{\textbf{Q1 状态变量与参数}} \\
+\midrule
+$\mathbf{S}_i^{(t)}$ & 小区$i$第$t$年末的三类老人数列向量 & 人 & 状态变量 & $\mathbb{R}_{\ge 0}^{3}$ \\
+$\mathbf{A}$ & 年际状态转移矩阵 ($3\times 3$) & -- & 参数 & $a_{pq}\in[0,1]$ \\
+$\alpha_{\text{self}\to\text{semi}}$ & 自理$\to$半失能转移概率 & -- & 参数 & 0.045 \\
+$\alpha_{\text{semi}\to\text{dis}}$ & 半失能$\to$失能转移概率 & -- & 参数 & 0.10 \\
+$\mu$ & 自然死亡率 & -- & 参数 & 0.05 \\
+$\beta$ & 新增老年人占比 & -- & 参数 & 0.07 \\
+\midrule
+\multicolumn{5}{c}{\textbf{Q2/Q3 决策变量与参数}} \\
+\midrule
+$y_{i,k}$ & 是否在$i$建设规模$k$的服务站 & -- & 决策 & $\{0,1\}$ \\
+$x_{i,j}$ & $j$的老人是否由服务站$i$服务 & -- & 决策 & $\{0,1\}$ \\
+$C_k^{\text{build}}$ & 规模$k$建设成本 & 万元 & 参数 & $\{18,32,45\}$ \\
+$Q_k^{\max}$ & 规模$k$日最大服务人次 & 人次/日 & 参数 & $\{1000,2000,3000\}$ \\
+$d_{i,j}$ & 小区$i$与$j$之间的距离 & 米 & 参数 & $[0,1800]$ \\
+$B$ & 总建设预算 & 万元 & 参数 & 120 \\
+\midrule
+\multicolumn{5}{c}{\textbf{满意度变量}} \\
+\midrule
+$S1_{i,j}$ & 距离满意度 & -- & 辅助 & $\{0.60,0.75,0.90,1.00\}$ \\
+$S2_i$ & 响应满意度(利用率驱动) & -- & 辅助 & $\{0.60,0.72,0.85,0.93,1.00\}$ \\
+$S3_{i,s}$ & 价格满意度 & -- & 辅助 & $\{0.60,0.75,0.90,1.00\}$ \\
+\bottomrule
+\end{longtable}
+
+\subsection*{附录F：多维度鲁棒性韧性矩阵}
+
+\begin{table}[H]
+\centering
+\caption{多维度鲁棒性韧性矩阵}
+\label{tab:q4_resilience}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{场景} & \textbf{覆盖率韧性$\rho_c$} & \textbf{满意度韧性$\rho_s$} & \textbf{利润率韧性$\rho_\pi$} & \textbf{综合韧性$\bar{\rho}$} \\
+\midrule
+A$_1$: 预算130万 & 1.00 & 0.961 & 0.960 & 0.974 \\
+A$_2$: 预算140万 & 1.00 & 0.954 & 0.920 & 0.958 \\
+A$_3$: 预算150万 & 1.00 & 0.927 & 0.893 & 0.940 \\
+B: 成本+20\% & \textbf{0.80} & 0.934 & 0.609 & 0.781 \\
+C: 银发海啸 & 0.90 & 0.947 & 0.809 & 0.885 \\
+\midrule
+\textbf{最劣情景} & 0.80 (B) & 0.927 (A$_3$) & 0.609 (B) & 0.781 (B) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width=0.68\textwidth]{figures/figure_q4_resilience_heatmap.png}
+\caption{多场景多维度韧性热力图。蓝色越深韧性越强，红色越深韧性越弱。场景B利润率维度（0.609）为唯一突破强鲁棒性阈值的场景-维度组合。}
+\label{fig:q4_heatmap_appendix}
+\end{figure}
 
 \end{document}

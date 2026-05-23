@@ -612,51 +612,52 @@ profit_vals = [
     scenario_c['total_profit'],
 ]
 
-fig, axes = plt.subplots(3, 1, figsize=(12, 18))
-fig.patch.set_facecolor('white')
+# ---- 三张独立图，分别输出 ----
 
-def style_academic_ax(ax, title, ylabel, ylim_bottom, ylim_top):
-    ax.set_title(title, fontsize=18, fontweight='bold', pad=20, color='#2C3E50')
-    ax.set_ylabel(ylabel, fontsize=14, color='#34495E')
+def make_single_fig(ax, scenario_labels, values, bar_colors, fmt, ylabel, title, ylim_bottom, ylim_top, hline_y=None):
+    bars = ax.bar(scenario_labels, values, color=bar_colors, edgecolor='white', lw=1.5, width=0.55)
+    for bar, val in zip(bars, values):
+        ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + (ylim_top-ylim_bottom)*0.015,
+                fmt.format(val), ha='center', fontsize=13, fontweight='bold', color='#2C3E50')
+    if hline_y is not None:
+        ax.axhline(y=hline_y, color='#BDC3C7', linestyle='--', lw=1.0, alpha=0.6)
+    ax.set_title(title, fontsize=16, fontweight='bold', pad=16, color='#2C3E50')
+    ax.set_ylabel(ylabel, fontsize=13, color='#34495E')
     ax.set_ylim(ylim_bottom, ylim_top)
-    ax.tick_params(axis='x', labelsize=13, colors='#2C3E50')
-    ax.tick_params(axis='y', labelsize=12, colors='#7F8C8D')
+    ax.tick_params(axis='x', labelsize=11, colors='#2C3E50')
+    ax.tick_params(axis='y', labelsize=10, colors='#7F8C8D')
     for spine in ['top', 'right', 'left', 'bottom']:
         ax.spines[spine].set_visible(False)
     ax.tick_params(left=False, bottom=False)
 
-# ---- Panel A: 覆盖率 ----
-ax = axes[0]
-bars = ax.bar(scenarios_labels, coverage_vals, color=bar_colors, edgecolor='white', lw=2.0, width=0.65)
-for bar, val in zip(bars, coverage_vals):
-    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 2.0,
-            f'{val:.0f}%', ha='center', fontsize=15, fontweight='bold', color='#2C3E50')
-ax.axhline(y=80, color='#BDC3C7', linestyle='--', lw=1.0, alpha=0.6)
-ax.axhline(y=100, color='#BDC3C7', linestyle='-', lw=0.5, alpha=0.3)
-style_academic_ax(ax, '(a) 覆盖率', '覆盖率 (%)', 55, 118)
+# Panel A: 覆盖率
+fig_a, ax_a = plt.subplots(figsize=(10, 6))
+fig_a.patch.set_facecolor('white')
+make_single_fig(ax_a, scenarios_labels, coverage_vals, bar_colors,
+                '{:.0f}%', '覆盖率 (%)', '(a) 覆盖率', 55, 118, hline_y=100)
+fig_a.tight_layout(pad=2.0)
+fig_a.savefig("figures/figure_q4_coverage.png", dpi=300, facecolor='white', bbox_inches='tight')
+plt.close(fig_a)
 
-# ---- Panel B: 满意度 ----
-ax = axes[1]
-bars = ax.bar(scenarios_labels, sat_vals, color=bar_colors, edgecolor='white', lw=2.0, width=0.65)
-for bar, val in zip(bars, sat_vals):
-    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 0.006,
-            f'{val:.3f}', ha='center', fontsize=15, fontweight='bold', color='#2C3E50')
-style_academic_ax(ax, '(b) 加权满意度', '平均综合满意度 $S$', 0.76, 1.03)
+# Panel B: 满意度
+fig_b, ax_b = plt.subplots(figsize=(10, 6))
+fig_b.patch.set_facecolor('white')
+make_single_fig(ax_b, scenarios_labels, sat_vals, bar_colors,
+                '{:.3f}', '平均综合满意度 $S$', '(b) 加权满意度', 0.76, 1.03)
+fig_b.tight_layout(pad=2.0)
+fig_b.savefig("figures/figure_q4_satisfaction.png", dpi=300, facecolor='white', bbox_inches='tight')
+plt.close(fig_b)
 
-# ---- Panel C: 利润 ----
-ax = axes[2]
-bars = ax.bar(scenarios_labels, profit_vals, color=bar_colors, edgecolor='white', lw=2.0, width=0.65)
-for bar, val in zip(bars, profit_vals):
-    ax.text(bar.get_x() + bar.get_width()/2, bar.get_height() + 8,
-            f'{val:.0f}', ha='center', fontsize=15, fontweight='bold', color='#2C3E50')
-style_academic_ax(ax, '(c) 年利润', '年总利润 (万元)', 500, max(profit_vals)*1.22)
+# Panel C: 利润
+fig_c, ax_c = plt.subplots(figsize=(10, 6))
+fig_c.patch.set_facecolor('white')
+make_single_fig(ax_c, scenarios_labels, profit_vals, bar_colors,
+                '{:.0f}', '年总利润 (万元)', '(c) 年利润', 500, max(profit_vals)*1.22)
+fig_c.tight_layout(pad=2.0)
+fig_c.savefig("figures/figure_q4_profit.png", dpi=300, facecolor='white', bbox_inches='tight')
+plt.close(fig_c)
 
-fig.suptitle('灵敏度分析 —— 三场景六方案多维对比', fontsize=20, fontweight='bold', y=0.995, color='#2C3E50')
-
-plt.tight_layout(pad=4.0)
-fig.savefig("figures/figure_q4_sensitivity_bars.png", dpi=300, facecolor='white', bbox_inches='tight')
-plt.close()
-print("\n[图表] figures/figure_q4_sensitivity_bars.png 已保存 (v4 seaborn-muted 学术风格)")
+print("\n[图表] figures/figure_q4_coverage.png, figure_q4_satisfaction.png, figure_q4_profit.png 已保存 (3张独立图)")
 
 print("\n" + "=" * 70)
 print("Q4 灵敏度分析完成")

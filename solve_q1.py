@@ -187,7 +187,7 @@ def plot_population_trends(communities, S_history):
     for idx in range(n_comm, len(axes_flat)):
         axes_flat[idx].set_visible(False)
 
-    fig.suptitle("图1: 各小区老年人口状态演化 (马尔可夫递推预测, t=0~5年)",
+    fig.suptitle("各小区老年人口状态演化 (马尔可夫递推预测, t=0~5年)",
                  fontsize=15, fontweight="bold", y=0.995)
     plt.tight_layout()
     fig.savefig("figures/figure_q1_population_trend.png", dpi=300)
@@ -201,7 +201,7 @@ def plot_population_trends(communities, S_history):
     for e in range(3):
         ax.plot(years, total_by_type[:, e], marker='s', linewidth=2.5,
                 color=colors[e], label=labels[e], markersize=7)
-    ax.set_title("图2: 全区域三类老人总量演化趋势", fontsize=14, fontweight="bold")
+    ax.set_title("全区域三类老人总量演化趋势", fontsize=14, fontweight="bold")
     ax.set_xlabel("年份")
     ax.set_ylabel("总人数")
     ax.legend(fontsize=11)
@@ -240,7 +240,7 @@ def plot_population_trends(communities, S_history):
         ax.set_ylabel("老年人口数")
         ax.legend(fontsize=9)
 
-    fig.suptitle("图3: 基年 vs 第5年末 各小区老年人口结构对比",
+    fig.suptitle("基年 vs 第5年末 各小区老年人口结构对比",
                  fontsize=14, fontweight="bold")
     plt.tight_layout()
     fig.savefig("figures/figure_q1_stacked_bar.png", dpi=300)
