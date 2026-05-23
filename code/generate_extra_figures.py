@@ -47,7 +47,7 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-Path("figures").mkdir(exist_ok=True)
+Path("../figures").mkdir(exist_ok=True)
 
 # ============================================================
 # 学术配色
@@ -125,7 +125,7 @@ def fig_q3_pricing():
 
     fig.suptitle('Q3 服务定价优化结果', fontsize=17, fontweight='bold', y=1.01)
     plt.tight_layout()
-    fig.savefig('figures/figure_q3_pricing_comparison.png', dpi=300, facecolor='white')
+    fig.savefig('../figures/figure_q3_pricing_comparison.png', dpi=300, facecolor='white')
     plt.close()
     print('[图表] figure_q3_pricing_comparison.png 已保存')
 
@@ -189,7 +189,7 @@ def fig_q3_profit_breakdown():
 
     fig.suptitle('Q3 各站点运营财务指标', fontsize=17, fontweight='bold', y=1.01)
     plt.tight_layout()
-    fig.savefig('figures/figure_q3_profit_breakdown.png', dpi=300, facecolor='white')
+    fig.savefig('../figures/figure_q3_profit_breakdown.png', dpi=300, facecolor='white')
     plt.close()
     print('[图表] figure_q3_profit_breakdown.png 已保存')
 
@@ -345,7 +345,7 @@ def fig_q3_cross_subsidy():
             color='#999', rotation=90)
 
     plt.tight_layout(pad=0.5)
-    fig.savefig('figures/figure_q3_cross_subsidy.png', dpi=300, facecolor='white')
+    fig.savefig('../figures/figure_q3_cross_subsidy.png', dpi=300, facecolor='white')
     plt.close()
     print('[图表] figure_q3_cross_subsidy.png 已保存')
 
@@ -403,7 +403,7 @@ def fig_q4_resilience_radar():
                  fontsize=16, fontweight='bold', pad=24, color='#2C3E50')
 
     plt.tight_layout()
-    fig.savefig('figures/figure_q4_resilience_radar.png', dpi=300, facecolor='white')
+    fig.savefig('../figures/figure_q4_resilience_radar.png', dpi=300, facecolor='white')
     plt.close()
     print('[图表] figure_q4_resilience_radar.png 已保存')
 
@@ -465,7 +465,7 @@ def fig_q2_station_load():
 
     fig.suptitle('Q2 各站点服务负荷与运营效率', fontsize=17, fontweight='bold', y=1.01)
     plt.tight_layout()
-    fig.savefig('figures/figure_q2_station_load.png', dpi=300, facecolor='white')
+    fig.savefig('../figures/figure_q2_station_load.png', dpi=300, facecolor='white')
     plt.close()
     print('[图表] figure_q2_station_load.png 已保存')
 
@@ -499,7 +499,7 @@ def fig_q4_resilience_heatmap():
     ax.set_ylabel('场景', fontsize=13)
 
     plt.tight_layout()
-    fig.savefig('figures/figure_q4_resilience_heatmap.png', dpi=300, facecolor='white')
+    fig.savefig('../figures/figure_q4_resilience_heatmap.png', dpi=300, facecolor='white')
     plt.close()
     print('[图表] figure_q4_resilience_heatmap.png 已保存')
 

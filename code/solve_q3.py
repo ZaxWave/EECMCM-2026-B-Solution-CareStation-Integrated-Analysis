@@ -18,11 +18,11 @@ warnings.filterwarnings('ignore')
 # ============================================================
 # §1 数据挂载：固化 Q2 选址-分配结果
 # ============================================================
-df_pop = pd.read_csv("results/q1_final_population.csv")
+df_pop = pd.read_csv("../results/q1_final_population.csv")
 communities = df_pop["小区"].tolist()
 n_comm = len(communities)
 
-df_demand = pd.read_csv("results/q1_service_demand.csv")
+df_demand = pd.read_csv("../results/q1_service_demand.csv")
 services = list(df_demand["服务项目"].unique())
 n_svc = len(services)
 
@@ -327,11 +327,11 @@ for st_name in ['F', 'H', 'J']:
 
 # ---- 导出 ----
 df_pricing = pd.DataFrame(results)
-df_pricing.to_csv("results/q3_optimal_pricing.csv", index=False, encoding="utf-8-sig")
+df_pricing.to_csv("../results/q3_optimal_pricing.csv", index=False, encoding="utf-8-sig")
 print(f"\n[导出] results/q3_optimal_pricing.csv")
 
 df_profit = pd.DataFrame(profit_rows)
-df_profit.to_csv("results/q3_station_profit.csv", index=False, encoding="utf-8-sig")
+df_profit.to_csv("../results/q3_station_profit.csv", index=False, encoding="utf-8-sig")
 print(f"[导出] results/q3_station_profit.csv")
 
 # ---- 交叉补贴分析 ----

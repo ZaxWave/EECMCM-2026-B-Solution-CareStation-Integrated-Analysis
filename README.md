@@ -9,14 +9,15 @@
 EECMCM2026/
 ├── main.tex                          # 论文主文件 (xelatex 编译)
 ├── main.pdf                          # 编译后论文
-├── fix_abstract.py                   # 摘要修正脚本
-├── solve_q1.py                       # 问题1：需求预测 (灰色GM(1,1) + 多元回归)
-├── solve_q2.py                       # 问题2：选址优化 (MCLP + 网络流)
-├── solve_q3.py                       # 问题3：定价策略 (双层规划)
-├── solve_q4_sensitivity.py           # 问题4：鲁棒性与灵敏度分析
-├── generate_extra_figures.py         # 论文图表生成
-├── generate_q4_combined.py           # 问题4组合图生成
-├── data/                             # B题赛题数据 (本文 + 5个附件)
+├── code/                              # 求解器与脚本
+│   ├── solve_q1.py                   # 问题1：需求预测 (Markov + Leslie)
+│   ├── solve_q2.py                   # 问题2：选址优化 (MILP-MCLP-ES)
+│   ├── solve_q3.py                   # 问题3：定价策略 (词典序MILP)
+│   ├── solve_q4_sensitivity.py       # 问题4：灵敏度与鲁棒性分析
+│   ├── generate_extra_figures.py     # 补充学术图表
+│   ├── generate_q4_combined.py       # Q4 组合图生成
+│   └── fix_abstract.py               # 摘要篇幅压缩脚本
+├── data/                              # B题赛题数据 (本文 + 5个附件)
 │   ├── B题：嵌入式社区养老服务站的建设与优化问题.pdf
 │   ├── 附件1：小区基础数据.xlsx
 │   ├── 附件2：服务需求数据.xlsx
@@ -65,10 +66,10 @@ xelatex main.tex
 pip install numpy scipy pandas matplotlib openpyxl
 
 # 按顺序运行
-python solve_q1.py
-python solve_q2.py
-python solve_q3.py
-python solve_q4_sensitivity.py
+python code/solve_q1.py
+python code/solve_q2.py
+python code/solve_q3.py
+python code/solve_q4_sensitivity.py
 ```
 
 ## 模型方法概览

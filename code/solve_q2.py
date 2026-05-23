@@ -122,16 +122,16 @@ def solve_with_fallback(prob, time_limit=180, gap_rel=0.01, verbose=True):
                 print(f"  [Solver] Mosek不可用 ({str(e)[:80]})")
                 print(f"  [Solver] 当前仅CBC可用.")
 
-BASE = os.path.join(os.path.dirname(__file__), "data")
+BASE = os.path.join(os.path.dirname(__file__), "..", "data")
 
 # ============================================================
 # §1 数据加载
 # ============================================================
-df_pop = pd.read_csv("results/q1_final_population.csv")
+df_pop = pd.read_csv("../results/q1_final_population.csv")
 communities = df_pop["小区"].tolist()
 n_comm = len(communities)
 
-df_demand = pd.read_csv("results/q1_service_demand.csv")
+df_demand = pd.read_csv("../results/q1_service_demand.csv")
 
 df_dist = pd.read_excel(os.path.join(BASE, "附件4：小区间距离矩阵.xlsx"),
                         sheet_name="小区间距离矩阵", skiprows=1)
@@ -382,7 +382,7 @@ for st in built:
 # ============================================================
 # 始终从 JSON 加载 Q2 已知最优解, 防止 CBC 非确定性导致图文不一致
 import json as _json_plot
-with open("results/q2_baseline.json", "r", encoding="utf-8") as _fp:
+with open("../results/q2_baseline.json", "r", encoding="utf-8") as _fp:
     _q2p = _json_plot.load(_fp)
 
 # 用硬编码解覆盖 solver 输出, 保证 figure 100% 与论文一致
@@ -422,7 +422,7 @@ pos = nx.kamada_kawai_layout(G, weight='weight', scale=3.0)
 # 加载 Q1 人口数据, 以暖色气泡大小映射各小区老年人口密度
 import matplotlib.colors as mcolors
 try:
-    df_pop_heat = pd.read_csv("results/q1_final_population.csv")
+    df_pop_heat = pd.read_csv("../results/q1_final_population.csv")
     pop_map = dict(zip(df_pop_heat["小区"], df_pop_heat["60岁以上总人口"]))
 except:
     pop_map = {c: 500 for c in communities}  # fallback
@@ -537,7 +537,7 @@ ax.set_xlim(-4.5, 4.5)
 ax.set_ylim(-4.0, 4.0)
 
 plt.tight_layout(pad=1.0)
-fig.savefig("figures/figure_q2_network.png", dpi=300, facecolor='white', bbox_inches='tight')
+fig.savefig("../figures/figure_q2_network.png", dpi=300, facecolor='white', bbox_inches='tight')
 plt.close()
 print("[图表] figure_q2_network.png 已保存 (v4 超大尺寸高可读性)")
 
@@ -550,7 +550,7 @@ df_out = pd.DataFrame([{
     '年营收(万元)': 0,
     '年补贴(万元)': 0,
 } for s in _q2p['stations']])
-df_out.to_csv("results/q2_optimal_location.csv", index=False, encoding="utf-8-sig")
+df_out.to_csv("../results/q2_optimal_location.csv", index=False, encoding="utf-8-sig")
 print("[导出] results/q2_optimal_location.csv (硬编码最优解)")
 
 # JSON 已硬编码, 此处仅验证

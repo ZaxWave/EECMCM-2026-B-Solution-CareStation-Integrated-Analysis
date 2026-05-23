@@ -30,7 +30,7 @@ plt.rcParams.update({
     "ytick.labelsize": 12,
 })
 
-Path("figures").mkdir(exist_ok=True)
+Path("../figures").mkdir(exist_ok=True)
 
 # ---- 数据: 与 solve_q4_sensitivity.py §7 完全一致 ----
 scenarios_labels = ['基线\n120万', 'A-130\n预算放松', 'A-140\n预算放松', 'A-150\n预算放松',
@@ -84,6 +84,6 @@ draw_panel(axes[2], scenarios_labels, profit_vals, bar_colors,
 
 fig.suptitle('三场景灵敏度分析全景对比', fontsize=17, fontweight='bold', y=1.01, color='#2C3E50')
 fig.tight_layout(pad=2.5)
-fig.savefig("figures/figure_q4_sensitivity_combined.png", dpi=300, facecolor='white', bbox_inches='tight')
+fig.savefig("../figures/figure_q4_sensitivity_combined.png", dpi=300, facecolor='white', bbox_inches='tight')
 plt.close(fig)
 print("[OK] figures/figure_q4_sensitivity_combined.png 已保存 (三面板横排)")

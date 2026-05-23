@@ -41,10 +41,10 @@ plt.rcParams.update({
     "axes.spines.right": False,
 })
 
-Path("results").mkdir(exist_ok=True)
-Path("figures").mkdir(exist_ok=True)
+Path("../results").mkdir(exist_ok=True)
+Path("../figures").mkdir(exist_ok=True)
 
-BASE = os.path.join(os.path.dirname(__file__), "data")
+BASE = os.path.join(os.path.dirname(__file__), "..", "data")
 
 # ============================================================
 # §1 数据挂载: 读取附件1 初始状态向量 S_i^(0)
@@ -193,7 +193,7 @@ def plot_population_trends(communities, S_history):
     fig.suptitle("各小区老年人口状态演化 (马尔可夫递推预测, t=0~5年)",
                  fontsize=15, fontweight="bold", y=0.995)
     plt.tight_layout()
-    fig.savefig("figures/figure_q1_population_trend.png", dpi=300)
+    fig.savefig("../figures/figure_q1_population_trend.png", dpi=300)
     plt.close()
     print("[图表] figure_q1_population_trend.png 已保存")
 
@@ -221,7 +221,7 @@ def plot_population_trends(communities, S_history):
                     arrowprops=dict(arrowstyle="->", color=colors[e], lw=0.8))
 
     plt.tight_layout()
-    fig.savefig("figures/figure_q1_total_trend.png", dpi=300)
+    fig.savefig("../figures/figure_q1_total_trend.png", dpi=300)
     plt.close()
     print("[图表] figure_q1_total_trend.png 已保存")
 
@@ -246,7 +246,7 @@ def plot_population_trends(communities, S_history):
     fig.suptitle("基年 vs 第5年末 各小区老年人口结构对比",
                  fontsize=14, fontweight="bold")
     plt.tight_layout()
-    fig.savefig("figures/figure_q1_stacked_bar.png", dpi=300)
+    fig.savefig("../figures/figure_q1_stacked_bar.png", dpi=300)
     plt.close()
     print("[图表] figure_q1_stacked_bar.png 已保存")
 
@@ -267,7 +267,7 @@ def export_results(communities, S_final, theoretical, actual, income,
         "60plus_total": S_final.sum(axis=1).astype(int),
         "人均月收入": income.astype(int),
     })
-    df_pop_export.to_csv("results/q1_final_population.csv", index=False, encoding="utf-8-sig")
+    df_pop_export.to_csv("../results/q1_final_population.csv", index=False, encoding="utf-8-sig")
     print(f"[导出] results/q1_final_population.csv — 第5年末各小区人口 ({len(communities)}行)")
 
     # ---- 6b: q1_service_demand.csv (Q2/Q3需求输入) ----
@@ -286,7 +286,7 @@ def export_results(communities, S_final, theoretical, actual, income,
                     "单次成本(元)": cost[s],
                 })
     df_demand_export = pd.DataFrame(rows)
-    df_demand_export.to_csv("results/q1_service_demand.csv", index=False, encoding="utf-8-sig")
+    df_demand_export.to_csv("../results/q1_service_demand.csv", index=False, encoding="utf-8-sig")
     print(f"[导出] results/q1_service_demand.csv — 服务需求明细 ({len(rows)}行)")
 
     # ---- 6c: q1_summary_stats.csv ----
@@ -317,7 +317,7 @@ def export_results(communities, S_final, theoretical, actual, income,
         ],
     }
     df_summary = pd.DataFrame(summary)
-    df_summary.to_csv("results/q1_summary_stats.csv", index=False, encoding="utf-8-sig")
+    df_summary.to_csv("../results/q1_summary_stats.csv", index=False, encoding="utf-8-sig")
     print(f"[导出] results/q1_summary_stats.csv — 汇总统计")
 
 

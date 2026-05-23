@@ -56,18 +56,18 @@ plt.rcParams.update({
 })
 print(f"[Font] Registered: {FONT_NAME}")
 
-BASE = os.path.join(os.path.dirname(__file__), "data")
-os.makedirs("results", exist_ok=True)
-os.makedirs("figures", exist_ok=True)
+BASE = os.path.join(os.path.dirname(__file__), "..", "data")
+os.makedirs("../results", exist_ok=True)
+os.makedirs("../figures", exist_ok=True)
 
 # ============================================================
 # §1 数据加载
 # ============================================================
-df_pop_orig = pd.read_csv("results/q1_final_population.csv")
+df_pop_orig = pd.read_csv("../results/q1_final_population.csv")
 communities = df_pop_orig["小区"].tolist()
 n_comm = len(communities)
 
-df_demand_orig = pd.read_csv("results/q1_service_demand.csv")
+df_demand_orig = pd.read_csv("../results/q1_service_demand.csv")
 
 df_dist = pd.read_excel(os.path.join(BASE, "附件4：小区间距离矩阵.xlsx"),
                         sheet_name="小区间距离矩阵", skiprows=1)
@@ -382,7 +382,7 @@ print("=" * 70)
 # ---- 基线: 直接从 Q2 JSON 加载, 保证与论文正文 54.225 完全一致 ----
 import json as _json
 print("\n[基线] 加载 Q2 确定性最优解 (F大型+H中型+J中型, Obj=54.225)...")
-with open("results/q2_baseline.json", "r", encoding="utf-8") as _f:
+with open("../results/q2_baseline.json", "r", encoding="utf-8") as _f:
     _q2 = _json.load(_f)
 baseline = {
     'status': 'Optimal (from Q2 JSON)',
@@ -544,7 +544,7 @@ summary_rows.append({
 })
 
 df_summary = pd.DataFrame(summary_rows)
-df_summary.to_csv("results/q4_sensitivity_summary.csv", index=False, encoding="utf-8-sig")
+df_summary.to_csv("../results/q4_sensitivity_summary.csv", index=False, encoding="utf-8-sig")
 print("\n[导出] results/q4_sensitivity_summary.csv")
 
 # LaTeX 表格
@@ -639,7 +639,7 @@ fig_a.patch.set_facecolor('white')
 make_single_fig(ax_a, scenarios_labels, coverage_vals, bar_colors,
                 '{:.0f}%', '覆盖率 (%)', '(a) 覆盖率', 55, 118, hline_y=100)
 fig_a.tight_layout(pad=2.0)
-fig_a.savefig("figures/figure_q4_coverage.png", dpi=300, facecolor='white', bbox_inches='tight')
+fig_a.savefig("../figures/figure_q4_coverage.png", dpi=300, facecolor='white', bbox_inches='tight')
 plt.close(fig_a)
 
 # Panel B: 满意度
@@ -648,7 +648,7 @@ fig_b.patch.set_facecolor('white')
 make_single_fig(ax_b, scenarios_labels, sat_vals, bar_colors,
                 '{:.3f}', '平均综合满意度 $S$', '(b) 加权满意度', 0.76, 1.03)
 fig_b.tight_layout(pad=2.0)
-fig_b.savefig("figures/figure_q4_satisfaction.png", dpi=300, facecolor='white', bbox_inches='tight')
+fig_b.savefig("../figures/figure_q4_satisfaction.png", dpi=300, facecolor='white', bbox_inches='tight')
 plt.close(fig_b)
 
 # Panel C: 利润
@@ -657,7 +657,7 @@ fig_c.patch.set_facecolor('white')
 make_single_fig(ax_c, scenarios_labels, profit_vals, bar_colors,
                 '{:.0f}', '年总利润 (万元)', '(c) 年利润', 500, max(profit_vals)*1.22)
 fig_c.tight_layout(pad=2.0)
-fig_c.savefig("figures/figure_q4_profit.png", dpi=300, facecolor='white', bbox_inches='tight')
+fig_c.savefig("../figures/figure_q4_profit.png", dpi=300, facecolor='white', bbox_inches='tight')
 plt.close(fig_c)
 
 print("\n[图表] figures/figure_q4_coverage.png, figure_q4_satisfaction.png, figure_q4_profit.png 已保存 (3张独立图)")

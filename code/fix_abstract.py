@@ -1,5 +1,5 @@
 """Fix abstract in main.tex — trim to fit 1 page."""
-with open('main.tex', 'r', encoding='utf-8') as f:
+with open('../main.tex', 'r', encoding='utf-8') as f:
     content = f.read()
 
 # Find second vspace{0.2cm} occurrence (the one before actual abstract text)
@@ -54,6 +54,6 @@ print(f"Saved: {len(old_body) - len(new_body)} chars")
 assert len(new_body) < len(old_body), "New body is NOT shorter!"
 
 content = content[:text_start] + new_body + content[text_end:]
-with open('main.tex', 'w', encoding='utf-8') as f:
+with open('../main.tex', 'w', encoding='utf-8') as f:
     f.write(content)
 print("Abstract replaced successfully.")
