@@ -405,31 +405,36 @@ print(f"  目标={baseline['objective']:.4f}, 覆盖={baseline['coverage']}/{bas
 print(f"  站点: {[(s['loc'], ['小','中','大'][s['size']]) for s in baseline['built_stations']]}")
 print(f"  [确认] 与 Q2 正文数据完全一致 (F大型+H中型+J中型, 109万元, 10/10覆盖)")
 
-# ---- 场景A: 预算放松 ----
+# ---- 场景A: 人口结构冲击 (题目4.1第一条: 增长率/转移概率同时变化) ----
 print("\n" + "-"*50)
-print("[场景A] 预算上限逐步放松 (120→130→140→150万)")
+print("[场景A] 人口结构冲击: 增长率7%→8%, α_sm 4.5%→5.5%, α_md 10%→9.5%")
 print("-"*50)
-scenario_a = {120: baseline}  # 复用基线
-for budget in [130, 140, 150]:
-    print(f"\n  Budget={budget}万...")
-    result = solve_q2_milp(df_demand_orig, budget,
+A_pop = build_transition_matrix(mu=BASELINE['mu'], alpha_sm=0.055,
+                                alpha_md=0.095, beta=0.08)
+S_final_pop, income_pop, comm_list = predict_population_from_original(A_pop, T=5)
+total_pop = S_final_pop.sum()
+disabled_pop = S_final_pop[:, 2].sum()
+disabled_pct_pop = disabled_pop / total_pop * 100
+print(f"  人口预测: 60+总人口={total_pop:.0f} (基线7577), "
+      f"失能={disabled_pop:.0f} (基线1125), 失能率={disabled_pct_pop:.1f}% (基线14.8%)")
+df_demand_pop, _, _, _ = compute_demand_from_final(
+    S_final_pop, income_pop, BASELINE['consumption_caps'], comm_list)
+scenario_a = solve_q2_milp(df_demand_pop, BASELINE['budget'],
                            BASELINE['build_cost'], BASELINE['daily_op'],
                            BASELINE['daily_cap'], time_limit=90)
-    scenario_a[budget] = result
-    print(f"  覆盖={result['coverage']}/{result['n_communities']}, "
-          f"目标={result['objective']:.2f}, 利润={result['total_profit']:.1f}万/年, "
-          f"平均S={result['avg_satisfaction']:.3f}")
-    print(f"  站点: {[(s['loc'], ['小','中','大'][s['size']]) for s in result['built_stations']]}")
-    print(f"  未覆盖: {result['uncovered']}, 已用预算={result['budget_used']}万")
+print(f"  覆盖={scenario_a['coverage']}/{scenario_a['n_communities']}, "
+      f"目标={scenario_a['objective']:.2f}, 利润={scenario_a['total_profit']:.1f}万/年, "
+      f"平均S={scenario_a['avg_satisfaction']:.3f}")
+print(f"  站点: {[(s['loc'], ['小','中','大'][s['size']]) for s in scenario_a['built_stations']]}")
+print(f"  未覆盖: {scenario_a['uncovered']}, 已用预算={scenario_a['budget_used']}万")
 
-# ---- 场景B: 成本膨胀 ----
+# ---- 场景B: 日固定管理成本+20% (题目4.1第二条: 仅运营成本上浮) ----
 print("\n" + "-"*50)
-print("[场景B] 供给侧冲击: 建设+运营成本统一上浮20%")
+print("[场景B] 成本冲击: 日固定管理成本+20% (建设成本不变)")
 print("-"*50)
-inflated_build_cost = BASELINE['build_cost'] * 1.20
-inflated_daily_op = BASELINE['daily_op'] * 1.20
+inflated_daily_op_only = BASELINE['daily_op'] * 1.20
 scenario_b = solve_q2_milp(df_demand_orig, BASELINE['budget'],
-                           inflated_build_cost, inflated_daily_op,
+                           BASELINE['build_cost'], inflated_daily_op_only,
                            BASELINE['daily_cap'], time_limit=90)
 print(f"  覆盖={scenario_b['coverage']}/{scenario_b['n_communities']}, "
       f"目标={scenario_b['objective']:.2f}, 利润={scenario_b['total_profit']:.1f}万/年, "
@@ -437,21 +442,11 @@ print(f"  覆盖={scenario_b['coverage']}/{scenario_b['n_communities']}, "
 print(f"  站点: {[(s['loc'], ['小','中','大'][s['size']]) for s in scenario_b['built_stations']]}")
 print(f"  未覆盖: {scenario_b['uncovered']}, 已用预算={scenario_b['budget_used']}万")
 
-# ---- 场景C: 银发海啸 ----
+# ---- 场景C: 预算调整至140万 (题目4.1第三条) ----
 print("\n" + "-"*50)
-print("[场景C] 需求侧冲击: 半失能转移4.5%→5.5%, 失能转移10%→12%")
+print("[场景C] 预算调整: 总建设预算120→140万")
 print("-"*50)
-A_tsunami = build_transition_matrix(mu=BASELINE['mu'], alpha_sm=0.055,
-                                    alpha_md=0.12, beta=BASELINE['beta'])
-S_final_tsunami, income_tsunami, comm_list = predict_population_from_original(A_tsunami, T=5)
-total_tsunami = S_final_tsunami.sum()
-disabled_tsunami = S_final_tsunami[:, 2].sum()
-print(f"  银发海啸预测: 60+总人口={total_tsunami:.0f}, 失能={disabled_tsunami:.0f} "
-      f"(基线: 7577/1125)")
-# 重算需求
-df_demand_tsunami, _, _, _ = compute_demand_from_final(
-    S_final_tsunami, income_tsunami, BASELINE['consumption_caps'], comm_list)
-scenario_c = solve_q2_milp(df_demand_tsunami, BASELINE['budget'],
+scenario_c = solve_q2_milp(df_demand_orig, 140.0,
                            BASELINE['build_cost'], BASELINE['daily_op'],
                            BASELINE['daily_cap'], time_limit=90)
 print(f"  覆盖={scenario_c['coverage']}/{scenario_c['n_communities']}, "
@@ -487,31 +482,29 @@ summary_rows.append({
     '未覆盖小区': ','.join(baseline['uncovered']) if baseline['uncovered'] else '无',
 })
 
-# 场景A 各行
-for budget in [120, 130, 140, 150]:
-    r = scenario_a[budget]
-    summary_rows.append({
-        '场景': f'A: 预算放松至{budget}万',
-        '预算(万元)': budget,
-        '成本系数': '1.00',
-        '60+人口': 7577,
-        '失能人口': 1125,
-        '失能占比(%)': 14.8,
-        '覆盖数': r['coverage'],
-        '覆盖率(%)': round(r['coverage']/r['n_communities']*100, 1),
-        '站点配置': '+'.join([f"{s['loc']}({['小','中','大'][s['size']]})" for s in r['built_stations']]),
-        '已用预算(万元)': r['budget_used'],
-        '目标值': round(r['objective'], 2),
-        '平均S': round(r['avg_satisfaction'], 3),
-        '年总利润(万元)': round(r['total_profit'], 1),
-        '未覆盖小区': ','.join(r['uncovered']) if r['uncovered'] else '无',
-    })
-
-# 场景B
+# 场景A: 人口结构冲击
 summary_rows.append({
-    '场景': 'B: 成本膨胀+20%',
+    '场景': 'A: 人口结构冲击 (r=8%,α_sm=5.5%,α_md=9.5%)',
     '预算(万元)': 120,
-    '成本系数': '1.20',
+    '成本系数': '1.00',
+    '60+人口': int(total_pop),
+    '失能人口': int(disabled_pop),
+    '失能占比(%)': round(disabled_pct_pop, 1),
+    '覆盖数': scenario_a['coverage'],
+    '覆盖率(%)': round(scenario_a['coverage']/scenario_a['n_communities']*100, 1),
+    '站点配置': '+'.join([f"{s['loc']}({['小','中','大'][s['size']]})" for s in scenario_a['built_stations']]),
+    '已用预算(万元)': scenario_a['budget_used'],
+    '目标值': round(scenario_a['objective'], 2),
+    '平均S': round(scenario_a['avg_satisfaction'], 3),
+    '年总利润(万元)': round(scenario_a['total_profit'], 1),
+    '未覆盖小区': ','.join(scenario_a['uncovered']) if scenario_a['uncovered'] else '无',
+})
+
+# 场景B: 运营成本+20%
+summary_rows.append({
+    '场景': 'B: 日固定管理成本+20%',
+    '预算(万元)': 120,
+    '成本系数': '1.20(op only)',
     '60+人口': 7577,
     '失能人口': 1125,
     '失能占比(%)': 14.8,
@@ -525,14 +518,14 @@ summary_rows.append({
     '未覆盖小区': ','.join(scenario_b['uncovered']) if scenario_b['uncovered'] else '无',
 })
 
-# 场景C
+# 场景C: 预算140万
 summary_rows.append({
-    '场景': 'C: 银发海啸加剧',
-    '预算(万元)': 120,
+    '场景': 'C: 预算调整至140万',
+    '预算(万元)': 140,
     '成本系数': '1.00',
-    '60+人口': int(total_tsunami),
-    '失能人口': int(disabled_tsunami),
-    '失能占比(%)': round(disabled_tsunami/total_tsunami*100, 1),
+    '60+人口': 7577,
+    '失能人口': 1125,
+    '失能占比(%)': 14.8,
     '覆盖数': scenario_c['coverage'],
     '覆盖率(%)': round(scenario_c['coverage']/scenario_c['n_communities']*100, 1),
     '站点配置': '+'.join([f"{s['loc']}({['小','中','大'][s['size']]})" for s in scenario_c['built_stations']]),
@@ -579,38 +572,31 @@ plt.rcParams.update({
     "font.sans-serif": [FONT_NAME, "Microsoft YaHei", "SimHei", "DejaVu Sans"],
     "axes.unicode_minus": False,
 })
-C_BASE    = '#2C3E50'
-C_BUDGET  = '#3498DB'
-C_SHOCK   = '#E74C3C'
-C_TSUNAMI = '#E67E22'
+NAVY   = '#1B2A4A'
+CYAN   = '#2E86AB'
+CORAL  = '#E85D75'
+TEAL   = '#0D7377'
 
-scenarios_labels = ['基线\n120万', 'A-130\n预算放松', 'A-140\n预算放松', 'A-150\n预算放松',
-                    'B-成本\n通胀+20%', 'C-银发\n海啸']
-bar_colors = [C_BASE, C_BUDGET, C_BUDGET, C_BUDGET, C_SHOCK, C_TSUNAMI]
+scenarios_labels = ['基线\n(原方案)', 'A-人口\n结构冲击', 'B-成本\n管理+20%', 'C-预算\n调整140万']
+bar_colors = [NAVY, CYAN, CORAL, TEAL]
 
 coverage_vals = [
     baseline['coverage']/baseline['n_communities']*100,
-    scenario_a[130]['coverage']/10*100,
-    scenario_a[140]['coverage']/10*100,
-    scenario_a[150]['coverage']/10*100,
+    scenario_a['coverage']/10*100,
     scenario_b['coverage']/10*100,
     scenario_c['coverage']/10*100,
 ]
 
 sat_vals = [
     baseline['avg_satisfaction'],
-    scenario_a[130]['avg_satisfaction'],
-    scenario_a[140]['avg_satisfaction'],
-    scenario_a[150]['avg_satisfaction'],
+    scenario_a['avg_satisfaction'],
     scenario_b['avg_satisfaction'],
     scenario_c['avg_satisfaction'],
 ]
 
 profit_vals = [
     baseline['total_profit'],
-    scenario_a[130]['total_profit'],
-    scenario_a[140]['total_profit'],
-    scenario_a[150]['total_profit'],
+    scenario_a['total_profit'],
     scenario_b['total_profit'],
     scenario_c['total_profit'],
 ]

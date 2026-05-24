@@ -1,0 +1,301 @@
+% ============================================================
+% 附录 — 完整代码 + 推导 + 补充数据表
+% 竞赛: 电工杯 B题 (2026)
+% ============================================================
+
+\newpage
+\appendix
+
+\section{主要算法伪代码}
+
+\subsection*{算法1：MILP-MCLP-ES 选址-规模优化}
+
+\begin{lstlisting}[language=Python, caption={MILP-MCLP-ES核心算法框架}, basicstyle=\scriptsize\ttfamily, numbers=left]
+# 输入: I(小区集), K(规模集), D(需求), d(距离矩阵), B(预算)
+# 输出: y*(选址-规模), x*(服务分配)
+
+# Step 1: 构建MILP模型
+prob = LpProblem("MCLP_ES", LpMaximize)
+
+# Step 2: 决策变量
+y[i,k] = Binary  # 小区i是否建规模k的站
+x[i,j] = Binary  # 小区i是否由站j服务
+s1[i,j] = Continuous  # S1距离满意度 (0.6-1.0)
+s2[i] = Continuous    # S2响应满意度 (0.6-1.0)
+
+# Step 3: Big-M线性化 S1 (4段)
+for each (i,j) with d[i,j] <= 1000:
+    sum(delta_s1[ell]) = x[i,j]
+    s1[i,j] = sum(val[ell] * delta_s1[ell])
+
+# Step 4: Big-M线性化 S2 (5段，基于利用率)
+for each i:
+    sum(delta_s2[ell]) = station_exists[i]
+    s2[i] = sum(val[ell] * delta_s2[ell])
+
+# Step 5: McCormick包络 (关键线性化)
+w[i,j] = s2[i] * x[i,j]  # 非线性乘积!
+# 替换为4条线性约束:
+w[i,j] <= x[i,j]
+w[i,j] <= s2[i]
+w[i,j] >= s2[i] - (1 - x[i,j])
+w[i,j] >= 0
+
+# Step 6: 目标与约束
+max sum(coverage * 5.0 + weighted_S * 0.5)
+s.t. budget <= 120万, capacity, single-sourcing, radius <= 1000m
+
+# Step 7: 求解 (三级求解器级联)
+solve_with_fallback(prob, time_limit=180)  # CBC -> Gurobi -> Mosek
+\end{lstlisting}
+
+\subsection*{算法2：S3价格满意度Big-M线性化 (Q3)}
+
+\begin{lstlisting}[language=Python, caption={定价优化S3线性化}, basicstyle=\scriptsize\ttfamily, numbers=left]
+# S3四段: 平价[0,1.0] / 微溢价(1.0,1.1] / 中溢价(1.1,1.2] / 高溢价(1.2,2.0]
+# 对应S3值: 1.00, 0.90, 0.75, 0.60
+
+for each service s (except emergency):
+    # 恰好选一段
+    sum(delta_s3[s,ell] for ell in 0..3) == 1
+
+    for ell in 0..3:
+        lo = base[s] * S3_lo[ell]
+        hi = base[s] * S3_hi[ell]
+        p[s] >= lo - M * (1 - delta_s3[s,ell])
+        p[s] <= hi + M * (1 - delta_s3[s,ell])
+
+    s3[s] = sum(S3_val[ell] * delta_s3[s,ell])
+
+# 词典序目标 (优先S3最大化, epsilon=1e-4营收弱激励)
+max sum(demand[s] * s3[s] * 0.5) + epsilon * sum(demand[s] * p[s])
+\end{lstlisting}
+
+\subsection*{算法3：三层交叉补贴决策逻辑 (Q3)}
+\label{alg:cross_subsidy}
+
+\begin{lstlisting}[language=Python, caption={三层交叉补贴算法}, basicstyle=\scriptsize\ttfamily, numbers=left]
+# 输入: stations, services, profits, subsidy_pool
+# 输出: 各站各服务交叉补贴流向矩阵
+
+# Layer 1: 站内营利服务补贴公益服务
+for each station:
+    surplus = sum(p_srv for p_srv in profitable_services)
+    deficit = sum(d_srv for d_srv in public_welfare)
+    if surplus >= deficit:
+        station_self_sufficient = True
+
+# Layer 2: 站间再分配（高利润站补贴低利润站）
+total_surplus = sum(station.profit for station in stations)
+total_deficit = sum(station.deficit for station in stations)
+cross_subsidy_ratio = total_deficit / total_surplus  # 全系统=14.3%
+
+# Layer 3: Ramsey-Boiteux反向价格歧视
+# 高价格弹性服务（助餐）维持基准价，低弹性服务（上门护理）降价
+for s in services:
+    if s.price_elasticity == max_elasticity:
+        p[s] = p_base[s]  # 保护高频刚需服务
+    elif s.profit_margin > regulator_cap:
+        p[s] *= (1 - adjustment)  # 降价至满足8%约束
+\end{lstlisting}
+
+\section{McCormick包络线性化推导}
+
+Q2 MILP模型中$S_2(i)\cdot x_{ij}$为连续变量$S_2(i)\in[0.6,1.0]$与二元变量$x_{ij}\in\{0,1\}$的乘积，构成双线性项。McCormick (1976) 提出了任意双线性项$w = u\cdot v$ ($u\in[u_L,u_U], v\in[v_L,v_U]$) 的凸包络线性化，由四组线性不等式构成其凸包络：
+
+\begin{equation}
+\begin{aligned}
+w &\ge u_L v + v_L u - u_L v_L \quad &\text{(下界1)} \\
+w &\ge u_U v + v_U u - u_U v_U \quad &\text{(下界2)} \\
+w &\le u_U v + v_L u - u_U v_L \quad &\text{(上界1)} \\
+w &\le u_L v + v_U u - u_L v_U \quad &\text{(上界2)}
+\end{aligned}
+\end{equation}
+
+对于本文特例$u=S_2(i)\in[0.6,1.0]$, $v=x_{ij}\in\{0,1\}$，代入边界值$u_L=0.6, u_U=1.0, v_L=0, v_U=1$，上述四约束简化为：
+
+\begin{equation}
+\boxed{
+\begin{aligned}
+w_{ij} &\le x_{ij} \\
+w_{ij} &\le S_2(i) \\
+w_{ij} &\ge S_2(i) - (1 - x_{ij}) \\
+w_{ij} &\ge 0
+\end{aligned}
+}
+\end{equation}
+
+\textbf{无误差等价性证明}：当$v=x_{ij}$为二元变量时，McCormick下界在整数可行域上收紧至真实乘积值。若$x_{ij}=1$，约束退化为$w_{ij}=S_2(i)$；若$x_{ij}=0$，约束退化为$w_{ij}=0$。因此该线性化是\textbf{精确的}，不引入近似误差——这是MILP-MCLP-ES模型保留全局最优性理论保证的关键。
+
+\section{Q1 马尔可夫人口预测完整代码}
+
+{\small 文件: \texttt{code/solve\_q1.py}（380行，含数据挂载+矩阵构造+递推预测+需求测算+可视化+CSV导出，完整可运行）}
+
+\lstinputlisting[language=Python, caption={solve\_q1.py — 增生型Markov链递推预测（完整代码）}, basicstyle=\scriptsize\ttfamily, numbers=left, numbersep=3pt, xleftmargin=12pt, frame=single]{../code/solve_q1.py}
+
+\section{Q2 MILP选址-规模优化核心代码}
+
+{\small 文件: \texttt{code/solve\_q2.py}（560行，含MILP建模+Big-M线性化+McCormick包络+三级求解器级联+网络可视化）}
+
+\lstinputlisting[language=Python, caption={solve\_q2.py — MILP-MCLP-ES选址优化（完整代码）}, basicstyle=\scriptsize\ttfamily, numbers=left, numbersep=3pt, xleftmargin=12pt, frame=single]{../code/solve_q2.py}
+
+\section{Q3 词典序MILP定价优化核心代码}
+
+{\small 文件: \texttt{code/solve\_q3.py}（360行，含Big-M S3线性化+利润率约束+三层交叉补贴核算）}
+
+\lstinputlisting[language=Python, caption={solve\_q3.py — 词典序定价与补贴优化（完整代码）}, basicstyle=\scriptsize\ttfamily, numbers=left, numbersep=3pt, xleftmargin=12pt, frame=single]{../code/solve_q3.py}
+
+\section{Q4 灵敏度分析与鲁棒性检验代码}
+
+{\small 文件: \texttt{code/solve\_q4\_sensitivity.py}（654行，含三场景参数扫描+Q1-Q2全链路重求解+韧性矩阵+可视化导出）}
+
+\lstinputlisting[language=Python, caption={solve\_q4\_sensitivity.py — 三场景灵敏度分析（完整代码）}, basicstyle=\scriptsize\ttfamily, numbers=left, numbersep=3pt, xleftmargin=12pt, frame=single]{../code/solve_q4_sensitivity.py}
+
+\section{可视化图表生成代码}
+
+\subsection*{总控脚本：regenerate\_all\_figures.py}
+
+{\small 文件: \texttt{code/regenerate\_all\_figures.py}（统一生成论文全部8张图表，含字体注册+配色方案+尺寸适配）}
+
+\lstinputlisting[language=Python, caption={regenerate\_all\_figures.py — 论文全部图表统一生成脚本}, basicstyle=\scriptsize\ttfamily, numbers=left, numbersep=3pt, xleftmargin=12pt, frame=single, firstline=1, lastline=80]{../code/regenerate_all_figures.py}
+
+\subsection*{韧性热力图与雷达图：generate\_extra\_figures.py (核心片段)}
+
+\begin{lstlisting}[language=Python, caption={generate\_extra\_figures.py — 韧性热力图与雷达图生成}, basicstyle=\scriptsize\ttfamily, numbers=left]
+# 热力图: 红(弱韧性 0.82) → 黄(中等 0.92) → 绿(强韧性 1.02)
+cmap = sns.diverging_palette(10, 130, s=85, l=50, center='light', as_cmap=True)
+im = ax.imshow(data, cmap=cmap, vmin=0.82, vmax=1.02, aspect='auto')
+for i in range(len(scenarios)):
+    for j in range(len(dims)):
+        color = 'white' if data[i,j] < 0.88 else NAVY
+        ax.text(j, i, f'{data[i,j]:.3f}', ha='center', va='center',
+                fontsize=12, fontweight='bold', color=color)
+
+# 雷达图: 三场景韧性系数多边形
+N = len(dims)
+angles = np.linspace(0, 2*np.pi, N, endpoint=False).tolist() + [0]
+for idx, (label, values) in enumerate(scenarios.items()):
+    vals = values + values[:1]
+    ax.fill(angles, vals, alpha=0.08, color=colors[idx])
+    ax.plot(angles, vals, 'o-', lw=2.2, color=colors[idx], label=label)
+ax.axhline(y=0.80, color=CORAL, ls='--', lw=1.2, alpha=0.6, label='强鲁棒性阈值0.80')
+\end{lstlisting}
+
+\section{数据预处理与验证代码}
+
+\subsection*{代码：附件数据加载与交叉校验（完整版）}
+
+\begin{lstlisting}[language=Python, caption={数据导入与一致性校验}, basicstyle=\scriptsize\ttfamily, numbers=left]
+# 读取5附件，9张工作表，210条记录
+df_pop = pd.read_excel('附件1.xlsx', sheet_name='人口数据')
+df_transfer = pd.read_excel('附件1.xlsx', sheet_name='转移概率')
+df_demand = pd.read_excel('附件2.xlsx', sheet_name='服务需求')
+df_revenue = pd.read_excel('附件2.xlsx', sheet_name='营收支出')
+df_consume = pd.read_excel('附件2.xlsx', sheet_name='消费上限')
+df_cost = pd.read_excel('附件3.xlsx', sheet_name='建设运营成本')
+df_dist = pd.read_excel('附件4.xlsx', sheet_name='距离矩阵', index_col=0)
+df_satisfy = pd.read_excel('附件5.xlsx', sheet_name='满意度规则')
+
+# 交叉校验: 三类老人数之和 = 60+总人口
+assert all(df_pop['自理'] + df_pop['半失能'] + df_pop['失能'] == df_pop['60+总人口'])
+
+# 距离矩阵对称性检验
+assert (df_dist.values == df_dist.values.T).all(), '距离矩阵不对称!'
+
+# 三角不等式检验 (保留<200m的轻微违反为道路迂回)
+violations = []
+for i in range(10):
+    for j in range(10):
+        for k in range(10):
+            detour = df_dist.iloc[i,j] + df_dist.iloc[j,k] - df_dist.iloc[i,k]
+            if detour < -200:
+                violations.append((i,j,k, -detour))
+print(f'三角不等式显著违反: {len(violations)}处 (阈值200m)')
+
+# 缺失值检验
+total_cells = sum(df.shape[0]*df.shape[1] for df in all_dfs)
+missing_cells = sum(df.isnull().sum().sum() for df in all_dfs)
+print(f'数据完整率: {(1-missing_cells/total_cells)*100:.1f}% ({total_cells}单元格)')
+\end{lstlisting}
+
+\subsection*{代码：距离矩阵可达性与覆盖度分析（完整版）}
+
+\begin{lstlisting}[language=Python, caption={空间可达性预分析}, basicstyle=\scriptsize\ttfamily, numbers=left]
+R_max = 1000  # 服务半径硬约束
+
+# 各小区可达邻居数
+reachable = (df_dist <= R_max).sum(axis=1) - 1  # 扣除自身
+print('各小区可达邻居数:', reachable.to_dict())
+# 输出: A:4, B:6, C:8, D:8, E:6, F:4, G:8, H:8, I:8, J:8
+
+# 90条边中70条<=1000m (77.8%)
+edges_total = 10 * 9
+edges_reachable = (df_dist.values <= R_max).sum() - 10
+print(f'可达边占比: {edges_reachable}/{edges_total} = {edges_reachable/edges_total*100:.1f}%')
+
+# 识别地理孤立小区 (可达邻居数最少)
+isolated = reachable[reachable <= reachable.quantile(0.25)].index.tolist()
+print(f'地理孤立小区 (下四分位): {isolated}')  # A, F
+
+# 空间距离矩阵热力图
+fig, ax = plt.subplots(figsize=(10, 8))
+sns.heatmap(df_dist, annot=True, fmt='.0f', cmap='YlOrRd',
+            xticklabels=communities, yticklabels=communities, linewidths=0.5, ax=ax)
+ax.set_title('10小区距离矩阵 ($D_{ij}$, m)', fontsize=14, fontweight='bold')
+fig.savefig('../figures/figure_distance_heatmap.png', dpi=300)
+\end{lstlisting}
+
+\section{补充数据表}
+
+\begin{table}[H]
+\centering
+\caption{三场景四维度韧性系数 $\rho = 1 - |\Delta X / X_{\text{baseline}}|$}
+\label{tab:q4_resilience}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{场景} & \textbf{覆盖率韧性} & \textbf{满意度韧性} & \textbf{利润率韧性} & \textbf{综合韧性} \\
+\midrule
+A: 人口结构冲击 & 0.900 & 0.967 & 0.849 & 0.903 \\
+B: 管理成本+20\% & 1.000 & 0.991 & 0.929 & 0.999 \\
+C: 预算调整至140万 & 1.000 & 0.953 & 0.920 & 0.996 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{Markov链与Leslie矩阵双模型预测对比}
+\label{tab:leslie_check}
+\begin{tabular}{lcccc}
+\hline
+\textbf{指标} & \textbf{Markov链} & \textbf{Leslie矩阵} & \textbf{偏差} & \textbf{偏差率(\%)} \\
+\hline
+第5年末60+总人口 & 7,577 & 7,709 & 132 & 1.7 \\
+第5年末自理 & 4,981 & 5,063 & 82 & 1.6 \\
+第5年末半失能 & 1,471 & 1,502 & 31 & 2.1 \\
+第5年末失能 & 1,125 & 1,144 & 19 & 1.7 \\
+年均增长率(\%) & 2.00 & 2.04 & 0.04 & 2.0 \\
+主特征值$\lambda_1$ & -- & 1.0198 & -- & -- \\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[H]
+\centering
+\caption{三场景灵敏度分析全量对比}
+\label{tab:sensitivity_full}
+\footnotesize
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{场景} & \textbf{预算(万)} & \textbf{选址方案} & \textbf{覆盖率(\%)} & \textbf{加权$S$} & \textbf{年利润(万)} \\
+\midrule
+基线 (Q2) & 120 & F(大)+H(中)+J(中) & 100 & 0.850 & 1~097.7 \\
+A: 人口冲击$^*$ & 120 & B(小)+D(大)+G(小)+I(中) & 90.0 & 0.878 & 931.7 \\
+B: 成本+20\%$^\dagger$ & 120 & A(中)+F(中)+G(大) & 100 & 0.842 & 1~019.9 \\
+C: 预算140万 & 140 & B(大)+D(大)+E(大) & 100 & 0.889 & 1~010.0 \\
+\bottomrule
+\end{tabular}
+
+\vspace{4pt}
+{\footnotesize $^*\beta=8\%$, $\alpha_{\text{S}\to\text{M}}=5.5\%$, $\alpha_{\text{M}\to\text{D}}=9.5\%$. $^\dagger$日固定管理成本上浮20\%.}
+\end{table}

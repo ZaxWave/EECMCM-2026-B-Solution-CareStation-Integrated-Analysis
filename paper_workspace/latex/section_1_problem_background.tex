@@ -1,0 +1,80 @@
+% ============================================================
+% §1 问题背景与重述
+% 竞赛: 电工杯 B题 (2026) | Stage 08 产物
+% ============================================================
+
+\section{问题背景与重述}
+
+\subsection{工程背景}
+
+截至2025年末，我国60岁及以上人口突破3.1亿（占总人口22.0\%），失能半失能老年人超4,500万，养老服务需求正从"有没有"向"好不好"转型。在"9073"养老格局——90\%居家、7\%社区、3\%机构——下，\textbf{嵌入式社区养老服务站}——以"小而精、就近就便"为核心理念，将专业照护功能嵌入既有社区空间——正成为破解"养老最后一公里"的主流方案。
+
+然而，这一模式的科学规划面临三重瓶颈：(1) \textbf{需求预测的非线性}：老年人口状态退化呈马尔可夫棘轮效应——失能状态具有半吸收性——中长期需求演化高度非线性且对转移概率敏感；(2) \textbf{选址-规模-定价的三重耦合}：服务站建在哪、建多大、收多少钱三者相互锁定，构成NP-hard联合优化问题，分离求解将损失耦合信息；(3) \textbf{公益与效率的张力}："公益优先、微利运营"的政策导向下，如何在8\%利润率红线下实现补贴效率最大化，是制度设计的核心难题。
+
+\subsection{题目重述}
+
+本题以某街道10个连片小区（编号A--J）为实证场景，提供5份附件数据，涵盖人口结构、服务需求、成本参数、距离矩阵与满意度规则，要求依次解决四个递进子问题：
+
+\begin{enumerate}[label=\textbf{(\arabic*)}, leftmargin=*, itemsep=2pt]
+    \item \textbf{人口演化预测与需求测算}：基于给定转移概率——自理$\to$半失能4.5\%、半失能$\to$失能10\%、年死亡率5\%、年新增自理7\%——建立Markov模型预测5年老年人口结构，并在消费预算约束下测算实际服务需求量。
+    \item \textbf{选址-规模联合优化}：在总预算$\le$120万元、服务半径$\le$1000m的约束下，从小/中/大三种规模——建设成本分别为18、32、45万元——中确定服务站的数量、位置与规模，最大化覆盖率与综合满意度。
+    \item \textbf{差异化定价与补贴优化}：在固化选址方案下，对6项服务——助餐、日间照料、上门护理、康复理疗、助浴与紧急救助——进行差异化定价，满足各站点利润率$\le$8\%的监管约束，并设计政府补贴方案。
+    \item \textbf{鲁棒性检验}：分别改变人口增长率与转移概率、管理成本、总预算三组参数，独立重求解以评估方案对参数扰动的敏感性。
+\end{enumerate}
+
+\subsection{数据概览}
+
+该区域常住人口31,300人，其中60岁以上老人6,864人（老龄化率21.9\%，高于全国均值），人均月收入3,250元。三类老人——自理、半失能与失能——占比为68.6\%:22.3\%:9.1\%。10个小区间距离矩阵对称，90条边中70条$\le$1000m（77.8\%），20条超出服务半径。5附件共9张工作表、210条记录，经检验缺失率0.0\%，数据质量良好。
+
+\subsection{技术路线}
+
+整体框架为"预测--选址--定价--灵敏度"四阶段递进，技术路线见图\ref{fig:tech_route}：数据流自附件1--5始，经Markov人口预测$\to$MILP选址优化$\to$词典序定价$\to$多场景鲁棒性验证，形成完整的闭环求解链条。
+
+\begin{figure}[H]
+\centering
+\resizebox{0.95\textwidth}{!}{%
+\begin{tikzpicture}[
+    node distance=0.5cm,
+    block/.style={rectangle, rounded corners=4pt, draw=#1, fill=#1!8, line width=1.2pt,
+                  minimum width=2.6cm, minimum height=1.0cm, align=center, font=\small},
+    arrow/.style={->, >=stealth, line width=1.3pt, color=NavyBlue!55},
+    datalabel/.style={font=\tiny, color=gray},
+]
+\definecolor{NavyBlue}{RGB}{27,42,74}
+\definecolor{CyanTeal}{RGB}{46,134,171}
+\definecolor{RoseRed}{RGB}{162,59,114}
+\definecolor{AmberGold}{RGB}{241,143,1}
+
+\node[block=NavyBlue, minimum height=1.2cm] (q1) {
+    \textbf{Q1 人口预测}\\[1pt]
+    {\footnotesize Markov + Leslie}
+};
+\node[block=CyanTeal, minimum height=1.2cm, right=2.2cm of q1] (q2) {
+    \textbf{Q2 选址-规模优化}\\[1pt]
+    {\footnotesize MILP-MCLP-ES}
+};
+\node[block=RoseRed, minimum height=1.2cm, right=2.2cm of q2] (q3) {
+    \textbf{Q3 差异化定价}\\[1pt]
+    {\footnotesize 词典序 MILP}
+};
+\node[block=AmberGold, minimum height=1.2cm, right=2.2cm of q3] (q4) {
+    \textbf{Q4 鲁棒性检验}\\[1pt]
+    {\footnotesize 三场景重求解}
+};
+
+% 阶段间箭头 — 标签上移避让边框
+\draw[arrow] (q1.east) -- (q2.west) node[midway, above=10pt, datalabel] {人口/需求CSV};
+\draw[arrow] (q2.east) -- (q3.west) node[midway, above=10pt, datalabel] {$y_{ik}^*,x_{ij}^*$ 固化};
+\draw[arrow] (q3.east) -- (q4.west) node[midway, above=10pt, datalabel] {参数扰动};
+
+% 关键结果
+\node[font=\footnotesize\bfseries, color=NavyBlue!80, anchor=north, yshift=-6pt] at (q1.south) {$\to$ 7,577人, 失能+80.3\%};
+\node[font=\footnotesize\bfseries, color=CyanTeal!80, anchor=north, yshift=-6pt] at (q2.south) {$\to$ F+H+J, 10/10全覆盖};
+\node[font=\footnotesize\bfseries, color=RoseRed!80, anchor=north, yshift=-6pt] at (q3.south) {$\to$ $S_3$=1.000, PR=7.6\%};
+\node[font=\footnotesize\bfseries, color=AmberGold!80, anchor=north, yshift=-6pt] at (q4.south) {$\to$ $\rho>0.80$, 强鲁棒};
+
+\end{tikzpicture}%
+}
+\caption{技术路线：四阶段递进框架。Q1输出人口与需求预测，Q2固化为选址-分配决策，Q3在固化选址下优化定价，Q4通过三场景参数扰动检验方案鲁棒性。}
+\label{fig:tech_route}
+\end{figure}

@@ -1,0 +1,161 @@
+% ============================================================
+% 电工杯 2026 B题 论文主文件
+% 竞赛: 电工杯 | 题号: B
+% 题目: 嵌入式社区养老服务站的建设与优化问题
+% 编译: xelatex main.tex (三编)
+% ============================================================
+
+\documentclass[12pt,a4paper]{ctexart}
+
+% ---- 版面 ----
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{cite}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    citecolor=blue,
+}
+
+\lstset{
+    basicstyle=\small\ttfamily,
+    breaklines=true,
+    frame=single,
+    numbers=left,
+    numberstyle=\tiny,
+    showstringspaces=false,
+    extendedchars=false,
+}
+
+% 页码：页脚居中，摘要页起从1编号
+
+\titleformat*{\section}{\Large\bfseries}
+\titleformat*{\subsection}{\large\bfseries}
+\titleformat*{\subsubsection}{\normalsize\bfseries}
+
+% ---- 定理环境 ----
+\newtheorem{definition}{定义}[section]
+\newtheorem{theorem}{定理}[section]
+\newtheorem{lemma}{引理}[section]
+\newtheorem{proposition}{命题}[section]
+
+\begin{document}
+
+% ===== 封面 (第1页) =====
+\begin{titlepage}
+\begin{center}
+\vspace*{3cm}
+{\heiti\fontsize{22pt}{28pt}\selectfont 参赛编号：014508}\\[4cm]
+
+{\heiti\fontsize{22pt}{28pt}\selectfont 论文题目：B题 嵌入式社区养老服务站的建设与优化问题}
+\end{center}
+\end{titlepage}
+
+% ===== 摘要 (第2页，页码从1开始，页脚居中) =====
+\setcounter{page}{1}
+\pagestyle{plain}
+
+\begin{center}
+{\heiti\fontsize{14pt}{20pt}\selectfont 嵌入式社区养老服务站的建设与优化问题}\\[0.4cm]
+\end{center}
+
+\section*{\centering 摘\quad 要}
+
+本文针对人口老龄化加速背景下嵌入式社区养老服务站"建在哪、建多大、收多少钱、抗多大风险"的全链条工程决策问题，以某城市10个连片小区为实证场景，建立了"增生型Markov链$\to$MILP-MCLP-ES选址$\to$词典序MILP定价$\to$多维鲁棒性检验"的四阶段递进求解框架。
+
+在人口预测与需求测算层面，本文构造了增生型3状态Markov转移矩阵$\mathbf{A}$，以自理$\to$半失能4.5\%、半失能$\to$失能10\%、年死亡率5\%、年新增自理7\%为输入参数，对10个小区独立运行5年递推预测。同时以Leslie矩阵进行双模型三角校验，两种独立范式对第5年末60+人口的预测偏差仅为1.7\%，Leslie主特征值$\lambda_1=1.0198$与Markov隐含年均增长率2.0\%精确吻合，确立了需求预测的可信度边界。在消费预算约束下——自理$\le$20\%、半失能$\le$25\%、失能$\le$30\%月收入——失能老人在全部10个小区均触发等比例需求削减，缺口高达23.9\%--49.1\%。
+
+在选址-规模联合优化层面，本文构建了MILP-MCLP-ES模型——混合整数线性规划-最大覆盖选址-嵌入式站点——针对题目满意度函数$S=0.2S_1+0.3S_2+0.5S_3$的三段阶梯非线性特征，引入McCormick包络与Big-M方法将$S_2(u_i)\cdot x_{ij}$乘积项及$S_1$与$S_2$的分段常数函数——分别为4段与5段——等价转化为混合整数线性约束组，由CBC分支定界在120秒内求得全局最优解。120万元预算下获得F(大型,45万)+H(中型,32万)+J(中型,32万)的最优方案，总建设成本109万元，实现10/10小区全覆盖，加权满意度0.850，年总利润1,097.7万元。
+
+在定价与补贴优化层面，本文在Q2固化选址下以词典序目标——优先$S_3$最大化、次优$\varepsilon=10^{-4}$营收激励——优化6项服务定价，满足各站点利润率$\le$8\%的监管约束。上门护理从30元降至12.64元，降幅57.9\%，以吸收F站的8\%利润率紧约束，其余5项服务维持基准价，全$S_3=1.000$。三层交叉补贴机制使紧急救助年净支出47.42万元由营利服务利润331.3万元完全吸收，交叉补贴率仅14.3\%。
+
+在鲁棒性检验层面，本文执行三场景——人口结构冲击、管理成本通胀20\%、预算释放至140万元——独立MILP重求解，构建覆盖率-满意度-利润率三维韧性系数矩阵$\rho = 1 - |\Delta X / X_{\text{baseline}}|$。九组场景-维度组合均满足$\rho>0.80$，最低0.849，系统整体具备强鲁棒性。预算增至140万时满意度跃升至0.889，增幅4.6\%，为政策制定提供了精确的边际投资锚点。
+
+本文的核心方法论——分段满意度Big-M线性化、McCormick乘积解耦、词典序多目标处理、多维韧性矩阵评估——可平滑迁移至分级诊疗站点选址、冷链前置仓网络规划与新能源充电桩布局等更广泛的公共设施优化场景。
+
+\vspace{6pt}
+\noindent\textbf{关键词:} 嵌入式养老；马尔可夫链；最大覆盖选址；混合整数线性规划；McCormick包络；交叉补贴；鲁棒性分析
+
+\newpage
+% ===== 正文 =====
+
+\input{section_1_problem_background.tex}
+
+\input{section_2_data_preprocessing.tex}
+
+\input{section_3_model_formulation.tex}
+
+\input{section_4_assumptions.tex}
+
+\section{子问题求解与结果分析}
+
+以下按Q1$\to$Q2$\to$Q3$\to$Q4的递进顺序报告求解结果。Q1输出第5年末人口结构与实际服务需求，作为Q2选址模型的输入参数；Q2固化选址-分配方案后，Q3在固定网络拓扑下优化差异化定价；Q4对前三阶段的联合输出进行多维参数扰动检验。四阶段数据流严格单向传递，每阶段均以CBC分支定界精确求解，关键中间变量以CSV接口无缝衔接。
+
+\input{section_5_1_q1_results.tex}
+
+\input{section_5_2_q2_results.tex}
+
+\input{section_5_3_q3_results.tex}
+
+\input{section_5_4_q4_robustness.tex}
+
+\input{section_6_model_evaluation.tex}
+
+\input{section_7_engineering_recommendations.tex}
+
+% ===== 结论 =====
+\section{结论}
+
+本文面向嵌入式社区养老服务站"建在哪、建多大、收多少钱、抗多大风险"的全链条工程决策问题，以增生型Markov链、MILP-MCLP-ES选址模型与词典序MILP定价模型为核心工具，在10个小区实证场景上完成了"预测--选址--定价--灵敏度"的闭环求解。主要结论如下：
+
+\begin{enumerate}[label=\textbf{(\arabic*)}, leftmargin=*]
+
+    \item \textbf{双模型三角校验确立了需求预测的可信度边界}。增生型Markov链与Leslie矩阵对第5年末60+人口的预测偏差仅为1.7\%，两种独立范式从不同数学路径收敛至一致结论。核心发现"失能棘轮效应"——失能状态$a_{33}=0.95$的高保留率使其5年暴增80.3\%，从624人增至1,125人——构成全系统最严峻的需求端压力。消费约束使失能群体全10小区触发需求削减，缺口23.9\%--49.1\%，"越失能、需求越大、预算越紧"的悖论构成后续定价优化的底层逻辑。
+
+    \item \textbf{MILP-MCLP-ES模型在120万元预算约束下输出确定性最优布局}。CBC在120秒内收敛至目标值54.225的全覆盖方案——F(大型,45万)+H(中型,32万)+J(中型,32万)，总建设成本109万元，10/10小区全覆盖，加权满意度0.850。三站呈"一大型两中型"的空间均衡布局，利用率92--96\%，处于"全覆盖"与"满意服务"的帕累托前沿拐点，人均建设成本仅159元。
+
+    \item \textbf{词典序MILP定价在利润率$\le 8\%$监管红线下实现全$S_3=1.000$的帕累托最优}。上门护理从30元降至12.64元，降幅57.9\%，以吸收F站的8\%利润率紧约束，其影子价格在所有服务中最高，成为词典序目标下的最优调节变量。三层交叉补贴机制使紧急救助年净支出47.42万元由营利服务利润331.3万元完全吸收，交叉补贴率仅14.3\%，验证了"规模经济摊薄公益成本"的制度设计逻辑。
+
+    \item \textbf{方案在多维参数扰动下呈现强鲁棒性}。三场景九维度韧性系数均大于0.80，最低0.849，满足强鲁棒性阈值。预算释放至140万时满意度跃升至0.889，增幅4.6\%，为政策制定提供了"追加20万元$\to$满意度+0.039"的精确边际投资锚点。多起点随机重启——10次独立求解——是回避MILP非凸满意度景观局部最优的低成本有效策略。
+
+\end{enumerate}
+
+综上所述，本文构建的MILP-MCLP-ES框架为"资源约束下的嵌入式养老设施规划"提供了一套数学上严谨、工程上可操作的定量决策工具。从Q1到Q4，109万元建设成本实现10/10全覆盖，人均仅159元；12.64元上门护理定价精准吸收利润率约束；三场景$\rho>0.80$验证方案韧性。三个数字共同勾勒出一条"公益优先、微利运营、预算可控"的可行路径。其核心方法论——分段满意度Big-M线性化、McCormick乘积解耦、词典序多目标处理、多维韧性矩阵评估——可平滑迁移至分级诊疗站点选址、冷链前置仓网络规划与新能源充电桩布局等更广泛的公共设施优化场景，为"十五五"期间基本养老服务体系建设提供可量化的决策支撑。
+
+% ===== 参考文献 =====
+\begin{thebibliography}{99}
+\bibitem{church1974} Church R L, ReVelle C. The maximal covering location problem[J]. Papers of the Regional Science Association, 1974, 32(1): 101-118.
+\bibitem{leslie1945} Leslie P H. On the use of matrices in certain population mathematics[J]. Biometrika, 1945, 33(3): 183-212.
+\bibitem{mccormick1976} McCormick G P. Computability of global solutions to factorable nonconvex programs: Part I — Convex underestimating problems[J]. Mathematical Programming, 1976, 10(1): 147-175.
+\bibitem{ramsey1927} Ramsey F P. A contribution to the theory of taxation[J]. The Economic Journal, 1927, 37(145): 47-61.
+\bibitem{daskin1995} Daskin M S. Network and Discrete Location: Models, Algorithms, and Applications[M]. New York: John Wiley \& Sons, 1995.
+\bibitem{wolsey1998} Wolsey L A. Integer Programming[M]. New York: John Wiley \& Sons, 1998.
+\bibitem{bertsimas2011} Bertsimas D, Brown D B, Caramanis C. Theory and applications of robust optimization[J]. SIAM Review, 2011, 53(3): 464-501.
+\end{thebibliography}
+
+
+\input{appendix_code.tex}
+
+\end{document}

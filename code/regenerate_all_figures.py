@@ -226,7 +226,7 @@ def make_figure_q1_total_trend():
     for t in range(5):
         S[t+1] = np.round(A @ S[t])
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 7.5))
     fig.patch.set_facecolor(WHITE)
     ax.set_facecolor(WHITE)
 
@@ -285,7 +285,7 @@ def make_figure_q1_stacked_bar():
             S_hist[t+1, i] = np.round(A @ S_hist[t, i])
     S5 = S_hist[-1]
 
-    fig, axes = plt.subplots(1, 2, figsize=(17, 7))
+    fig, axes = plt.subplots(1, 2, figsize=(13, 7.5))
     fig.patch.set_facecolor(WHITE)
 
     for ax_idx, (t, S_data, title) in enumerate([
@@ -460,18 +460,13 @@ def make_figure_q2_station_load():
     df_demand = pd.read_csv(os.path.join(RES, "q1_service_demand.csv"))
     loads = []
     for st in st_names:
-        served = [c for c, s in q2['assignments'].items() if s == st]
+        served = [c for c, s in q2['assignments'].items() if s['station'] == st]
         load = sum(df_demand[df_demand["小区"].isin(served)]["实际月需求(次)"].sum() for _ in [0])
-        # 更准确的计算
-        load = 0
-        for comm in served:
-            mask = df_demand["小区"] == comm
-            load += df_demand[mask]["实际月需求(次)"].sum()
         loads.append(load / 30)  # 转换为日负荷
 
     util = [l/c*100 for l, c in zip(loads, capacities)]
 
-    fig, ax = plt.subplots(figsize=(10, 6))
+    fig, ax = plt.subplots(figsize=(10, 5.5))
     fig.patch.set_facecolor(WHITE)
     ax.set_facecolor(WHITE)
 
@@ -510,10 +505,12 @@ def make_figure_q2_station_load():
     ax.legend(lines1+lines2, labels1+labels2, frameon=True, framealpha=0.9,
               fontsize=11, loc='upper left')
 
+    ax.set_ylim(0, max(capacities)*1.18)
+    ax2.set_ylim(0, 105)
     ax.set_xlim(-0.5, len(st_names)-0.5)
     fig.tight_layout(pad=1.5)
     fig.savefig(os.path.join(FIG, "figure_q2_station_load.png"), dpi=300,
-                facecolor='white', bbox_inches='tight')
+                facecolor='white')
     plt.close(fig)
     print("[OK] figure_q2_station_load.png — 站点负荷图")
 
@@ -570,12 +567,11 @@ def make_figure_q3_pricing_comparison():
 # ============================================================
 def make_figure_q4_sensitivity_combined():
     """三面板横排灵敏度全景图."""
-    scenarios = ['基线\n120万', 'A-130\n预算放松', 'A-140\n预算放松', 'A-150\n预算放松',
-                 'B-成本\n通胀+20%', 'C-银发\n海啸']
-    colors = [NAVY, CYAN, CYAN, CYAN, CORAL, AMBER]
-    coverage = [100.0, 100.0, 100.0, 100.0, 80.0, 90.0]
-    sat = [0.850, 0.883, 0.889, 0.912, 0.906, 0.895]
-    profit = [1097.7, 1053.8, 1010.0, 980.9, 667.7, 887.9]
+    scenarios = ['基线\n(120万)', 'A-人口\n结构冲击', 'B-管理\n成本+20%', 'C-预算\n调整140万']
+    colors = [NAVY, CYAN, CORAL, TEAL]
+    coverage = [100.0, 90.0, 100.0, 100.0]
+    sat = [0.850, 0.878, 0.842, 0.889]
+    profit = [1097.7, 931.7, 1019.9, 1010.0]
 
     fig, axes = plt.subplots(1, 3, figsize=(21, 6.2))
     fig.patch.set_facecolor(WHITE)
@@ -611,24 +607,22 @@ def make_figure_q4_sensitivity_combined():
 
 def make_figure_q4_resilience_heatmap():
     """多场景多维度韧性热力图."""
-    scenarios = ['A1(130万)', 'A2(140万)', 'A3(150万)', 'B(成本通胀)', 'C(银发海啸)']
+    scenarios = ['A(人口冲击)', 'B(成本+20%)', 'C(预算140万)']
     dims = ['覆盖率', '满意度', '利润率', '目标值']
     # ρ = 1 - |ΔX/X_baseline|
     data = np.array([
-        [1.00, 0.961, 0.960, 0.972],   # A1
-        [1.00, 0.954, 0.920, 0.955],   # A2
-        [1.00, 0.927, 0.894, 0.924],   # A3
-        [0.80, 0.934, 0.609, 0.862],   # B
-        [0.90, 0.947, 0.809, 0.894],   # C
+        [0.90, 0.967, 0.849, 0.903],   # A: 人口结构冲击
+        [1.00, 0.991, 0.929, 0.999],   # B: 管理成本+20%
+        [1.00, 0.953, 0.920, 0.996],   # C: 预算调整140万
     ])
 
     fig, ax = plt.subplots(figsize=(10, 6))
     fig.patch.set_facecolor(WHITE)
     ax.set_facecolor(WHITE)
 
-    # 自定义 colormap: 红(弱韧性) → 白 → 蓝(强韧性)
-    cmap = sns.diverging_palette(10, 250, as_cmap=True)
-    im = ax.imshow(data, cmap=cmap, vmin=0.55, vmax=1.05, aspect='auto')
+    # 红(弱韧性) → 黄 → 绿(强韧性)，vmin/vmax 压缩至高值区凸显差异
+    cmap = sns.diverging_palette(10, 130, s=85, l=50, center='light', as_cmap=True)
+    im = ax.imshow(data, cmap=cmap, vmin=0.82, vmax=1.02, aspect='auto')
 
     ax.set_xticks(range(len(dims)))
     ax.set_xticklabels(dims, fontsize=12, color=NAVY)
@@ -654,15 +648,14 @@ def make_figure_q4_resilience_heatmap():
     print("[OK] figure_q4_resilience_heatmap.png — 韧性热力图")
 
 def make_figure_q4_resilience_radar():
-    """多维度鲁棒性雷达图."""
+    """多维度鲁棒性雷达图 (v5: 题目4.1三场景)."""
     scenarios = {
-        'A1(预算130万)': [1.00, 0.961, 0.960, 0.972],
-        'A3(预算150万)': [1.00, 0.927, 0.894, 0.924],
-        'B(成本通胀)':   [0.80, 0.934, 0.609, 0.862],
-        'C(银发海啸)':   [0.90, 0.947, 0.809, 0.894],
+        'A(人口结构冲击)': [0.90, 0.967, 0.849, 0.903],
+        'B(管理成本+20%)': [1.00, 0.991, 0.929, 0.999],
+        'C(预算调整140万)': [1.00, 0.953, 0.920, 0.996],
     }
     dims = ['覆盖率\n韧性', '满意度\n韧性', '利润率\n韧性', '目标值\n韧性']
-    colors_radar = [CYAN, TEAL, CORAL, AMBER]
+    colors_radar = [CYAN, CORAL, TEAL]
     N = len(dims)
     angles = np.linspace(0, 2*np.pi, N, endpoint=False).tolist()
     angles += angles[:1]
