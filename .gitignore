@@ -40,6 +40,9 @@ mathmodel-skill/
 paper_workspace/main_backup.tex
 utils/_verify_font.png
 
+# Reference materials (external guides, not for commit)
+references/external_guides/
+
 # VS Code and misc
 .vscode/
 Thumbs.db
