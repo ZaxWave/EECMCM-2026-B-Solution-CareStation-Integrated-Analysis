@@ -1,8 +1,64 @@
 # EECMCM 2026 B题 — 嵌入式社区养老服务站的建设与优化问题
 
-> 竞赛：中国电机工程学会杯 (电工杯) · 2026 · B题  
-> 参赛编号：014508  
-> 仓库：[EECMCM-2026-B-Solution-CareStation-Integrated-Analysis](https://github.com/ZaxWave/EECMCM-2026-B-Solution-CareStation-Integrated-Analysis)
+> **竞赛**：中国电机工程学会杯 (电工杯) · 2026 · B题 &emsp;|&emsp; **参赛编号**：014508  
+> **命题**：嵌入式社区养老服务站"建在哪、建多大、收多少钱、抗多大风险"的全链条工程决策
+
+<p align="center">
+  <img src="paper_workspace/figures/figure_tech_route.png" width="92%" alt="技术路线">
+</p>
+
+---
+
+## 核心成果速览
+
+<p align="center">
+  <b>109万元建设成本</b> · <b>10/10小区全覆盖</b> · <b>人均仅159元</b> · <b>年利润1,097.7万元</b>
+</p>
+
+| 指标 | 数值 | 指标 | 数值 |
+|------|------|------|------|
+| 最优方案 | **F(大型) + H(中型) + J(中型)** | 加权满意度 | **0.850** |
+| 总建设成本 | **109 万元** (预算120万) | 日总容量 | **7,000 人次** |
+| 双模型偏差 | **1.7%** (Markov vs Leslie) | 交叉补贴率 | **14.3%** |
+| Q3全S₃ | **1.000** (平价区间) | 韧性最低值 | **ρ = 0.849** (强鲁棒) |
+
+### 最优选址方案
+
+<p align="center">
+  <img src="paper_workspace/figures/figure_q2_network.png" width="72%" alt="Q2最优选址网络">
+</p>
+
+F站(大型,45万)覆盖C-F-G-I四小区，H站(中型,32万)覆盖B-E-H三小区，J站(中型,32万)覆盖A-D-J三小区。三站利用率92%–96%，呈三足鼎立的空间均衡布局。
+
+### 人口演化与鲁棒性
+
+<p align="center">
+  <img src="paper_workspace/figures/figure_q1_total_trend.png" width="46%" alt="Q1人口趋势">
+  <img src="paper_workspace/figures/figure_q4_sensitivity_combined.png" width="52%" alt="Q4鲁棒性">
+</p>
+
+失能老人5年暴增**+80.3%**（棘轮效应：$a_{33}=0.95$半吸收壁）。三场景九维度韧性系数均满足 $\rho>0.80$，系统整体强鲁棒。
+
+---
+
+## 模型方法
+
+| 问题 | 方法 | 关键技术 |
+|------|------|----------|
+| **Q1** 人口预测 | 增生型Markov链 + Leslie矩阵互证 | 3状态转移矩阵, 消费约束需求削减, 双模型三角校验 |
+| **Q2** 选址优化 | **MILP-MCLP-ES** 混合整数线性规划 | Big-M分段满意度线性化, McCormick包络, CBC分支定界 |
+| **Q3** 定价策略 | 词典序MILP + Ramsey-Boiteux定价 | S₃优先→ε=10⁻⁴营收激励, 三层交叉补贴, 利润率≤8% |
+| **Q4** 鲁棒性 | 三场景独立MILP重求解 | 韧性矩阵 ρ=1−\|ΔX/X\|, 三级分级(高韧/中韧/脆弱) |
+
+### 定价优化亮点
+
+<p align="center">
+  <img src="paper_workspace/figures/figure_q3_pricing_comparison.png" width="60%" alt="Q3定价对比">
+</p>
+
+上门护理从30元降至12.64元（**−57.9%**），吸收F站8%利润率紧约束，其余5项服务维持基准价。紧急救助公益免费，年净支出47.42万元由营利服务利润331.3万元完全吸收。
+
+---
 
 ## 项目结构
 
@@ -10,90 +66,55 @@
 EECMCM2026/
 ├── paper_workspace/                  # LaTeX 论文源文件 + 提交产物
 │   ├── main_backup.tex               # 论文主文件 (xelatex 三编)
-│   ├── 014508B.pdf                   # 参赛论文 (终稿, ≤20MB)
-│   ├── 014508Bshuju.zip              # 支撑材料 (代码+数据+结果+图表+LaTeX)
-│   ├── section_1_problem_background.tex
-│   ├── section_2_data_preprocessing.tex
-│   ├── section_3_model_formulation.tex
-│   ├── section_4_assumptions.tex
-│   ├── section_5_1_q1_results.tex
-│   ├── section_5_2_q2_results.tex
-│   ├── section_5_3_q3_results.tex
-│   ├── section_5_4_q4_robustness.tex
-│   ├── section_6_model_evaluation.tex
-│   ├── section_7_engineering_recommendations.tex
+│   ├── 014508B.pdf                   # 参赛论文 (≤20MB)
+│   ├── 014508Bshuju.zip              # 支撑材料 (≤20MB)
+│   ├── section_1~7_*.tex             # 正文分章节 (10个文件)
 │   ├── appendix_code.tex             # 附录 (代码+推导+补充表)
-│   └── figures/                      # 论文插图 (14 张 PNG, 300dpi)
-├── code/                             # 核心求解器与图表生成
-│   ├── config.py                     # 共享配置 (路径/调色板/字体)
-│   ├── solve_q1.py                   # Q1: Markov链人口预测 + Leslie互证
-│   ├── solve_q2.py                   # Q2: MILP-MCLP-ES 选址-规模优化
-│   ├── solve_q3.py                   # Q3: 词典序MILP 定价与补贴优化
-│   ├── solve_q4_sensitivity.py       # Q4: 三场景灵敏度与鲁棒性检验
-│   ├── regenerate_all_figures.py     # 论文全部图表统一生成 (总控)
-│   ├── generate_extra_figures.py     # 韧性热力图 + 雷达图
-│   └── generate_q4_combined.py       # Q4 三场景组合图
-├── utils/                            # 工具脚本
-│   ├── fix_matplotlib_font.py        # matplotlib 中文字体修复
-│   ├── fix_abstract.py               # 摘要篇幅压缩
-│   └── _verify_font.png              # 字体验证截图
-├── data/                             # B题赛题数据 (5附件 + 赛题PDF)
-├── results/                          # 模型中间输出 (CSV/JSON, Q1→Q4)
-├── references/                       # 参考文献与外部资料
-├── docs/                             # 论文规范
-├── state/                            # 建模决策日志
-└── README.md
+│   └── figures/                      # 论文插图 (14张PNG, 300dpi)
+├── code/                             # 核心求解器与图表生成 (9个文件)
+│   ├── solve_q1~q4*.py               # Q1–Q4 求解器
+│   ├── regenerate_all_figures.py     # 图表总控
+│   └── config.py                     # 共享配置
+├── utils/                            # 工具脚本 (字体修复/摘要调整)
+├── data/                             # 赛题原始数据 (5附件)
+├── results/                          # 模型中间输出 (CSV/JSON)
+├── references/                       # 参考文献
+└── docs/                             # 竞赛论文规范
 ```
 
-## 模型方法概览
-
-| 问题 | 方法 | 核心内容 |
-|------|------|----------|
-| Q1 人口预测 | 增生型Markov链 + Leslie矩阵互证 | 3状态转移矩阵, 5年递推, 消费约束需求削减 |
-| Q2 选址优化 | MILP-MCLP-ES (混合整数线性规划) | Big-M分段满意度线性化, McCormick包络, CBC分支定界 |
-| Q3 定价策略 | 词典序MILP + Ramsey-Boiteux定价 | S3最大化优先, ε=10⁻⁴营收激励, 三层交叉补贴 |
-| Q4 鲁棒性 | 三场景独立MILP重求解 | 韧性系数矩阵 ρ=1−\|ΔX/X\|, 三级分级标准 |
+---
 
 ## 快速开始
-
-### 编译论文
-
-```bash
-cd paper_workspace
-xelatex main_backup.tex
-xelatex main_backup.tex
-xelatex main_backup.tex
-# 输出: main_backup.pdf (73页, 正文≤25页)
-```
-
-### 运行求解器
 
 ```bash
 # 安装依赖
 pip install numpy scipy pandas matplotlib openpyxl pulp
 
-# 按 Q1→Q2→Q3→Q4 顺序执行 (数据流串行依赖)
+# 按 Q1→Q2→Q3→Q4 顺序求解 (数据流串行依赖)
 python code/solve_q1.py
 python code/solve_q2.py
 python code/solve_q3.py
 python code/solve_q4_sensitivity.py
 
-# 重新生成全部论文图表
+# 生成全部论文图表
 python code/regenerate_all_figures.py
-python code/generate_extra_figures.py
-python code/generate_q4_combined.py
+
+# 编译论文
+cd paper_workspace
+xelatex main_backup.tex && xelatex main_backup.tex && xelatex main_backup.tex
 ```
+
+---
 
 ## 提交文件
 
-| 文件 | 说明 | 大小限制 |
-|------|------|----------|
-| `paper_workspace/014508B.pdf` | 参赛论文 | ≤20MB |
-| `paper_workspace/014508Bshuju.zip` | 支撑材料 (代码+数据+结果+图表+LaTeX) | ≤20MB |
+| 文件 | 大小 | 说明 |
+|------|------|------|
+| `paper_workspace/014508B.pdf` | 3.1 MB | 参赛论文 (73页, 正文25页) |
+| `paper_workspace/014508Bshuju.zip` | 3.8 MB | 支撑材料 (代码+数据+结果+图表+LaTeX) |
 
-## 竞赛规范
+---
 
-- 论文格式参见 `docs/论文规范` (2024年修订稿, 10条规则)
-- 封面页: 参赛编号 + 论文题目 (毋自拟)
-- 正文 ≤ 25页, 附录不限
-- 参考文献按正文引用次序列出
+<p align="center">
+  <sub>Methodology: Markov Chain · MILP-MCLP-ES · Big-M Linearization · McCormick Envelope · Lexicographic MILP · Ramsey-Boiteux Pricing</sub>
+</p>
