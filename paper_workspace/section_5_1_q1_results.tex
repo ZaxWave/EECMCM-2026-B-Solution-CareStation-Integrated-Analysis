@@ -11,14 +11,14 @@
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.85\textwidth]{figures/figure_q1_total_trend.png}
+\includegraphics[width=0.78\textwidth]{figures/figure_q1_total_trend.png}
 \caption{全区域三类老人总量5年演化轨迹。自理老人(+5.7\%)与失能老人(+80.3\%)同步增长，半失能老人(-3.7\%)因净流出效应微降。}
 \label{fig:q1_total}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=0.92\textwidth]{figures/figure_q1_stacked_bar.png}
+\includegraphics[width=0.85\textwidth]{figures/figure_q1_stacked_bar.png}
 \caption{基年与第5年末各小区老年人口结构对比。失能老人(橙色)占比从9.1\%跃升至14.8\%，构成"银发海啸"的底层推力。}
 \label{fig:q1_stacked}
 \end{figure}
@@ -45,8 +45,6 @@
 \end{tabular}
 \end{table}
 
-\subsubsection{核心发现与机制分析}
+\subsubsection{核心发现：失能棘轮效应}
 
-表\ref{tab:q1_summary}的核心发现是失能老人的\textbf{"失能棘轮效应"}：失能状态在转移矩阵$\mathbf{A}$中处于半吸收地位，对角元$a_{33}=0.95$，持续接收半失能群体10\%的年化流入（$a_{32}=0.095$），5年增幅达+80.3\%。半失能群体充当从自理到失能的加速通道，自身净减少3.7\%。每年7\%的新增自理注入产生总量稀释与结构滞后两重效应，使当前失能激增实际源自5年前已处于半失能状态的人群。
-
-消费约束引入后，理论月需求削减5.9\%至247~060次/月，失能老人全10小区触发等比例削减（缺口23.9\%--49.1\%），构成Q3定价与补贴优化的底层经济学逻辑。Q1输出已结构化为两个CSV接口文件（\texttt{q1\_final\_population.csv}与\texttt{q1\_service\_demand.csv}）供Q2/Q3无缝读取，实现全流程数值闭环。
+失能状态在$\mathbf{A}$中处于半吸收地位（$a_{33}=0.95$），持续接收半失能10\%年化流入（$a_{32}=0.095$），5年+80.3\%。半失能充当自理$\to$失能加速通道，自身净减3.7\%。每年7\%新增自理注入产生总量稀释与结构滞后双重效应。消费约束削减理论需求5.9\%至247~060次/月，失能全10小区触发削减（缺口23.9\%--49.1\%），构成Q3底层经济学逻辑。输出CSV接口供Q2/Q3无缝读取。

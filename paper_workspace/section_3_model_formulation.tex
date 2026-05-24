@@ -58,9 +58,7 @@ $S3_{i,s}$ & 价格满意度 (4段阶梯) & $\{0.60,0.75,0.90,1.00\}$ \\
 
 其中$t=0$对应于题目给出的基年截面数据。
 
-题设中三类老人的动力学受三个独立机制共同支配：(1) \textbf{状态转移}——自理可退化为半失能（概率$\alpha_{\text{S}\to\text{M}}=0.045$），半失能可进一步退化为失能（概率$\alpha_{\text{M}\to\text{D}}=0.10$），失能不能恢复为更佳状态（吸收壁）；(2) \textbf{自然死亡}——三类老人均以年均$\mu=0.05$的概率退出系统（进入吸收态"死亡"，不再参与后续递推）；(3) \textbf{新生注入}——每年新增刚满60岁的老年人，其数量等于当年老年总人口的$\beta=0.07$，且全部以\textbf{自理状态}进入系统。
-
-这三个机制的物理本质可统一编码为一个$3\times 3$的\textbf{增生型转移矩阵}$\mathbf{A}$：
+题设动力学受三个独立机制支配：(1) 状态退化——自理$\xrightarrow{0.045}$半失能$\xrightarrow{0.10}$失能（吸收壁）；(2) 自然死亡——年均$\mu=0.05$概率退出；(3) 新生注入——每年新增$\beta=0.07$（当年总量）的60岁自理老人。编码为增生型转移矩阵$\mathbf{A}$：
 
 \begin{equation}
 \boxed{
@@ -73,22 +71,11 @@ $S3_{i,s}$ & 价格满意度 (4段阶梯) & $\{0.60,0.75,0.90,1.00\}$ \\
 }
 \end{equation}
 
-代入数值$\mu=0.05$, $\alpha_{\text{S}\to\text{M}}=0.045$, $\alpha_{\text{M}\to\text{D}}=0.10$, $\beta=0.07$：
+代入$\mu=0.05$, $\alpha_{\text{S}\to\text{M}}=0.045$, $\alpha_{\text{M}\to\text{D}}=0.10$, $\beta=0.07$得数值矩阵，列和$1.02>1$反映年均净增长约2\%——"增生型马尔可夫链"区别于标准吸收链的核心特征。
 
-\begin{equation}
-\mathbf{A} =
-\begin{bmatrix}
-0.97725 & 0.07 & 0.07 \\
-0.04275 & 0.855 & 0 \\
-0 & 0.095 & 0.95
-\end{bmatrix}
-\end{equation}
+\subsubsection{模型B：Leslie矩阵互证}
 
-矩阵$\mathbf{A}$的各列（列向量约定$\mathbf{S}^{(t+1)} = \mathbf{A}\mathbf{S}^{(t)}$）具有明晰的物理语义：第一列$[0.97725, 0.04275, 0]^\top$表示自理老人97.725\%保持自理、4.275\%退化为半失能；新生注入项$\beta=0.07$出现在第一行全三列，维持系统的开放性。矩阵列和均$1.02>1$，反映年均约2\%的净增长——这是"增生型马尔可夫链"区别于标准吸收链的核心特征。
-
-\subsubsection{模型B：Leslie年龄结构矩阵的等价推导与互证}
-
-将三类老人视为三个"生理年龄组"，构造$3\times 3$ Leslie矩阵$\mathbf{L}$\cite{leslie1945}，其元素$f_1=(1-\mu)(1-\alpha_{\text{S}\to\text{M}})+\beta$（自理留存-新生复合生育力），$f_2=f_3=\beta$（新生注入），$p_{1\to2}=(1-\mu)\alpha_{\text{S}\to\text{M}}$（自理$\to$半失能转移率），$p_{2\to3}=(1-\mu)\alpha_{\text{M}\to\text{D}}$（半失能$\to$失能退化率）。$\mathbf{L}$精确等价于$\mathbf{A}^\top$（Leslie行向量左乘vs马尔可夫列向量右乘），两模型5年递推结果完全一致（差异$<10^{-6}$），构成模型内互证。Leslie主特征值$\lambda_1=1.0198>1$揭示年均净增长率约2.0\%，与Q1数值结果精确吻合——这一结构稳定性信息是纯马尔可夫递推所不能直接提供的（双模型数值对比见附录表\ref{tab:leslie_check}）。
+将三类老人视为三个"生理年龄组"，构造$3\times 3$ Leslie矩阵$\mathbf{L}$\cite{leslie1945}：$f_1=(1-\mu)(1-\alpha_{\text{S}\to\text{M}})+\beta$, $f_2=f_3=\beta$, $p_{1\to2}=(1-\mu)\alpha_{\text{S}\to\text{M}}$, $p_{2\to3}=(1-\mu)\alpha_{\text{M}\to\text{D}}$。$\mathbf{L}\equiv\mathbf{A}^\top$，主特征值$\lambda_1=1.0198>1$揭示年均净增长率约2.0\%，与Q1数值结果精确吻合——纯Markov递推无法直接提供此结构稳定性信息（数值对比见附录表\ref{tab:leslie_check}）。
 
 \subsubsection{递推预测算法}
 
@@ -134,25 +121,9 @@ D_{i,e,s}^{\text{actual}} = s_{i,e}^{(t)} \cdot D_{e,s} \cdot \min\left(1, \frac
 
 \subsection{Q2：嵌入式选址-规模联合优化的MILP模型}
 
-\subsubsection{问题类型的精确定位与模型选型}
+\subsubsection{问题定位于MCLP-CFLP谱系交汇处}
 
-Q2要求"确定服务站数量、位置、规模，使得服务覆盖率和服务满意度尽可能高"。其数学本质可追溯至运筹学中的两个经典模型谱系：
-
-\textbf{理论底座一：最大覆盖选址问题 (Maximal Covering Location Problem, MCLP)}。Church和ReVelle \cite{church1974}在其开创性论文中首次形式化了如下问题：给定$n$个需求点、$m$个候选设施点、服务半径$R$和设施数量上限$P$，如何选择至多$P$个设施点以最大化被覆盖的需求总量？该模型在无线基站选址（GSM Transmitter Location）、消防站部署、急救中心规划等领域有广泛工程应用。本问题中，\textbf{服务站$\equiv$GSM发射塔、1000m服务半径$\equiv$基站信号覆盖半径、老年人口$\equiv$信号需求密度}——三要素精确对齐，构成了问题2的理论底座。国内学者在养老设施空间匹配\cite{wang2024}与社区型设施分布优化\cite{sima2024}方面的实证研究，为本文选址模型的参数标定提供了方法论参照。
-
-\textbf{理论底座二：有容量设施选址问题 (Capacitated Facility Location Problem, CFLP)}。MCLP的经典形式假设设施容量无上限，而本题中三种规模服务站分别对应1~000/2~000/3~000人次/日的硬容量约束，且建设成本各异——这恰好对应CFLP的"多容量等级"变体（Multi-Level CFLP）\cite{daskin1995}。
-
-\textbf{本问题的复合特征}。在上述两个经典谱系的交汇处，本问题额外附加了三个使建模显著复杂化的特征：(1) 满意度$S$是距离、利用率、价格三因素的\textbf{分段常数阶梯函数}——不可微分，不可简单连续化；(2) 目标为覆盖率与满意度的\textbf{双目标帕累托优化}；(3) 服务站容量与服务满意度通过利用率$S_2$产生\textbf{非线性耦合}。因此，本文将所建模型命名为\textbf{MILP-MCLP-ES (Maximal Covering Location Problem for Embedded Stations)}，以显式标注其在运筹学谱系中的精确位置。
-
-\textbf{候选模型淘汰记录} (反事实探索)：
-
-\begin{enumerate}
-    \item \textbf{遗传算法 (GA) / 粒子群优化 (PSO)}：\textbf{淘汰}。启发式算法无法保证全局最优——在满意度分段阶梯函数的非凸可行域中，GA极易收敛至局部最优（例如将站点部署在"刚好够用"的次优位置而非全局最优）。反模式C5要求"必须验证模型可行性"，启发式不可验证最优性。
-
-    \item \textbf{层次分析法 (AHP) / TOPSIS}：\textbf{淘汰}。反模式E3：评价类方法将选址问题降维为"打分排序"，丧失了空间距离、服务容量、满意度耦合的结构化信息，属于"用评价代替优化"的架构性错误。
-
-    \item \textbf{MILP-MCLP-ES (选定)}：\textbf{选定}。将覆盖率与满意度加权聚合为单目标，通过Big-M约束将题目给定的阶梯状满意度规则\textbf{精确线性化}为混合整数线性不等式组，利用分支定界法求全局最优解。模型全称：\textbf{最大覆盖嵌入式服务站选址模型 (Maximal Covering Location Problem for Embedded Stations, MILP-MCLP-ES)}，该命名显式标注了其在Church\&ReVelle (1974) MCLP谱系中的精确位置——将经典MCLP从"0-1覆盖"推广至"分段满意度覆盖"、从"无容量"推广至"多级容量"、从"单目标"推广至"双目标帕累托"。
-\end{enumerate}
+Q2是经典\textbf{最大覆盖选址（MCLP, Church\&ReVelle, 1974\cite{church1974}）}与\textbf{有容量设施选址（CFLP\cite{daskin1995}）}的复合变体：1000m服务半径对应MCLP覆盖逻辑，三种规模的硬容量约束对应CFLP多容量等级，满意度$S$的分段阶梯函数带来了额外的非线性。本文将所建模型命名为\textbf{MILP-MCLP-ES}，通过Big-M线性化将非凸满意度规则转化为混合整数线性不等式组，以分支定界求全局最优。淘汰方案：GA/PSO（非凸可行域中无最优性保证）；AHP/TOPSIS（用评价替代优化，丧失空间-容量-满意度耦合信息）\cite{wang2024,sima2024}。
 
 \subsubsection{目标函数}
 
@@ -184,7 +155,7 @@ x_{i,j} \le \sum_{k\in\mathcal{K}} y_{i,k}, \quad \forall i,j \in \mathcal{I}
 x_{i,j} = 0, \quad \forall i,j: d_{i,j} > 1000 \text{ m}
 \end{equation}
 
-\textbf{(C4) 每位老人由最近服务站服务}：由题目假设"老人只选择满意度最高的服务站"驱动。在Q2阶段（定价固定为基准价），$S_3=1.0$且$S_2$在建站后确定，$S_1$完全由距离决定——因此\textbf{满意度最大化等价于距离最小化}。该逻辑通过以下约束编码：
+\textbf{(C4) 唯一分配约束}：每位老人由恰好一个服务站服务（满意度最大化$\equiv$距离最小化，因Q2阶段定价固定$S_3\equiv1.0$）。
 \begin{equation}
 \sum_{i\in\mathcal{I}} x_{i,j} = 1, \quad \forall j \in \mathcal{I}
 \end{equation}
@@ -244,38 +215,22 @@ S_{i,j} = 0.2 \cdot S1_{i,j} + 0.3 \cdot S2_i + 0.5 \cdot \frac{1}{|\mathcal{S}|
 
 \subsection{Q3：服务定价与政府补贴优化模型}
 
-养老服务定价与补贴机制设计是近年国内学界关注焦点\cite{feng2024,zhao2024}。Q3在Q2最优选址方案$\{y_{i,k}^*\}$已确定的前提下，允许每个服务站自主定价$p'_{i,s}$，目标为最大化老人满意度，同时满足利润率$\le 8\%$的监管约束。
+Q3在Q2最优选址$\{y_{i,k}^*\}$固化的前提下，允许各站自主定价$p'_{i,s}$，目标最大化满意度，受利润率$\le 8\%$监管约束\cite{feng2024,zhao2024}。定价通过$S_3$影响满意度（$x_{i,j}^*$固定）。
 
-\subsubsection{目标函数（Q3修正）}
+\subsubsection{利润率与补贴约束}
 
-\begin{equation}
-\max \; \frac{1}{|\mathcal{I}|}\sum_{i\in\mathcal{I}}\sum_{j\in\mathcal{I}} S_{i,j} \cdot x_{i,j}^*
-\end{equation}
-
-其中$x_{i,j}^*$由Q2最优解固定（即服务分配关系在Q3中不再变化，老人仍由Q2指定的服务站服务）。定价变化仅通过$S_3$影响满意度。
-
-\subsubsection{利润率约束}
-
-服务站$i$的年度利润定义为：
+年利润$\Pi_i$含运营收支、政府补贴$\sigma_s^{\text{sub}}=2$元/人次（紧急救助除外）、20年折旧：
 
 \begin{equation}
-\Pi_i = 360 \cdot \sum_{j}\sum_{e}\sum_{s} D_{i,j,e,s}^{\text{actual}} \cdot (p'_{i,s} - c_s + \sigma_s^{\text{sub}}) \cdot x_{i,j}^* - 360 \cdot \sum_{k} O_k \cdot y_{i,k}^* - \frac{\sum_k C_k^{\text{build}} \cdot y_{i,k}^*}{20}
+\Pi_i = 360 \sum_{j,e,s} D_{i,j,e,s}^{\text{actual}} (p'_{i,s} - c_s + \sigma_s^{\text{sub}}) x_{i,j}^* - 360 \sum_k O_k y_{i,k}^* - \frac{\sum_k C_k^{\text{build}} y_{i,k}^*}{20}
 \end{equation}
-
-其中$\sigma_s^{\text{sub}}$为政府补贴（紧急救助除外，2元/人次），360为年运营天数，最后一项为20年等额折旧分摊。利润率约束：
 
 \begin{equation}
-\frac{\Pi_i}{360 \cdot \sum_k O_k \cdot y_{i,k}^* + \sum_k C_k^{\text{build}} \cdot y_{i,k}^* / 20} \le 0.08, \quad \forall i: \sum_k y_{i,k}^* = 1
+\frac{\Pi_i}{360 \sum_k O_k y_{i,k}^* + \sum_k C_k^{\text{build}} y_{i,k}^* / 20} \le 0.08, \quad \forall i
 \end{equation}
 
-\subsubsection{补贴上限约束}
+补贴上限约束（非紧急救助）：$\sum_{j,e,s} D_{i,j,e,s}^{\text{actual}} \cdot 2 \cdot x_{i,j}^* \le B_k^{\text{sub}}, \; B_k^{\text{sub}} \in \{1000, 1800, 2600\}$元/日。
 
-单个服务站每日补贴总额不超过规模上限：
+\subsection{模型族一致性}
 
-\begin{equation}
-\sum_{j}\sum_{e}\sum_{s \neq \text{紧急救助}} D_{i,j,e,s}^{\text{actual}} \cdot \sigma_s^{\text{sub}} \cdot x_{i,j}^* \le \sum_{k} B_k^{\text{sub}} \cdot y_{i,k}^*, \quad B_k^{\text{sub}} \in \{1000, 1800, 2600\} \text{ 元/日}
-\end{equation}
-
-\subsection{模型族一致性声明}
-
-本文Q1--Q4的模型族遵循统一的设计哲学：(1) Q1的马尔可夫递推为Q2/Q3提供人口与需求输入，形成\textbf{数据驱动的串行依赖链}；(2) Q2与Q3共享同一套Big-M+SOS2线性化框架（距离、利用率、价格三个维度的满意度编码方式完全一致），Q3仅新增定价自由度与利润率约束；(3) Q4的灵敏度分析通过参数扰动调用Q2/Q3的完整求解器，无需额外建模。此设计避免了反模式G1（子问题各做各），确保了全文方法的\textbf{架构内聚性}。
+Q1$\to$Q2$\to$Q3串行依赖链：Q1输出人口与需求$\to$Q2选址$\to$Q3定价。Q2与Q3共享Big-M满意度线性化框架，Q4通过参数扰动复用Q2/Q3求解器。全文方法内聚于统一的MILP编译框架。
