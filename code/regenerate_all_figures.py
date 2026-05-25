@@ -121,136 +121,144 @@ def despine_fully(ax):
 # §1 技术路线流程图 (NEW — Visio-style)
 # ============================================================
 def make_figure_tech_route():
-    """四阶段递进技术路线图 — 现代卡片式设计."""
-    fig, ax = plt.subplots(figsize=(20, 6.5))
+    """四阶段技术路线流程图 — 垂直管道式设计."""
+    fig, ax = plt.subplots(figsize=(12, 16))
     fig.patch.set_facecolor(WHITE)
-    ax.set_xlim(0, 20)
-    ax.set_ylim(0, 6.5)
+    ax.set_xlim(0, 12)
+    ax.set_ylim(0, 16)
     ax.axis('off')
 
-    # 阶段颜色与元数据
-    stages = [
-        {"num": "01", "title": "人口预测", "en": "Population Forecast",
-         "method": "增生型Markov链\n+ Leslie矩阵互证",
-         "output": "5年末人口结构\n失能+80.3%\n实际需求247,060次/月",
-         "color": CYAN, "x": 1.0},
-        {"num": "02", "title": "选址-规模优化", "en": "Location-Scale Optimization",
-         "method": "MILP-MCLP-ES\nBig-M + McCormick包络",
-         "output": "F(大)+H(中)+J(中)\n10/10全覆盖\n109万 / 120万预算",
-         "color": TEAL, "x": 5.9},
-        {"num": "03", "title": "差异化定价", "en": "Pricing & Subsidy",
-         "method": "词典序MILP\nRamsey-Boiteux定价",
-         "output": "上门护理12.64元(−57.9%)\n全S₃=1.000平价\n交叉补贴率14.3%",
-         "color": ROSE, "x": 10.8},
-        {"num": "04", "title": "鲁棒性检验", "en": "Robustness Verification",
-         "method": "三场景独立MILP\n重求解 + 韧性矩阵",
-         "output": "九维度ρ>0.80\n预算140万→S=0.889\n强鲁棒性判定",
-         "color": AMBER, "x": 15.7},
+    colors = [CYAN, TEAL, ROSE, AMBER]
+    nums = ["01", "02", "03", "04"]
+    titles = ["人口预测", "选址-规模优化", "差异化定价", "鲁棒性检验"]
+    subs = ["Markov Chain\n+ Leslie Matrix", "MILP-MCLP-ES\nBig-M + McCormick", "词典序 MILP\nRamsey-Boiteux", "三场景 MILP\n独立重求解"]
+    methods = [
+        "增生型转移矩阵 A\n消费约束等比例削减\n双模型三角校验 (偏差 1.7%)",
+        "覆盖权重 5.0 + 满意度权重 0.5\nMcCormick 乘积解耦\nCBC 分支定界 (gap<1%)",
+        "S₃ 最大化优先\nε = 10⁻⁴ 营收弱激励\nRamsey 反向价格歧视",
+        "人口·成本·预算三组扰动\n韧性矩阵 ρ = 1−|ΔX/X|\n三级分级 (高韧/中韧/脆弱)",
+    ]
+    outputs = [
+        "7,577 人 (失能 +80.3%)\n247,060 次/月实际需求\n→ Q2 输入 CSV",
+        "F(大) + H(中) + J(中)\n109 万 / 120 万\n10/10 全覆盖",
+        "上门护理 12.64 元 (−57.9%)\n全 S₃ = 1.000\n交叉补贴率 14.3%",
+        "九维度 ρ > 0.80\n预算 140 万 → S = 0.889\n强鲁棒性判定",
     ]
 
-    card_w, card_h = 4.2, 4.5
-    card_y = 1.2
+    # ---- layout params ----
+    card_w, card_h = 8.6, 2.7
+    center_x = 6.0
+    start_y = 12.6
+    gap = 3.6
+    arrow_head_w = 0.25
+    arrow_head_h = 0.28
 
-    for st in stages:
-        x = st["x"]
-        c = st["color"]
+    for i in range(4):
+        y0 = start_y - i * gap
+        c = colors[i]
 
-        # 卡片阴影
-        shadow = FancyBboxPatch((x+0.06, card_y-0.06), card_w, card_h,
-                                 boxstyle="round,pad=0.2", facecolor='#E8E8E8',
-                                 edgecolor='none', alpha=0.5, zorder=1)
+        # ── card shadow ──
+        shadow = FancyBboxPatch((center_x - card_w/2 + 0.08, y0 - card_h - 0.08),
+                                 card_w, card_h, boxstyle="round,pad=0.25",
+                                 facecolor='#E2E2E2', edgecolor='none', alpha=0.4, zorder=1)
         ax.add_patch(shadow)
 
-        # 主卡片
-        card = FancyBboxPatch((x, card_y), card_w, card_h, boxstyle="round,pad=0.2",
-                               facecolor=WHITE, edgecolor=c, lw=2.2, zorder=2)
+        # ── main card ──
+        card = FancyBboxPatch((center_x - card_w/2, y0 - card_h), card_w, card_h,
+                               boxstyle="round,pad=0.25", facecolor=WHITE,
+                               edgecolor=c, lw=2.5, zorder=2)
         ax.add_patch(card)
 
-        # 顶部色条 (卡片宽度一致)
-        header_h = 0.55
-        header = FancyBboxPatch((x+0.3, card_y+card_h-header_h-0.1), card_w-0.6, header_h,
-                                 boxstyle="round,pad=0.08", facecolor=c, edgecolor='none',
-                                 alpha=0.92, zorder=3)
-        ax.add_patch(header)
+        # ── left accent bar ──
+        bar_w = 0.14
+        bar = FancyBboxPatch((center_x - card_w/2 + 0.15, y0 - card_h + 0.3),
+                              bar_w, card_h - 0.6, boxstyle="round,pad=0.04",
+                              facecolor=c, edgecolor='none', alpha=0.85, zorder=3)
+        ax.add_patch(bar)
 
-        # 阶段编号 & 标题 (在色条上)
-        ax.text(x+card_w/2, card_y+card_h-0.42, f"{st['num']}  {st['title']}",
-                ha='center', va='center', fontsize=15, fontweight='bold',
-                color=WHITE, zorder=4)
+        # ── stage number circle ──
+        circle = mpatches.Circle((center_x - card_w/2 + 0.95, y0 - card_h/2),
+                                  0.42, facecolor=c, edgecolor='white', lw=2.5, zorder=4)
+        ax.add_patch(circle)
+        ax.text(center_x - card_w/2 + 0.95, y0 - card_h/2, nums[i],
+                ha='center', va='center', fontsize=14, fontweight='bold',
+                color=WHITE, zorder=5)
 
-        # 英文副标题
-        ax.text(x+card_w/2, card_y+card_h-0.85, st["en"],
-                ha='center', va='center', fontsize=8, color=WHITE, alpha=0.85,
-                style='italic', zorder=4)
+        # ── title ──
+        ax.text(center_x - card_w/2 + 1.55, y0 - 0.45, titles[i],
+                ha='left', va='center', fontsize=14.5, fontweight='bold',
+                color=NAVY, zorder=4)
+        ax.text(center_x - card_w/2 + 1.55, y0 - 0.85, subs[i],
+                ha='left', va='center', fontsize=8.5, color=c, style='italic',
+                zorder=4)
 
-        # 方法区
-        method_y = card_y + card_h - 1.55
-        ax.text(x+card_w/2, method_y+0.15, "▎方法", ha='center', va='center',
-                fontsize=7.5, color=SLATE, fontweight='bold', zorder=4)
-        ax.text(x+card_w/2, method_y-0.45, st["method"], ha='center', va='center',
-                fontsize=9.5, color=NAVY, zorder=4, linespacing=1.35)
+        # ── divider ──
+        div_y = y0 - 1.25
+        ax.plot([center_x - card_w/2 + 0.5, center_x + card_w/2 - 0.5],
+                [div_y, div_y], color=c, lw=0.6, alpha=0.35, zorder=3)
 
-        # 分隔线
-        sep_y = method_y - 0.9
-        ax.plot([x+0.6, x+card_w-0.6], [sep_y, sep_y], color=c, lw=0.6, alpha=0.35, zorder=3)
+        # ── method (left column) ──
+        lx = center_x - card_w/2 + 0.55
+        ax.text(lx, div_y - 0.30, "▎方法", ha='left', va='top',
+                fontsize=7.8, color=SLATE, fontweight='bold', zorder=4)
+        ax.text(lx, div_y - 0.58, methods[i], ha='left', va='top',
+                fontsize=9, color=NAVY, zorder=4, linespacing=1.45)
 
-        # 输出区
-        out_y = sep_y - 0.35
-        ax.text(x+card_w/2, out_y, "▎关键输出", ha='center', va='center',
-                fontsize=7.5, color=SLATE, fontweight='bold', zorder=4)
-        ax.text(x+card_w/2, out_y-0.75, st["output"], ha='center', va='center',
-                fontsize=9, color=NAVY, zorder=4, linespacing=1.4)
+        # ── output (right column) ──
+        rx = center_x + card_w/2 - 0.55
+        ax.text(rx, div_y - 0.30, "▎关键输出", ha='right', va='top',
+                fontsize=7.8, color=SLATE, fontweight='bold', zorder=4)
+        ax.text(rx, div_y - 0.58, outputs[i], ha='right', va='top',
+                fontsize=9, color=NAVY, zorder=4, linespacing=1.45)
 
-    # 阶段间连接箭头
-    for i in range(len(stages)-1):
-        x_start = stages[i]["x"] + card_w + 0.1
-        x_end = stages[i+1]["x"] - 0.1
-        y_mid = card_y + card_h/2
-        mid_x = (x_start + x_end) / 2
+    # ── connecting arrows between cards ──
+    for i in range(3):
+        y_from = start_y - i * gap - card_h
+        y_to = start_y - (i+1) * gap
+        mid_y = (y_from + y_to) / 2
 
-        # 箭头主体
-        ax.annotate("", xy=(x_end, y_mid), xytext=(x_start, y_mid),
-                    arrowprops=dict(arrowstyle="->", color=SLATE, lw=2.5,
+        # vertical line
+        ax.annotate("", xy=(center_x, y_to + arrow_head_h/2),
+                    xytext=(center_x, y_from - arrow_head_h/2),
+                    arrowprops=dict(arrowstyle="->", color=SLATE, lw=2.0,
                                    connectionstyle="arc3,rad=0"), zorder=5)
 
-        # 传输标签 — 胶囊形
-        labels = [
-            ("人口·需求", "→"),
-            ("选址·分配", "→"),
-            ("定价·补贴", "→"),
-        ]
-        label_y = y_mid + 0.65
-        # 胶囊背景
-        capsule_w, capsule_h = 1.2, 0.32
-        cap = FancyBboxPatch((mid_x-capsule_w/2, label_y-capsule_h/2), capsule_w, capsule_h,
-                              boxstyle="round,pad=0.05", facecolor=SLATE, edgecolor='none',
-                              alpha=0.12, zorder=5)
-        ax.add_patch(cap)
-        ax.text(mid_x, label_y, labels[i][0], ha='center', va='center',
-                fontsize=7.5, color=SLATE, fontweight='bold', zorder=6)
+        # data flow label (right side)
+        data_labels = ["人口·需求 CSV", "y*/x* 选址固化", "p* 定价固化"]
+        # small tag on the right
+        tag_w, tag_h = 1.5, 0.28
+        tag = FancyBboxPatch((center_x + 0.8, mid_y - tag_h/2), tag_w, tag_h,
+                              boxstyle="round,pad=0.04", facecolor=SLATE,
+                              edgecolor='none', alpha=0.13, zorder=5)
+        ax.add_patch(tag)
+        ax.text(center_x + 1.55, mid_y, data_labels[i], ha='center', va='center',
+                fontsize=7.2, color=SLATE, fontweight='bold', zorder=6)
 
-    # 底部数据流条
-    stream_y = 0.55
-    stream_bar = FancyBboxPatch((0.5, stream_y), 19, 0.32, boxstyle="round,pad=0.06",
-                                 facecolor=NAVY, edgecolor='none', alpha=0.07, zorder=1)
-    ax.add_patch(stream_bar)
-    ax.text(10, stream_y+0.16,
-            "数据管道  →  附件1–5  →  Q1 人口·需求 CSV  →  Q2 选址·分配 JSON  →  Q3 定价·补贴 CSV  →  Q4 灵敏度汇总",
-            ha='center', va='center', fontsize=7.8, color=SLATE, zorder=2)
+    # ── left pipeline track ──
+    track_x = 0.35
+    ax.add_patch(FancyBboxPatch((track_x, start_y - 3*gap + card_h/2 - 5.1),
+                                 0.18, 10.7, boxstyle="round,pad=0.06",
+                                 facecolor=NAVY, edgecolor='none', alpha=0.08, zorder=0))
+    ax.text(track_x + 0.09, 3.6, "数\n据\n管\n道", ha='center', va='center',
+            fontsize=7.5, color=SLATE, fontweight='bold', rotation=90, zorder=1,
+            linespacing=1.8)
 
-    # 顶部标题区
-    ax.text(10, 6.05, "技术路线：四阶段递进求解框架", ha='center', va='center',
-            fontsize=18, fontweight='bold', color=NAVY)
-    ax.text(10, 5.70, "Markov 预测  →  MILP 选址  →  词典序定价  →  鲁棒性检验  |  CBC 分支定界 · 全链路精确求解",
+    # ── top title ──
+    ax.text(center_x, 15.1, "技术路线：四阶段递进求解框架", ha='center', va='center',
+            fontsize=19, fontweight='bold', color=NAVY)
+    ax.text(center_x, 14.55, "人口预测 → 选址优化 → 差异化定价 → 鲁棒性检验  |  CBC 分支定界 · 全链路精确求解",
             ha='center', va='center', fontsize=10, color=SLATE)
+    ax.plot([3.5, 8.5], [14.32, 14.32], color=NAVY, lw=0.7, alpha=0.2, zorder=0)
 
-    # 顶部装饰线
-    ax.plot([5, 15], [5.52, 5.52], color=NAVY, lw=0.8, alpha=0.25, zorder=1)
+    # ── bottom note ──
+    ax.text(center_x, start_y - 3*gap + card_h/2 - 1.25,
+            "Q1 输出人口结构与实际需求  →  Q2 MILP选址固化 y*/x*  →  Q3 词典序定价 p*  →  Q4 三场景扰动重求解",
+            ha='center', va='center', fontsize=7.8, color=SLATE, style='italic')
 
     fig.savefig(os.path.join(FIG, "figure_tech_route.png"), dpi=300,
                 facecolor='white', bbox_inches='tight')
     plt.close(fig)
-    print("[OK] figure_tech_route.png — 技术路线流程图 (现代卡片式)")
+    print("[OK] figure_tech_route.png — 垂直管道式流程图")
 
 # ============================================================
 # §2 Q1 图表重绘 — 学术黑金风格

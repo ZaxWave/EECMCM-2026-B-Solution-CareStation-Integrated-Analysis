@@ -30,14 +30,21 @@
 
 F站(大型,45万)覆盖C-F-G-I四小区，H站(中型,32万)覆盖B-E-H三小区，J站(中型,32万)覆盖A-D-J三小区。三站利用率92%–96%，呈三足鼎立的空间均衡布局。
 
-### 人口演化与鲁棒性
+### 人口演化轨迹
 
 <p align="center">
-  <img src="paper_workspace/figures/figure_q1_total_trend.png" width="46%" alt="Q1人口趋势">
-  <img src="paper_workspace/figures/figure_q4_sensitivity_combined.png" width="52%" alt="Q4鲁棒性">
+  <img src="paper_workspace/figures/figure_q1_total_trend.png" width="88%" alt="Q1人口趋势">
 </p>
 
-失能老人5年暴增**+80.3%**（棘轮效应：$a_{33}=0.95$半吸收壁）。三场景九维度韧性系数均满足 $\rho>0.80$，系统整体强鲁棒。
+失能老人5年暴增**+80.3%**（棘轮效应：$a_{33}=0.95$半吸收壁），半失能净流出−3.7%，自理+5.7%。消费约束使失能全10小区触发需求削减，缺口23.9%–49.1%。
+
+### 鲁棒性全景
+
+<p align="center">
+  <img src="paper_workspace/figures/figure_q4_sensitivity_combined.png" width="88%" alt="Q4鲁棒性">
+</p>
+
+三场景独立MILP重求解。韧性分级：$\rho\ge0.90$高韧 / $0.80\le\rho<0.90$中韧 / $\rho<0.80$脆弱。九维度$\rho>0.80$，零脆弱，系统强鲁棒。
 
 ---
 
