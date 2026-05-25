@@ -3,9 +3,62 @@
 > **竞赛**：中国电机工程学会杯 (电工杯) · 2026 · B题 &emsp;|&emsp; **参赛编号**：014508  
 > **命题**：嵌入式社区养老服务站"建在哪、建多大、收多少钱、抗多大风险"的全链条工程决策
 
-<p align="center">
-  <img src="paper_workspace/figures/figure_tech_route.png" width="92%" alt="技术路线">
-</p>
+```mermaid
+graph TB
+    %% ═══ Styles ═══
+    classDef base fill:#1B2A4A,stroke:none,color:#FFFFFF,rx:8,font-size:15px,font-weight:bold
+    classDef q1 fill:#2E86AB,stroke:none,color:#FFF,rx:8,font-size:14px,font-weight:bold
+    classDef q2 fill:#0D7377,stroke:none,color:#FFF,rx:8,font-size:14px,font-weight:bold
+    classDef q3 fill:#A23B72,stroke:none,color:#FFF,rx:8,font-size:14px,font-weight:bold
+    classDef q4 fill:#F18F01,stroke:none,color:#FFF,rx:8,font-size:14px,font-weight:bold
+    classDef out fill:#F5F0EB,stroke:#5D6D7E,color:#1B2A4A,rx:6,font-size:12px
+    classDef data fill:#E8E8E8,stroke:#5D6D7E,color:#5D6D7E,rx:4,font-size:11px,stroke-dasharray:4 2
+    classDef track fill:none,stroke:#1B2A4A,color:#5D6D7E,font-size:10px
+
+    %% ═══ Title ═══
+    title["<b>技术路线：四阶段递进求解框架</b><br/>Markov 预测 → MILP 选址 → 词典序定价 → 鲁棒性检验 | CBC 分支定界 · 全链路求解"]:::base
+
+    %% ═══ Q1 ═══
+    subgraph S1[" "]
+        q1n("<b>01 · 人口预测</b><br/>增生型 Markov 链 + Leslie 互证"):::q1
+        q1o("5年末 7,577人 · 失能 +80.3%<br/>消费约束削减 15,493次/月"):::out
+    end
+
+    %% ═══ Q2 ═══
+    subgraph S2[" "]
+        q2n("<b>02 · 选址-规模优化</b><br/>MILP-MCLP-ES · Big-M + McCormick"):::q2
+        q2o("F(大) + H(中) + J(中) · 109万<br/>10/10 全覆盖 · 目标值 54.225"):::out
+    end
+
+    %% ═══ Q3 ═══
+    subgraph S3[" "]
+        q3n("<b>03 · 差异化定价</b><br/>词典序 MILP · Ramsey-Boiteux"):::q3
+        q3o("上门护理 12.64元 (−57.9%) · 全S₃=1.000<br/>交叉补贴率 14.3% · 利润率≤8%"):::out
+    end
+
+    %% ═══ Q4 ═══
+    subgraph S4[" "]
+        q4n("<b>04 · 鲁棒性检验</b><br/>人口·成本·预算 三场景重求解"):::q4
+        q4o("九维度 ρ>0.80 · 零脆弱<br/>预算140万 → S=0.889 (+4.6%)"):::out
+    end
+
+    %% ═══ Edges ═══
+    title --> q1n
+    q1n --> q1o
+    q1o -->|"人口·需求 CSV"| q2n
+    q2n --> q2o
+    q2o -->|"y*/x* 选址固化"| q3n
+    q3n --> q3o
+    q3o -->|"p* 定价固化"| q4n
+    q4n --> q4o
+
+    %% ═══ Data pipeline ═══
+    pipeline["附件1-5 → Q1人口CSV → Q2选址JSON → Q3定价CSV → Q4灵敏度汇总"]:::track
+    q1o -.-> pipeline
+    q2o -.-> pipeline
+    q3o -.-> pipeline
+    q4o -.-> pipeline
+```
 
 ---
 
