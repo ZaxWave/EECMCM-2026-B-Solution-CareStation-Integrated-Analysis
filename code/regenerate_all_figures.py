@@ -83,7 +83,7 @@ os.makedirs("../figures", exist_ok=True)
 # ---- 数据路径 ----
 BASE = os.path.join(os.path.dirname(__file__), "..", "data")
 RES  = os.path.join(os.path.dirname(__file__), "..", "results")
-FIG  = os.path.join(os.path.dirname(__file__), "..", "figures")
+FIG  = os.path.join(os.path.dirname(__file__), "..", "paper_workspace", "figures")
 
 def load_q1_data():
     """加载 Q1 人口预测结果."""
@@ -121,80 +121,136 @@ def despine_fully(ax):
 # §1 技术路线流程图 (NEW — Visio-style)
 # ============================================================
 def make_figure_tech_route():
-    """四阶段递进流程图: 预测→选址→定价→灵敏度."""
-    fig, ax = plt.subplots(figsize=(18, 5.5))
+    """四阶段递进技术路线图 — 现代卡片式设计."""
+    fig, ax = plt.subplots(figsize=(20, 6.5))
     fig.patch.set_facecolor(WHITE)
-    ax.set_xlim(0, 18)
-    ax.set_ylim(0, 5.5)
+    ax.set_xlim(0, 20)
+    ax.set_ylim(0, 6.5)
     ax.axis('off')
 
-    # 四阶段定义
+    # 阶段颜色与元数据
     stages = [
-        {"x": 1.0, "title": "Q1\n人口预测", "sub": "Markov+Leslie\n双模型互证",
-         "items": ["增生型转移矩阵", "消费约束预诊断", "失能棘轮效应"], "color": CYAN},
-        {"x": 5.3, "title": "Q2\n选址-规模优化", "sub": "MILP-MCLP-ES\nMcCormick+Big-M",
-         "items": ["10/10全覆盖", "F大+H中+J中", "109万/120万预算"], "color": TEAL},
-        {"x": 9.6, "title": "Q3\n差异化定价", "sub": "词典序MILP\nRamsey-Boiteux",
-         "items": ["三层交叉补贴", "S3=1.000平价", "利润率≤8%紧约束"], "color": ROSE},
-        {"x": 13.9, "title": "Q4\n鲁棒性检验", "sub": "三场景6组MILP\n重求解",
-         "items": ["韧性矩阵ρ>0.80", "全覆盖底线109万", "130万甜点门槛"], "color": AMBER},
+        {"num": "01", "title": "人口预测", "en": "Population Forecast",
+         "method": "增生型Markov链\n+ Leslie矩阵互证",
+         "output": "5年末人口结构\n失能+80.3%\n实际需求247,060次/月",
+         "color": CYAN, "x": 1.0},
+        {"num": "02", "title": "选址-规模优化", "en": "Location-Scale Optimization",
+         "method": "MILP-MCLP-ES\nBig-M + McCormick包络",
+         "output": "F(大)+H(中)+J(中)\n10/10全覆盖\n109万 / 120万预算",
+         "color": TEAL, "x": 5.9},
+        {"num": "03", "title": "差异化定价", "en": "Pricing & Subsidy",
+         "method": "词典序MILP\nRamsey-Boiteux定价",
+         "output": "上门护理12.64元(−57.9%)\n全S₃=1.000平价\n交叉补贴率14.3%",
+         "color": ROSE, "x": 10.8},
+        {"num": "04", "title": "鲁棒性检验", "en": "Robustness Verification",
+         "method": "三场景独立MILP\n重求解 + 韧性矩阵",
+         "output": "九维度ρ>0.80\n预算140万→S=0.889\n强鲁棒性判定",
+         "color": AMBER, "x": 15.7},
     ]
 
-    # 绘制阶段盒子
+    card_w, card_h = 4.2, 4.5
+    card_y = 1.2
+
     for st in stages:
-        x, w, h = st["x"], 3.6, 3.2
-        # 主矩形
-        rect = FancyBboxPatch((x, 1.0), w, h, boxstyle="round,pad=0.15",
-                               facecolor=WHITE, edgecolor=st["color"], lw=2.5, zorder=2)
-        ax.add_patch(rect)
-        # 顶部色条
-        bar = FancyBboxPatch((x+0.3, 3.8), w-0.6, 0.35, boxstyle="round,pad=0.06",
-                              facecolor=st["color"], edgecolor='none', alpha=0.85, zorder=3)
-        ax.add_patch(bar)
-        # 标题
-        ax.text(x+w/2, 3.97, st["title"], ha='center', va='center',
-                fontsize=14, fontweight='bold', color=WHITE, zorder=4)
-        # 副标题
-        ax.text(x+w/2, 2.75, st["sub"], ha='center', va='center',
-                fontsize=9.5, color=SLATE, zorder=4, linespacing=1.3)
+        x = st["x"]
+        c = st["color"]
+
+        # 卡片阴影
+        shadow = FancyBboxPatch((x+0.06, card_y-0.06), card_w, card_h,
+                                 boxstyle="round,pad=0.2", facecolor='#E8E8E8',
+                                 edgecolor='none', alpha=0.5, zorder=1)
+        ax.add_patch(shadow)
+
+        # 主卡片
+        card = FancyBboxPatch((x, card_y), card_w, card_h, boxstyle="round,pad=0.2",
+                               facecolor=WHITE, edgecolor=c, lw=2.2, zorder=2)
+        ax.add_patch(card)
+
+        # 顶部色条 (卡片宽度一致)
+        header_h = 0.55
+        header = FancyBboxPatch((x+0.3, card_y+card_h-header_h-0.1), card_w-0.6, header_h,
+                                 boxstyle="round,pad=0.08", facecolor=c, edgecolor='none',
+                                 alpha=0.92, zorder=3)
+        ax.add_patch(header)
+
+        # 阶段编号 & 标题 (在色条上)
+        ax.text(x+card_w/2, card_y+card_h-0.42, f"{st['num']}  {st['title']}",
+                ha='center', va='center', fontsize=15, fontweight='bold',
+                color=WHITE, zorder=4)
+
+        # 英文副标题
+        ax.text(x+card_w/2, card_y+card_h-0.85, st["en"],
+                ha='center', va='center', fontsize=8, color=WHITE, alpha=0.85,
+                style='italic', zorder=4)
+
+        # 方法区
+        method_y = card_y + card_h - 1.55
+        ax.text(x+card_w/2, method_y+0.15, "▎方法", ha='center', va='center',
+                fontsize=7.5, color=SLATE, fontweight='bold', zorder=4)
+        ax.text(x+card_w/2, method_y-0.45, st["method"], ha='center', va='center',
+                fontsize=9.5, color=NAVY, zorder=4, linespacing=1.35)
+
         # 分隔线
-        ax.plot([x+0.4, x+w-0.4], [2.3, 2.3], color=st["color"], lw=0.6, alpha=0.4, zorder=3)
-        # 条目
-        for idx, item in enumerate(st["items"]):
-            ax.text(x+w/2, 1.85 - idx*0.42, f"▸ {item}", ha='center', va='center',
-                    fontsize=9, color=NAVY, zorder=4)
+        sep_y = method_y - 0.9
+        ax.plot([x+0.6, x+card_w-0.6], [sep_y, sep_y], color=c, lw=0.6, alpha=0.35, zorder=3)
 
-    # 阶段间箭头
+        # 输出区
+        out_y = sep_y - 0.35
+        ax.text(x+card_w/2, out_y, "▎关键输出", ha='center', va='center',
+                fontsize=7.5, color=SLATE, fontweight='bold', zorder=4)
+        ax.text(x+card_w/2, out_y-0.75, st["output"], ha='center', va='center',
+                fontsize=9, color=NAVY, zorder=4, linespacing=1.4)
+
+    # 阶段间连接箭头
     for i in range(len(stages)-1):
-        x1 = stages[i]["x"] + 3.6
-        x2 = stages[i+1]["x"]
-        y = 2.55
-        ax.annotate("", xy=(x2-0.15, y), xytext=(x1+0.15, y),
-                    arrowprops=dict(arrowstyle="->", color=SLATE, lw=2.8,
+        x_start = stages[i]["x"] + card_w + 0.1
+        x_end = stages[i+1]["x"] - 0.1
+        y_mid = card_y + card_h/2
+        mid_x = (x_start + x_end) / 2
+
+        # 箭头主体
+        ax.annotate("", xy=(x_end, y_mid), xytext=(x_start, y_mid),
+                    arrowprops=dict(arrowstyle="->", color=SLATE, lw=2.5,
                                    connectionstyle="arc3,rad=0"), zorder=5)
-        # 箭头标签
-        mid = (x1+x2)/2
-        arrows_labels = ["Markov\n递推", "y*/x*\n固化", "site*\n固化"]
-        ax.text(mid, y+0.55, arrows_labels[i], ha='center', va='center',
-                fontsize=7.5, color=SLATE, style='italic', zorder=5)
 
-    # 底部数据流
-    data_bar_y = 0.55
-    ax.add_patch(FancyBboxPatch((0.3, data_bar_y), 17.4, 0.28, boxstyle="round,pad=0.04",
-                                 facecolor=NAVY, edgecolor='none', alpha=0.06, zorder=1))
-    ax.text(9, data_bar_y+0.14, "数据流: 附件1-5 → Q1人口CSV → Q2选址JSON → Q3定价CSV → Q4灵敏度汇总",
-            ha='center', va='center', fontsize=7.5, color=SLATE, zorder=2)
+        # 传输标签 — 胶囊形
+        labels = [
+            ("人口·需求", "→"),
+            ("选址·分配", "→"),
+            ("定价·补贴", "→"),
+        ]
+        label_y = y_mid + 0.65
+        # 胶囊背景
+        capsule_w, capsule_h = 1.2, 0.32
+        cap = FancyBboxPatch((mid_x-capsule_w/2, label_y-capsule_h/2), capsule_w, capsule_h,
+                              boxstyle="round,pad=0.05", facecolor=SLATE, edgecolor='none',
+                              alpha=0.12, zorder=5)
+        ax.add_patch(cap)
+        ax.text(mid_x, label_y, labels[i][0], ha='center', va='center',
+                fontsize=7.5, color=SLATE, fontweight='bold', zorder=6)
 
-    # 标题
-    ax.text(9, 4.7, "图X  技术路线：\"预测—选址—定价—灵敏度\"四阶段递进框架",
-            ha='center', va='center', fontsize=16, fontweight='bold', color=NAVY)
-    ax.text(9, 4.35, "数据驱动 + MILP精确求解 + 多场景鲁棒性验证",
-            ha='center', va='center', fontsize=11, color=SLATE)
+    # 底部数据流条
+    stream_y = 0.55
+    stream_bar = FancyBboxPatch((0.5, stream_y), 19, 0.32, boxstyle="round,pad=0.06",
+                                 facecolor=NAVY, edgecolor='none', alpha=0.07, zorder=1)
+    ax.add_patch(stream_bar)
+    ax.text(10, stream_y+0.16,
+            "数据管道  →  附件1–5  →  Q1 人口·需求 CSV  →  Q2 选址·分配 JSON  →  Q3 定价·补贴 CSV  →  Q4 灵敏度汇总",
+            ha='center', va='center', fontsize=7.8, color=SLATE, zorder=2)
+
+    # 顶部标题区
+    ax.text(10, 6.05, "技术路线：四阶段递进求解框架", ha='center', va='center',
+            fontsize=18, fontweight='bold', color=NAVY)
+    ax.text(10, 5.70, "Markov 预测  →  MILP 选址  →  词典序定价  →  鲁棒性检验  |  CBC 分支定界 · 全链路精确求解",
+            ha='center', va='center', fontsize=10, color=SLATE)
+
+    # 顶部装饰线
+    ax.plot([5, 15], [5.52, 5.52], color=NAVY, lw=0.8, alpha=0.25, zorder=1)
 
     fig.savefig(os.path.join(FIG, "figure_tech_route.png"), dpi=300,
                 facecolor='white', bbox_inches='tight')
     plt.close(fig)
-    print("[OK] figure_tech_route.png — 技术路线流程图")
+    print("[OK] figure_tech_route.png — 技术路线流程图 (现代卡片式)")
 
 # ============================================================
 # §2 Q1 图表重绘 — 学术黑金风格

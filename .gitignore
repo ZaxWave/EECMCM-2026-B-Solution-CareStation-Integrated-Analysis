@@ -36,8 +36,7 @@ mathmodel-skill/
 # Claude internal
 .claude/
 
-# Backup / debug
-paper_workspace/main_backup.tex
+# Debug
 utils/_verify_font.png
 
 # Reference materials (external guides, not for commit)
